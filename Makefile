@@ -1,7 +1,10 @@
 CXX = clang++
 SRC = \
 			main.cpp \
+			defines.cpp \
+			envelope.cpp \
 			fmvoice.cpp \
+			fmsynth.cpp \
 			jackcpp/src/jackaudioio.cpp
 
 CXXFLAGS += -std=c++11 -g -Wall
