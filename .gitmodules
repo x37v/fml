@@ -1,0 +1,3 @@
+[submodule "jackcpp"]
+	path = jackcpp
+	url = https://github.com/x37v/jackcpp.git
