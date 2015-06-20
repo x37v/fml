@@ -1,8 +1,10 @@
 CXX = clang++
 SRC = \
 			main.cpp \
+			fmvoice.cpp \
 			jackcpp/src/jackaudioio.cpp
 
+CXXFLAGS += -std=c++11 -g -Wall
 CXXFLAGS += -Ijackcpp/include/
 LDFLAGS += -ljack
 OBJ = ${SRC:.cpp=.o}
