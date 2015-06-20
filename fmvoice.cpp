@@ -10,11 +10,10 @@ namespace {
 };
 
 FMVoice::FMVoice() {
-  mMPhaseInc = 440.0 / fm::fsample_rate();
-  mCPhaseInc = 440.0 / fm::fsample_rate();
-
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+
+  update_increments();
 }
 
 float FMVoice::compute() {
@@ -40,8 +39,29 @@ float FMVoice::compute() {
 }
 
 void FMVoice::trigger(bool on, float frequency) {
-  if (on)
+  if (on) {
     mModEnv.trigger();
+    mBaseFreq = frequency;
+    update_increments();
+  }
   mAmpEnv.trigger(on);
+}
+
+void FMVoice::feedback(float v) {
+  mMFeedBack = v;
+}
+
+void FMVoice::mod_depth(float v) {
+  mModDepth = v;
+}
+
+void FMVoice::freq_mult(float mod, float car) {
+  mMFreqMult = mod;
+  mCFreqMult = car;
+}
+
+void FMVoice::update_increments() {
+  mMPhaseInc = (mBaseFreq * mMFreqMult) / fm::fsample_rate();
+  mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
 }
 

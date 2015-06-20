@@ -5,9 +5,19 @@
 #include <memory>
 #include <signal.h>
 
+#include <random>
+
 bool should_exit = false;
 
 void sighandler(int sig) { should_exit = true; }
+
+float rand_note() {
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
+  static std::uniform_int_distribution<> dis(220, 1000);
+
+  return static_cast<float>(dis(gen));
+}
 
 //just output fm voice
 class JackAudio : public JackCpp::AudioIO {
@@ -22,9 +32,9 @@ class JackAudio : public JackCpp::AudioIO {
         }
         mTrigCount--;
         if (mTrigCount <= 0) {
-          mTrigCount = 44100 * 2;
-          mFM.trigger(0, true, 440);
-        } else if (mTrigCount == 44100) {
+          mTrigCount = 44100;
+          mFM.trigger(0, true, rand_note());
+        } else if (mTrigCount == (44100 - 4100)) {
           mFM.trigger(0, false, 440);
         }
       }
@@ -32,7 +42,7 @@ class JackAudio : public JackCpp::AudioIO {
     }
     JackAudio() : JackCpp::AudioIO("fm", 0, 2) { }
   private:
-    int mTrigCount = 44100 * 2;
+    int mTrigCount = 0;
     FMSynth mFM;
     float mVolume = 0.2;
 };

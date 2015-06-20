@@ -37,8 +37,8 @@ void ADEnvelope::trigger() {
 
 
 ADSREnvelope::ADSREnvelope() {
-  mStageSettings[ATTACK] = 1.0 / (0.03 * fm::fsample_rate()); //attack time
-  mStageSettings[DECAY] = 1.0 / (0.05 * fm::fsample_rate()); //decay time
+  mStageSettings[ATTACK] = 1.0 / (0.04 * fm::fsample_rate()); //attack time
+  mStageSettings[DECAY] = 1.0 / (0.04 * fm::fsample_rate()); //decay time
   mStageSettings[SUSTAIN] = 0.8; //sustain level
   mStageSettings[RELEASE] = 1.0 / (1.0 * fm::fsample_rate()); //release time
 }

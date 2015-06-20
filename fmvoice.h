@@ -9,7 +9,13 @@ class FMVoice {
     float compute();
     void trigger(bool on, float frequency);
 
+    void feedback(float v);
+    void mod_depth(float v);
+    void freq_mult(float mod, float car);
+
   private:
+    void update_increments(); //based on frequency or ratio change
+
     float mMPhase = 0.0f;
     float mCPhase = 0.0f;
 
@@ -18,8 +24,13 @@ class FMVoice {
 
     float mMOutLast = 0.0f;
 
-    float mMFeedBack = 0.0f;
+    float mMFeedBack = 0.01f;
     float mModDepth = 0.1f;
+
+    float mMFreqMult = 1.0f;
+    float mCFreqMult = 1.0f;
+
+    float mBaseFreq = 440.0f;
 
     ADEnvelope mModEnv;
     ADSREnvelope mAmpEnv;
