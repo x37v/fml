@@ -5,6 +5,7 @@ SRC = \
 			envelope.cpp \
 			fmvoice.cpp \
 			fmsynth.cpp \
+			midiproc.cpp \
 			jackcpp/src/jackaudioio.cpp \
 			jackcpp/src/jackmidiport.cpp
 

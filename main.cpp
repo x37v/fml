@@ -2,6 +2,7 @@
 #include "jackmidiport.hpp"
 
 #include "fmsynth.h"
+#include "midiproc.h"
 #include <chrono>
 #include <thread>
 #include <memory>
@@ -22,10 +23,6 @@ float rand_note() {
   return static_cast<float>(dis(gen));
 }
 
-float midi_to_freq(uint8_t midi_note) {
-  return powf(2, (midi_note - 69.0) / 12.0) * 440;
-}
-
 //just output fm voice
 class JackAudio : public JackCpp::AudioIO {
   public:
@@ -38,10 +35,13 @@ class JackAudio : public JackCpp::AudioIO {
           if (mMidiInput.get(evt, midi_buff, i) && evt.size == 3) {
             switch (JackCpp::MIDIPort::status(evt)) {
               case JackCpp::MIDIPort::NOTEON:
-                mFM.trigger(0, true, midi_to_freq(evt.buffer[1]));
+                mMidiProc.process_note(mFM, true, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
                 break;
               case JackCpp::MIDIPort::NOTEOFF:
-                mFM.trigger(0, false, midi_to_freq(evt.buffer[1]));
+                mMidiProc.process_note(mFM, false, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
+                break;
+              case JackCpp::MIDIPort::CC:
+                mMidiProc.process_cc(mFM, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
                 break;
             }
           }
@@ -56,7 +56,10 @@ class JackAudio : public JackCpp::AudioIO {
       }
       return 0;
     }
-    JackAudio() : JackCpp::AudioIO("fm", 0, 2) { 
+    JackAudio() : JackCpp::AudioIO("fm", 0, 2),
+      mFM(),
+      mMidiProc()
+    { 
       mMidiInput.init(this, "fml_in");
       mFM.freq_mult(8, 1);
       mFM.feedback(0);
@@ -65,6 +68,7 @@ class JackAudio : public JackCpp::AudioIO {
   private:
     JackCpp::MIDIInPort mMidiInput;
     FMSynth mFM;
+    FMMidiProc mMidiProc;
     float mVolume = 0.2;
 };
 

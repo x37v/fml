@@ -14,6 +14,11 @@ FMVoice::FMVoice() {
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
   update_increments();
+
+  mAmpEnv.complete_callback([this] (void) {
+    if (mCompleteCallback)
+      mCompleteCallback();
+  });
 }
 
 float FMVoice::compute() {
@@ -58,6 +63,10 @@ void FMVoice::mod_depth(float v) {
 void FMVoice::freq_mult(float mod, float car) {
   mMFreqMult = mod;
   mCFreqMult = car;
+}
+
+void FMVoice::complete_callback(complete_callback_t cb) {
+  mCompleteCallback = cb;
 }
 
 void FMVoice::update_increments() {

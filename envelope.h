@@ -2,16 +2,18 @@
 #define ENVELOPE_H
 
 #include <array>
+#include <functional>
 
 //all stages, except sustain, increment a counter from 0 to 1 and may do math
 //against that to figure out the value
 
 class ADEnvelope {
   public:
+    enum stage_t {ATTACK = 0, DECAY = 1, COMPLETE};
+
     ADEnvelope();
     float compute();
     void trigger();
-    enum stage_t {ATTACK = 0, DECAY = 1, COMPLETE};
 
   private:
     stage_t mStage = COMPLETE;
@@ -21,12 +23,17 @@ class ADEnvelope {
 
 class ADSREnvelope {
   public:
+    typedef std::function<void(void)> complete_callback_t;
+    enum stage_t {ATTACK = 0, DECAY = 1, SUSTAIN = 2, RELEASE = 3, COMPLETE};
+
     ADSREnvelope();
     float compute();
     void trigger(bool start = true);
-    enum stage_t {ATTACK = 0, DECAY = 1, SUSTAIN = 2, RELEASE = 3, COMPLETE};
 
+    void complete_callback(complete_callback_t cb); 
   private:
+    complete_callback_t mCompleteCallback = nullptr;
+
     stage_t mStage = COMPLETE;
     float mPosition = 0.0f;
     std::array<float, 4> mStageSettings;

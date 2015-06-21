@@ -5,7 +5,10 @@
 
 class FMVoice {
   public:
+    typedef std::function<void(void)> complete_callback_t;
+
     FMVoice();
+
     float compute();
     void trigger(bool on, float frequency);
 
@@ -13,8 +16,11 @@ class FMVoice {
     void mod_depth(float v);
     void freq_mult(float mod, float car);
 
+    void complete_callback(complete_callback_t cb); 
   private:
     void update_increments(); //based on frequency or ratio change
+
+    complete_callback_t mCompleteCallback = nullptr;
 
     float mMPhase = 0.0f;
     float mCPhase = 0.0f;

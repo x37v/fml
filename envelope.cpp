@@ -75,8 +75,11 @@ float ADSREnvelope::compute() {
       val = mInterpPoint + mInterpMult * mPosition;
       mPosition += mStageSettings[RELEASE];
       if (mPosition >= 1.0f) {
+        val = 0.0f;
         mPosition = 0;
         mStage = COMPLETE;
+        if (mCompleteCallback)
+          mCompleteCallback();
       }
       break;
   }
@@ -94,5 +97,9 @@ void ADSREnvelope::trigger(bool start) {
     mStage = RELEASE;
     mInterpMult = -mInterpPoint; //0 - start
   }
+}
+
+void ADSREnvelope::complete_callback(complete_callback_t cb) {
+  mCompleteCallback = cb;
 }
 

@@ -1,6 +1,15 @@
 #include "fmsynth.h"
 #include <cassert>
 
+FMSynth::FMSynth() {
+  for (unsigned int i = 0; i < mVoices.size(); i++) {
+    mVoices[i].complete_callback([this, i] (void) {
+      if (mVoiceCompleteCallback)
+        mVoiceCompleteCallback(i);
+    });
+  }
+}
+
 float FMSynth::compute() {
   float out = 0;
   for (auto& s: mVoices)
@@ -33,5 +42,9 @@ void FMSynth::mod_depth(float v) {
 void FMSynth::freq_mult(float mod, float car) {
   for (auto& s: mVoices)
     s.freq_mult(mod, car);
+}
+
+void FMSynth::complete_callback(voice_complete_cb_t cb) {
+  mVoiceCompleteCallback = cb;
 }
 
