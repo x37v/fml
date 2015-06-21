@@ -25,7 +25,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
     } else {
       voice = mNoteVoiceLRUQueue.front().second;
       mNoteVoiceLRUQueue.pop_front();
-      synth.trigger(voice, false); //XXX should actually do something about the 'click'
+      //XXX what to do about click?
     }
     mNoteVoiceLRUQueue.push_back({note, voice});
     synth.trigger(voice, true, midi_note_to_freq(note));
