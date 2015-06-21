@@ -20,6 +20,29 @@ FMMidiProc::FMMidiProc(FMSynth& synth) {
 void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val) {
   if (channel != mChannel)
     return;
+  switch (num) {
+    case RATIO:
+      {
+        int index = (static_cast<int>(val) - 64) / 2;
+        if (index >= 0) {
+          synth.freq_mult(index + 1.0, 1.0);
+        } else {
+          synth.freq_mult(1.0, -index);
+        }
+      }
+      break;
+    case FINE:
+      synth.modulator_freq_offset(static_cast<float>(val) / 127.0);
+      break;
+    case FBDK:
+      synth.feedback(static_cast<float>(val) / 127.0);
+      break;
+    case DEPTH:
+      synth.mod_depth(static_cast<float>(val) / 127.0);
+      break;
+    default:
+      break;
+  }
 }
 
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {

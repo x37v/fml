@@ -17,6 +17,7 @@ class FMSynth {
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);
+    void modulator_freq_offset(float v);
 
     void complete_callback(voice_complete_cb_t cb);
 

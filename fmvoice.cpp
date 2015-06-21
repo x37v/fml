@@ -63,6 +63,12 @@ void FMVoice::mod_depth(float v) {
 void FMVoice::freq_mult(float mod, float car) {
   mMFreqMult = mod;
   mCFreqMult = car;
+  update_increments();
+}
+
+void FMVoice::modulator_freq_offset(float v) {
+  mMFreqMultOffset = v;
+  update_increments();
 }
 
 void FMVoice::complete_callback(complete_callback_t cb) {
@@ -74,7 +80,7 @@ bool FMVoice::active() const {
 }
 
 void FMVoice::update_increments() {
-  mMPhaseInc = (mBaseFreq * mMFreqMult) / fm::fsample_rate();
+  mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
   mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
 }
 

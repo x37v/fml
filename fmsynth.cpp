@@ -50,6 +50,11 @@ void FMSynth::freq_mult(float mod, float car) {
     s.freq_mult(mod, car);
 }
 
+void FMSynth::modulator_freq_offset(float v) {
+  for (auto& s: mVoices)
+    s.modulator_freq_offset(v);
+}
+
 void FMSynth::complete_callback(voice_complete_cb_t cb) {
   mVoiceCompleteCallback = cb;
 }

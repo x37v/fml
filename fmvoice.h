@@ -15,6 +15,7 @@ class FMVoice {
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);
+    void modulator_freq_offset(float v);
 
     void complete_callback(complete_callback_t cb); 
 
@@ -37,6 +38,8 @@ class FMVoice {
 
     float mMFreqMult = 1.0f;
     float mCFreqMult = 1.0f;
+
+    float mMFreqMultOffset = 0.0f;
 
     float mBaseFreq = 440.0f;
 

@@ -7,6 +7,16 @@
 
 class FMMidiProc {
   public:
+    enum cc_map_t {
+      RATIO = 8,
+      FINE = 16,
+      FBDK = 24,
+
+      DEPTH = 9,
+      VOL = 17,
+      //PORT = 25,
+    };
+
     FMMidiProc(FMSynth& synth);
     void process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val);
     void process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel);
