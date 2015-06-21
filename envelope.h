@@ -14,6 +14,7 @@ class ADEnvelope {
     ADEnvelope();
     float compute();
     void trigger();
+    void stage_setting(stage_t stage, float v);
 
   private:
     stage_t mStage = COMPLETE;
@@ -29,6 +30,7 @@ class ADSREnvelope {
     ADSREnvelope();
     float compute();
     void trigger(bool start = true);
+    void stage_setting(stage_t stage, float v);
 
     void complete_callback(complete_callback_t cb); 
 

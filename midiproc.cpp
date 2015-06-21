@@ -20,6 +20,7 @@ FMMidiProc::FMMidiProc(FMSynth& synth) {
 void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val) {
   if (channel != mChannel)
     return;
+  float fval = static_cast<float>(val) / 127.0;
   switch (num) {
     case RATIO:
       {
@@ -32,13 +33,33 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       }
       break;
     case FINE:
-      synth.modulator_freq_offset(static_cast<float>(val) / 127.0);
+      synth.modulator_freq_offset(fval);
       break;
     case FBDK:
-      synth.feedback(static_cast<float>(val) / 127.0);
+      synth.feedback(fval);
       break;
     case DEPTH:
-      synth.mod_depth(static_cast<float>(val) / 127.0);
+      synth.mod_depth(fval);
+      break;
+
+    case MOD_ENV_ATK:
+      synth.mod_envelope_setting(ADEnvelope::ATTACK, 0.015 + fval);
+      break;
+    case MOD_ENV_DEC:
+      synth.mod_envelope_setting(ADEnvelope::DECAY, 0.015 + fval);
+      break;
+
+    case VOL_ENV_ATK:
+      synth.volume_envelope_setting(ADSREnvelope::ATTACK, 0.015 + fval * 2);
+      break;
+    case VOL_ENV_DEC:
+      synth.volume_envelope_setting(ADSREnvelope::DECAY, 0.015 + fval);
+      break;
+    case VOL_ENV_SUS:
+      synth.volume_envelope_setting(ADSREnvelope::SUSTAIN, fval);
+      break;
+    case VOL_ENV_REL:
+      synth.volume_envelope_setting(ADSREnvelope::RELEASE, fval * 2.0);
       break;
     default:
       break;

@@ -36,6 +36,12 @@ void ADEnvelope::trigger() {
   mStage = ATTACK;
 }
 
+void ADEnvelope::stage_setting(stage_t stage, float v) {
+  if (stage == COMPLETE)
+    return;
+  mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
+}
+
 
 ADSREnvelope::ADSREnvelope() {
   mStageSettings[ATTACK] = 1.0 / (0.04 * fm::fsample_rate()); //attack time
@@ -105,6 +111,14 @@ void ADSREnvelope::trigger(bool start) {
     mStage = RELEASE;
     mInterpMult = -mInterpPoint; //0 - start
   }
+}
+
+void ADSREnvelope::stage_setting(stage_t stage, float v) {
+  if (stage == COMPLETE)
+    return;
+  if (stage != SUSTAIN)
+    v = 1.0 / (v * fm::fsample_rate());
+  mStageSettings[stage] = v;
 }
 
 void ADSREnvelope::complete_callback(complete_callback_t cb) { mCompleteCallback = cb; }

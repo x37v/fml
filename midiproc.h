@@ -15,6 +15,14 @@ class FMMidiProc {
       DEPTH = 9,
       VOL = 17,
       //PORT = 25,
+
+      MOD_ENV_ATK = 14,
+      MOD_ENV_DEC = 22,
+
+      VOL_ENV_ATK = 15,
+      VOL_ENV_DEC = 23,
+      VOL_ENV_SUS = 31,
+      VOL_ENV_REL = 39,
     };
 
     FMMidiProc(FMSynth& synth);

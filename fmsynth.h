@@ -19,6 +19,9 @@ class FMSynth {
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
+    void volume_envelope_setting(ADSREnvelope::stage_t stage, float v);
+    void mod_envelope_setting(ADEnvelope::stage_t stage, float v);
+
     void complete_callback(voice_complete_cb_t cb);
 
     //XXX debug

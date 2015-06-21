@@ -71,6 +71,14 @@ void FMVoice::modulator_freq_offset(float v) {
   update_increments();
 }
 
+void FMVoice::volume_envelope_setting(ADSREnvelope::stage_t stage, float v) {
+  mAmpEnv.stage_setting(stage, v);
+}
+
+void FMVoice::mod_envelope_setting(ADEnvelope::stage_t stage, float v) {
+  mModEnv.stage_setting(stage, v);
+}
+
 void FMVoice::complete_callback(complete_callback_t cb) {
   mCompleteCallback = cb;
 }
