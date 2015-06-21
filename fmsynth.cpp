@@ -15,3 +15,23 @@ void FMSynth::trigger(unsigned int voice, bool on, float frequency) {
   }
   mVoices[voice].trigger(on, frequency);
 }
+
+void FMSynth::feedback(float v) {
+  if (v < -1)
+    v = -1;
+  else if (v > 1)
+    v = 1;
+  for (auto& s: mVoices)
+    s.feedback(v);
+}
+
+void FMSynth::mod_depth(float v) {
+  for (auto& s: mVoices)
+    s.mod_depth(v);
+}
+
+void FMSynth::freq_mult(float mod, float car) {
+  for (auto& s: mVoices)
+    s.freq_mult(mod, car);
+}
+

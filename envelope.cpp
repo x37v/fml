@@ -2,8 +2,8 @@
 #include "defines.h"
 
 ADEnvelope::ADEnvelope() {
-  mStageSettings[0] = 1.0 / (1.50 * fm::fsample_rate()); //attack time
-  mStageSettings[1] = 1.0 / (0.50 * fm::fsample_rate()); //decay time
+  mStageSettings[0] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
+  mStageSettings[1] = 1.0 / (0.03 * fm::fsample_rate()); //decay time
 }
 
 float ADEnvelope::compute() {

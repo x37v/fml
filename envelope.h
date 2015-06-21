@@ -11,8 +11,9 @@ class ADEnvelope {
     ADEnvelope();
     float compute();
     void trigger();
-  private:
     enum stage_t {ATTACK = 0, DECAY = 1, COMPLETE};
+
+  private:
     stage_t mStage = COMPLETE;
     float mPosition = 0.0f;
     std::array<float, 2> mStageSettings;
@@ -23,8 +24,9 @@ class ADSREnvelope {
     ADSREnvelope();
     float compute();
     void trigger(bool start = true);
-  private:
     enum stage_t {ATTACK = 0, DECAY = 1, SUSTAIN = 2, RELEASE = 3, COMPLETE};
+
+  private:
     stage_t mStage = COMPLETE;
     float mPosition = 0.0f;
     std::array<float, 4> mStageSettings;

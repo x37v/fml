@@ -5,7 +5,8 @@ SRC = \
 			envelope.cpp \
 			fmvoice.cpp \
 			fmsynth.cpp \
-			jackcpp/src/jackaudioio.cpp
+			jackcpp/src/jackaudioio.cpp \
+			jackcpp/src/jackmidiport.cpp
 
 CXXFLAGS += -std=c++11 -g -Wall
 CXXFLAGS += -Ijackcpp/include/
