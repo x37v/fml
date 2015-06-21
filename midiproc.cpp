@@ -36,7 +36,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       synth.modulator_freq_offset(fval);
       break;
     case FBDK:
-      synth.feedback(fval);
+      synth.feedback(fval * 0.2);
       break;
     case DEPTH:
       synth.mod_depth(fval);
