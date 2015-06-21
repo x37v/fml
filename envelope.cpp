@@ -97,10 +97,11 @@ float ADSREnvelope::compute() {
 
 void ADSREnvelope::trigger(bool start) {
   mInterpPoint = mValueLast;
-  mPosition = 0;
   if (start) {
+    mPosition = mValueLast; //so that we ramp up from where we were
     mStage = ATTACK;
   } else {
+    mPosition = 0;
     mStage = RELEASE;
     mInterpMult = -mInterpPoint; //0 - start
   }
