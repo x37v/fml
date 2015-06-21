@@ -1,6 +1,11 @@
 #include "fmsynth.h"
 #include <cassert>
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 FMSynth::FMSynth() {
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     mVoices[i].complete_callback([this, i] (void) {
@@ -22,6 +27,7 @@ void FMSynth::trigger(unsigned int voice, bool on, float frequency) {
     assert(false);
     return;
   }
+  //cout << "trig " << (on ? "on  " : "off ") << voice << endl;
   mVoices[voice].trigger(on, frequency);
 }
 
@@ -48,3 +54,14 @@ void FMSynth::complete_callback(voice_complete_cb_t cb) {
   mVoiceCompleteCallback = cb;
 }
 
+void FMSynth::print_active() {
+  bool any = false;
+  for (int i = 0; i < mVoices.size(); i++) {
+    if (mVoices[i].active()) {
+      cout << i << "\t";
+      any = true;
+    }
+  }
+  if (any)
+    cout << endl;
+}

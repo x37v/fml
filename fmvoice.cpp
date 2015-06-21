@@ -69,6 +69,10 @@ void FMVoice::complete_callback(complete_callback_t cb) {
   mCompleteCallback = cb;
 }
 
+bool FMVoice::active() const {
+  return mAmpEnv.stage() != ADSREnvelope::COMPLETE;
+}
+
 void FMVoice::update_increments() {
   mMPhaseInc = (mBaseFreq * mMFreqMult) / fm::fsample_rate();
   mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();

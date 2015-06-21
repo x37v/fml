@@ -1,22 +1,34 @@
 #include "midiproc.h"
 #include <cmath>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 namespace {
   float midi_note_to_freq(uint8_t midi_note) {
     return powf(2, (midi_note - 69.0) / 12.0) * 440;
   }
 }
 
-FMMidiProc::FMMidiProc() {
+FMMidiProc::FMMidiProc(FMSynth& synth) {
   for (int i = 0; i < FM_VOICES; i++)
     mFreeVoiceQueue.push_back(i);
+  synth.complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
 void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val) {
+  if (channel != mChannel)
+    return;
 }
 
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
+  if (channel != mChannel)
+    return;
   int voice = -1;
+
+  //XXX do we find sounding voices and dealloc them?
+  
   if (on) {
     //use a free voice or the least recently used sounding voice
     if (mFreeVoiceQueue.size()) {
@@ -35,10 +47,11 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
       if (nv.first == note) {
         voice = nv.second;
         synth.trigger(voice, false);
-        break;
       }
     }
   }
+
+  //cout << voice << " note " << (on ? "on  " : "off ") << static_cast<int>(note) << endl;
 }
 
 void FMMidiProc::voice_freed(unsigned int voice) {
@@ -50,3 +63,4 @@ void FMMidiProc::voice_freed(unsigned int voice) {
     }
   }
 }
+

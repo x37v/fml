@@ -31,6 +31,8 @@ class ADSREnvelope {
     void trigger(bool start = true);
 
     void complete_callback(complete_callback_t cb); 
+
+    stage_t stage() const;
   private:
     complete_callback_t mCompleteCallback = nullptr;
 

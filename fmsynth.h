@@ -20,6 +20,9 @@ class FMSynth {
 
     void complete_callback(voice_complete_cb_t cb);
 
+    //XXX debug
+    void print_active();
+
   private:
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;

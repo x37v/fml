@@ -11,6 +11,10 @@
 
 #include <random>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 bool should_exit = false;
 
 void sighandler(int sig) { should_exit = true; }
@@ -32,17 +36,19 @@ class JackAudio : public JackCpp::AudioIO {
       if (jack_nframes_t events = mMidiInput.event_count(midi_buff)) {
         for (uint32_t i = 0; i < events; i++) {
           jack_midi_event_t evt;
-          if (mMidiInput.get(evt, midi_buff, i) && evt.size == 3) {
-            switch (JackCpp::MIDIPort::status(evt)) {
-              case JackCpp::MIDIPort::NOTEON:
-                mMidiProc.process_note(mFM, true, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
-                break;
-              case JackCpp::MIDIPort::NOTEOFF:
-                mMidiProc.process_note(mFM, false, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
-                break;
-              case JackCpp::MIDIPort::CC:
-                mMidiProc.process_cc(mFM, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
-                break;
+          if (mMidiInput.get(evt, midi_buff, i)) {
+            if (evt.size == 3) {
+              switch (JackCpp::MIDIPort::status(evt)) {
+                case JackCpp::MIDIPort::NOTEON:
+                  mMidiProc.process_note(mFM, true, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
+                  break;
+                case JackCpp::MIDIPort::NOTEOFF:
+                  mMidiProc.process_note(mFM, false, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
+                  break;
+                case JackCpp::MIDIPort::CC:
+                  mMidiProc.process_cc(mFM, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
+                  break;
+              }
             }
           }
         }
@@ -53,12 +59,16 @@ class JackAudio : public JackCpp::AudioIO {
         for (unsigned int i = 0; i < outBufs.size(); i++) {
           outBufs[i][j] = v;
         }
+        if (mActiveCounter-- <= 0) {
+          mActiveCounter = 44100 * 2;
+          //mFM.print_active();
+        }
       }
       return 0;
     }
     JackAudio() : JackCpp::AudioIO("fm", 0, 2),
       mFM(),
-      mMidiProc()
+      mMidiProc(mFM)
     { 
       mMidiInput.init(this, "fml_in");
       mFM.freq_mult(2, 1);
@@ -70,6 +80,7 @@ class JackAudio : public JackCpp::AudioIO {
     FMSynth mFM;
     FMMidiProc mMidiProc;
     float mVolume = 0.2;
+    int mActiveCounter = 44100 * 2;
 };
 
 int main(int argc, char * argv[]) {

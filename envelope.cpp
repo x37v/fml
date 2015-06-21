@@ -106,7 +106,5 @@ void ADSREnvelope::trigger(bool start) {
   }
 }
 
-void ADSREnvelope::complete_callback(complete_callback_t cb) {
-  mCompleteCallback = cb;
-}
-
+void ADSREnvelope::complete_callback(complete_callback_t cb) { mCompleteCallback = cb; }
+ADSREnvelope::stage_t ADSREnvelope::stage() const { return mStage; }

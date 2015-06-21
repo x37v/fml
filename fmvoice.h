@@ -17,6 +17,8 @@ class FMVoice {
     void freq_mult(float mod, float car);
 
     void complete_callback(complete_callback_t cb); 
+
+    bool active() const;
   private:
     void update_increments(); //based on frequency or ratio change
 
