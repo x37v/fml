@@ -1,5 +1,6 @@
 #include "envelope.h"
 #include "defines.h"
+#include <cassert>
 
 ADEnvelope::ADEnvelope() {
   mStageSettings[0] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
@@ -41,6 +42,12 @@ ADSREnvelope::ADSREnvelope() {
   mStageSettings[DECAY] = 1.0 / (0.04 * fm::fsample_rate()); //decay time
   mStageSettings[SUSTAIN] = 0.8; //sustain level
   mStageSettings[RELEASE] = 1.0 / (1.0 * fm::fsample_rate()); //release time
+
+  for (int i = 0; i < mStageSettings.size(); i++) {
+    if (mStageSettings[i] <= 0) {
+      assert(false);
+    }
+  }
 }
 
 float ADSREnvelope::compute() {
