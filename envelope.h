@@ -7,17 +7,22 @@
 //all stages, except sustain, increment a counter from 0 to 1 and may do math
 //against that to figure out the value
 
-class ADEnvelope {
+class ADARnvelope {
   public:
-    enum stage_t {ATTACK = 0, DECAY = 1, COMPLETE};
+    enum stage_t {ATTACK = 0, DECAY_RELEASE = 1, COMPLETE};
+    enum mode_t { AD, AR };
 
-    ADEnvelope();
+    ADARnvelope();
     float compute();
-    void trigger();
+    void trigger(bool start = true);
     void stage_setting(stage_t stage, float v);
+
+    void mode(mode_t v);
+    mode_t mode() const;
 
   private:
     stage_t mStage = COMPLETE;
+    mode_t mMode = AR;
     float mPosition = 0.0f;
     std::array<float, 2> mStageSettings;
 };

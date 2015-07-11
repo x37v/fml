@@ -62,7 +62,7 @@ void FMSynth::volume_envelope_setting(ADSREnvelope::stage_t stage, float v) {
     s.volume_envelope_setting(stage, v);
 }
 
-void FMSynth::mod_envelope_setting(ADEnvelope::stage_t stage, float v) {
+void FMSynth::mod_envelope_setting(ADARnvelope::stage_t stage, float v) {
   if (v <= 0)
     v = 0.000001;
   for (auto& s: mVoices)

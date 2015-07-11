@@ -1,2 +1,4 @@
 /test
 *.d
+/fml
+/connect.sh

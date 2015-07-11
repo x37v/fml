@@ -2,12 +2,12 @@
 #include "defines.h"
 #include <cassert>
 
-ADEnvelope::ADEnvelope() {
+ADARnvelope::ADARnvelope() {
   mStageSettings[0] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
   mStageSettings[1] = 1.0 / (0.3 * fm::fsample_rate()); //decay time
 }
 
-float ADEnvelope::compute() {
+float ADARnvelope::compute() {
   float val = 0.0f;
   switch (mStage) {
     case COMPLETE:
@@ -16,14 +16,17 @@ float ADEnvelope::compute() {
       val = mPosition;
       mPosition += mStageSettings[ATTACK];
       if (mPosition >= 1.0f) {
-        mPosition = 0;
-        mStage = DECAY;
+        if (mMode == AD) {
+          mStage = DECAY_RELEASE;
+        } else {
+          mPosition = 1;
+        }
       }
       return val;
-    case DECAY:
-      val = 1.0f - mPosition;
-      mPosition += mStageSettings[DECAY];
-      if (mPosition >= 1.0f) {
+    case DECAY_RELEASE:
+      val = mPosition;
+      mPosition -= mStageSettings[DECAY_RELEASE];
+      if (mPosition <= 0.0f) {
         mPosition = 0;
         mStage = COMPLETE;
       }
@@ -31,17 +34,23 @@ float ADEnvelope::compute() {
   }
 }
 
-void ADEnvelope::trigger() {
-  mPosition = 0;
-  mStage = ATTACK;
+void ADARnvelope::trigger(bool start) {
+  if (start) {
+    mPosition = 0;
+    mStage = ATTACK;
+  } else if (mMode == AR) {
+    mStage = DECAY_RELEASE;
+  }
 }
 
-void ADEnvelope::stage_setting(stage_t stage, float v) {
+void ADARnvelope::stage_setting(stage_t stage, float v) {
   if (stage == COMPLETE)
     return;
   mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
 }
 
+void ADARnvelope::mode(mode_t v) { mMode = v; }
+ADARnvelope::mode_t ADARnvelope::mode() const { return mMode; }
 
 ADSREnvelope::ADSREnvelope() {
   mStageSettings[ATTACK] = 1.0 / (0.04 * fm::fsample_rate()); //attack time

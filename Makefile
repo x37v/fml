@@ -14,8 +14,8 @@ CXXFLAGS += -Ijackcpp/include/
 LDFLAGS += -ljack
 OBJ = ${SRC:.cpp=.o}
 
-test: ${OBJ}
-	${CXX} ${CXXFLAGS} -o test ${OBJ} ${LDFLAGS} 
+fml: ${OBJ}
+	${CXX} ${CXXFLAGS} -o fml ${OBJ} ${LDFLAGS} 
 
 # pull in dependency info for *existing* .o files
 -include $(OBJ:.o=.d)

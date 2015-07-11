@@ -18,7 +18,7 @@ class FMVoice {
     void modulator_freq_offset(float v);
 
     void volume_envelope_setting(ADSREnvelope::stage_t stage, float v);
-    void mod_envelope_setting(ADEnvelope::stage_t stage, float v);
+    void mod_envelope_setting(ADARnvelope::stage_t stage, float v);
 
     void complete_callback(complete_callback_t cb); 
 
@@ -46,7 +46,7 @@ class FMVoice {
 
     float mBaseFreq = 440.0f;
 
-    ADEnvelope mModEnv;
+    ADARnvelope mModEnv;
     ADSREnvelope mAmpEnv;
 };
 

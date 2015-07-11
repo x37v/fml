@@ -45,10 +45,10 @@ float FMVoice::compute() {
 
 void FMVoice::trigger(bool on, float frequency) {
   if (on) {
-    mModEnv.trigger();
     mBaseFreq = frequency;
     update_increments();
   }
+  mModEnv.trigger(on);
   mAmpEnv.trigger(on);
 }
 
@@ -75,7 +75,7 @@ void FMVoice::volume_envelope_setting(ADSREnvelope::stage_t stage, float v) {
   mAmpEnv.stage_setting(stage, v);
 }
 
-void FMVoice::mod_envelope_setting(ADEnvelope::stage_t stage, float v) {
+void FMVoice::mod_envelope_setting(ADARnvelope::stage_t stage, float v) {
   mModEnv.stage_setting(stage, v);
 }
 
