@@ -1,0 +1,66 @@
+I've attached a screenshot of the patch view, but it's kind of a tangle.
+Reaktor flows from left to right. There are subpatches inside the Carrier
+and Modulator, with phase modulated sine waves and basic envelopes. I'm
+also attaching a simplified block diagram. I know the DX synths use phase
+modulation of wavetables, so I'm guessing that's the most efficient method.
+
+Here's a rundown of the panel controls:
+
+1. Ratio controls the integer frequency relationship of the two sine
+waves. At 12 o'clock, the ratio is 1:1. Turned to the right, it increases
+the Modulator in whole number steps. Turned to the left, it increases the
+Carrier in whole number steps. Ideally this is a 20 position switch or
+encoder.
+
+2. Fine adds an offet of 0-1 to the Carrier's ratio setting.
+
+3. Depth multiplies the Modulator's level by an Attack-Decay envelope.
+
+4. Feedback multiplies the Modulator's modulation of its own phase.
+
+5. Trans offsets the pitch of both oscillators in octave steps.
+
+6. Volume multiplies the Carrier's level by an Attack-Decay/Release
+envelope. We've talked about maybe making it overdrive past a certain
+point. 12 o'clock would be convenient because we could use a pot with
+center detent.
+
+7. Mode has not yet been implemented in the mock-up, but the idea is that
+it could select between monophonic, polyphonic and unison modes (and if
+the hardware supports it, stereo detuning when a cable is plugged into
+output 2).
+
+8. Porta slews the incoming MIDI pitch to both oscillators.
+********* not exactly sure how this should work
+
+9. Velo multiplies incoming MIDI velocity by Carrier envelope, Modulator
+envelope, Both, or Neither.
+
+10. Fixed disconnects the Modulator from the incoming MIDI pitch and sets
+it to note number 63, but does not disconnect it from Trans.
+
+11. Sustain toggles the Carrier's envelope between AD and AR behavior.
+
+12. Attack and Decay controls are for typical exponential envelopes,
+though we could go linear for vintage Yamaha character. The AD/R for the
+Carrier includes a sustain phase at max level toggled by the Sustain
+control.
+
+Pitch wheel is +/- one octave range routed to both oscillators, except the
+Modulator ignores it in Fixed mode.
+
+Mod wheel adds a very small offset to the Modulator's frequency, to get
+slow phasing interactions.
+
+CC control of every parameter seems reasonable, especially since there's
+no LFO.
+
+In effect, you get a very basic hands-on synth where Depth is the FM
+amount/brightness, Ratio is the basic spectral profile, and Fine gets all
+the dissonant bell tones in between the whole number ratio steps. Feedback
+makes it raspy, noisey etc; you know the DX sound. One envelope for the
+volume, one for the timbre. I guess we're basically trying to boil down a
+set of FM controls to something similar to a basic 1 oscillator
+subtractive synth, which users seem to be able to grasp/explore fairly
+easily even if they don't understand what it's doing.
+
