@@ -10,15 +10,15 @@ class FMVoice {
     FMVoice();
 
     float compute();
-    void trigger(bool on, float frequency);
+    void trigger(bool on, float frequency, float velocity);
 
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
-    void volume_envelope_setting(ADSREnvelope::stage_t stage, float v);
-    void mod_envelope_setting(ADARnvelope::stage_t stage, float v);
+    void volume_envelope_setting(ADAREnvelope::stage_t stage, float v);
+    void mod_envelope_setting(ADSREnvelope::stage_t stage, float v);
 
     void complete_callback(complete_callback_t cb); 
 
@@ -42,12 +42,15 @@ class FMVoice {
     float mMFreqMult = 1.0f;
     float mCFreqMult = 1.0f;
 
+    float mModVelocity = 1.0f;
+    float mAmpVelocity = 1.0f;
+
     float mMFreqMultOffset = 0.0f;
 
     float mBaseFreq = 440.0f;
 
-    ADARnvelope mModEnv;
-    ADSREnvelope mAmpEnv;
+    ADSREnvelope mModEnv;
+    ADAREnvelope mAmpEnv;
 };
 
 #endif
