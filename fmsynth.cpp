@@ -33,12 +33,11 @@ void FMSynth::trigger(unsigned int voice, bool on, float frequency, float veloci
 }
 
 void FMSynth::feedback(float v) {
-  v *= 0.5;
-  v *= v; // x**2
   if (v < -1)
     v = -1;
   else if (v > 1)
     v = 1;
+  v = powf(v * 0.5, 2.0);
   for (auto& s: mVoices)
     s.feedback(v);
 }
