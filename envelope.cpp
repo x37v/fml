@@ -48,6 +48,8 @@ void ADAREnvelope::trigger(bool start) {
 void ADAREnvelope::stage_setting(stage_t stage, float v) {
   if (stage == COMPLETE)
     return;
+  if (v <= 0.0)
+    mStageSettings[stage] = 1.0;
   mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
 }
 
@@ -133,8 +135,12 @@ void ADSREnvelope::trigger(bool start) {
 void ADSREnvelope::stage_setting(stage_t stage, float v) {
   if (stage == COMPLETE)
     return;
-  if (stage != SUSTAIN)
-    v = 1.0 / (v * fm::fsample_rate());
+  if (stage != SUSTAIN) {
+    if (v > 0.0)
+      v = 1.0 / (v * fm::fsample_rate());
+    else
+      v = 1.0;
+  }
   mStageSettings[stage] = v;
 }
 
