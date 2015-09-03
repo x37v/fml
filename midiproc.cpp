@@ -43,24 +43,24 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(ADARnvelope::ATTACK, 0.015 + fval);
+      synth.mod_envelope_setting(ADSREnvelope::ATTACK, fval);
       break;
     case MOD_ENV_DEC:
-      synth.mod_envelope_setting(ADARnvelope::DECAY_RELEASE, 0.015 + fval);
+      synth.mod_envelope_setting(ADSREnvelope::RELEASE, 0.015 + fval);
       break;
 
     case VOL_ENV_ATK:
-      synth.volume_envelope_setting(ADSREnvelope::ATTACK, 0.015 + fval * 2);
+      synth.volume_envelope_setting(ADAREnvelope::ATTACK, 0.015 + fval * 2);
       break;
     case VOL_ENV_DEC:
-      synth.volume_envelope_setting(ADSREnvelope::DECAY, 0.015 + fval);
+      synth.volume_envelope_setting(ADAREnvelope::DECAY_RELEASE, 0.015 + fval * 2);
       break;
-    case VOL_ENV_SUS:
-      synth.volume_envelope_setting(ADSREnvelope::SUSTAIN, fval);
-      break;
-    case VOL_ENV_REL:
-      synth.volume_envelope_setting(ADSREnvelope::RELEASE, fval * 2.0);
-      break;
+    //case VOL_ENV_SUS:
+      //synth.volume_envelope_setting(ADSREnvelope::SUSTAIN, fval);
+      //break;
+    //case VOL_ENV_REL:
+      //synth.volume_envelope_setting(ADSREnvelope::RELEASE, fval * 2.0);
+      //break;
     default:
       break;
   }
@@ -84,7 +84,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
       //XXX what to do about click?
     }
     mNoteVoiceLRUQueue.push_back({note, voice});
-    synth.trigger(voice, true, midi_note_to_freq(note));
+    synth.trigger(voice, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
   } else {
     //don't actually take an 'off' note out of the queue because it needs its release time
     for (auto& nv: mNoteVoiceLRUQueue) {

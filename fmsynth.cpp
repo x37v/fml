@@ -22,13 +22,13 @@ float FMSynth::compute() {
   return out / static_cast<float>(mVoices.size());
 }
 
-void FMSynth::trigger(unsigned int voice, bool on, float frequency) {
+void FMSynth::trigger(unsigned int voice, bool on, float frequency, float velocity) {
   if (voice >= mVoices.size()) {
     assert(false);
     return;
   }
-  //cout << "trig " << (on ? "on  " : "off ") << voice << endl;
-  mVoices[voice].trigger(on, frequency);
+  //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
+  mVoices[voice].trigger(on, frequency, velocity);
 }
 
 void FMSynth::feedback(float v) {
@@ -56,14 +56,14 @@ void FMSynth::modulator_freq_offset(float v) {
     s.modulator_freq_offset(v);
 }
 
-void FMSynth::volume_envelope_setting(ADSREnvelope::stage_t stage, float v) {
+void FMSynth::volume_envelope_setting(ADAREnvelope::stage_t stage, float v) {
   if (v <= 0)
     v = 0.000001;
   for (auto& s: mVoices)
     s.volume_envelope_setting(stage, v);
 }
 
-void FMSynth::mod_envelope_setting(ADARnvelope::stage_t stage, float v) {
+void FMSynth::mod_envelope_setting(ADSREnvelope::stage_t stage, float v) {
   if (v <= 0)
     v = 0.000001;
   for (auto& s: mVoices)

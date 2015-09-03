@@ -12,15 +12,15 @@ class FMSynth {
     FMSynth();
 
     float compute();
-    void trigger(unsigned int voice, bool on, float frequency = 440); //frequency ignored for off
+    void trigger(unsigned int voice, bool on, float frequency = 440, float velocity = 1.0f); //frequency,velocity ignored for off
 
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
-    void volume_envelope_setting(ADSREnvelope::stage_t stage, float v);
-    void mod_envelope_setting(ADARnvelope::stage_t stage, float v);
+    void volume_envelope_setting(ADAREnvelope::stage_t stage, float v);
+    void mod_envelope_setting(ADSREnvelope::stage_t stage, float v);
 
     void complete_callback(voice_complete_cb_t cb);
 
