@@ -7,12 +7,13 @@
 //all stages, except sustain, increment a counter from 0 to 1 and may do math
 //against that to figure out the value
 
-class ADARnvelope {
+class ADAREnvelope {
   public:
+    typedef std::function<void(void)> complete_callback_t;
     enum stage_t {ATTACK = 0, DECAY_RELEASE = 1, COMPLETE};
     enum mode_t { AD, AR };
 
-    ADARnvelope();
+    ADAREnvelope();
     float compute();
     void trigger(bool start = true);
     void stage_setting(stage_t stage, float v);
@@ -20,7 +21,11 @@ class ADARnvelope {
     void mode(mode_t v);
     mode_t mode() const;
 
+    void complete_callback(complete_callback_t cb); 
+
+    stage_t stage() const;
   private:
+    complete_callback_t mCompleteCallback = nullptr;
     stage_t mStage = COMPLETE;
     mode_t mMode = AR;
     float mPosition = 0.0f;

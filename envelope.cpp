@@ -2,12 +2,12 @@
 #include "defines.h"
 #include <cassert>
 
-ADARnvelope::ADARnvelope() {
+ADAREnvelope::ADAREnvelope() {
   mStageSettings[0] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
   mStageSettings[1] = 1.0 / (0.3 * fm::fsample_rate()); //decay time
 }
 
-float ADARnvelope::compute() {
+float ADAREnvelope::compute() {
   float val = 0.0f;
   switch (mStage) {
     case COMPLETE:
@@ -29,12 +29,14 @@ float ADARnvelope::compute() {
       if (mPosition <= 0.0f) {
         mPosition = 0;
         mStage = COMPLETE;
+        if (mCompleteCallback)
+          mCompleteCallback();
       }
       return val;
   }
 }
 
-void ADARnvelope::trigger(bool start) {
+void ADAREnvelope::trigger(bool start) {
   if (start) {
     mPosition = 0;
     mStage = ATTACK;
@@ -43,14 +45,20 @@ void ADARnvelope::trigger(bool start) {
   }
 }
 
-void ADARnvelope::stage_setting(stage_t stage, float v) {
+void ADAREnvelope::stage_setting(stage_t stage, float v) {
   if (stage == COMPLETE)
     return;
   mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
 }
 
-void ADARnvelope::mode(mode_t v) { mMode = v; }
-ADARnvelope::mode_t ADARnvelope::mode() const { return mMode; }
+ADAREnvelope::stage_t ADAREnvelope::stage() const { return mStage; }
+
+void ADAREnvelope::mode(mode_t v) { mMode = v; }
+ADAREnvelope::mode_t ADAREnvelope::mode() const { return mMode; }
+
+void ADAREnvelope::complete_callback(complete_callback_t cb) {
+  mCompleteCallback = cb;
+}
 
 ADSREnvelope::ADSREnvelope() {
   mStageSettings[ATTACK] = 1.0 / (0.04 * fm::fsample_rate()); //attack time
