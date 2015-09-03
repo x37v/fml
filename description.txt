@@ -16,11 +16,11 @@ encoder.
 
 3. Depth multiplies the Modulator's level by an Attack-Decay envelope.
 
-***How much?
+***How much? max is 1.25 but it is 5 * ((0.5 * (midi / 127)) ** 2)
 
 4. Feedback multiplies the Modulator's modulation of its own phase.
 
-***How much?
+***How much? max is 0.25 but it is (0.5 * (midi / 127)) ** 2
 
 5. Trans offsets the pitch of both oscillators in octave steps.
 
@@ -34,8 +34,14 @@ it could select between monophonic, polyphonic and unison modes (and if
 the hardware supports it, stereo detuning when a cable is plugged into
 output 2).
 
+no unison
+
 8. Porta slews the incoming MIDI pitch to both oscillators.
 ********* not exactly sure how this should work
+we're not sure.. probably just bend from last hit.
+
+sounds like its actually just round robin, from last note that the voice 
+allocated was at
 
 9. Velo multiplies incoming MIDI velocity by Carrier envelope, Modulator
 envelope, Both, or Neither.
@@ -56,10 +62,13 @@ Modulator ignores it in Fixed mode.
 
 Mod wheel adds a very small offset to the Modulator's frequency, to get
 slow phasing interactions.
-***How much?
+***How much? like 0.1% of offset?
 
 CC control of every parameter seems reasonable, especially since there's
 no LFO.
+
+Stereo out could just be detuned version on one channel
+
 
 In effect, you get a very basic hands-on synth where Depth is the FM
 amount/brightness, Ratio is the basic spectral profile, and Fine gets all
