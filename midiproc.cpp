@@ -36,17 +36,17 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       synth.modulator_freq_offset(fval);
       break;
     case FBDK:
-      synth.feedback(fval * 0.5);
+      synth.feedback(fval);
       break;
     case DEPTH:
       synth.mod_depth(fval);
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(ADSREnvelope::ATTACK, fval);
+      synth.mod_envelope_setting(ADSREnvelope::ATTACK, 2.0 * fval);
       break;
     case MOD_ENV_DEC:
-      synth.mod_envelope_setting(ADSREnvelope::RELEASE, 0.015 + fval);
+      synth.mod_envelope_setting(ADSREnvelope::DECAY, 2.0 * fval);
       break;
 
     case VOL_ENV_ATK:

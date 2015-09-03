@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <iostream>
+#include <cmath>
 
 using std::cout;
 using std::endl;
@@ -32,6 +33,7 @@ void FMSynth::trigger(unsigned int voice, bool on, float frequency, float veloci
 }
 
 void FMSynth::feedback(float v) {
+  v *= 0.5;
   v *= v; // x**2
   if (v < -1)
     v = -1;
@@ -42,6 +44,7 @@ void FMSynth::feedback(float v) {
 }
 
 void FMSynth::mod_depth(float v) {
+  v = 5.0 * powf(0.5 * v, 2.0);
   for (auto& s: mVoices)
     s.mod_depth(v);
 }
