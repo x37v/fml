@@ -65,8 +65,8 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
   if (on) {
     mBaseFreq = frequency;
     update_increments();
-    mAmpVelocity = 1.0f;//remap_amp_velocity(velocity);
-    mModVelocity = 1.0f;//remap_mod_velocity(velocity);
+    mAmpVelocity = remap_amp_velocity(velocity);
+    mModVelocity = remap_mod_velocity(velocity);
   }
   mModEnv.trigger(on);
   mAmpEnv.trigger(on);
