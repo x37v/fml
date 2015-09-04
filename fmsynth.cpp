@@ -59,15 +59,11 @@ void FMSynth::modulator_freq_offset(float v) {
 }
 
 void FMSynth::volume_envelope_setting(ADAREnvelope::stage_t stage, float v) {
-  if (v <= 0)
-    v = 0.000001;
   for (auto& s: mVoices)
     s.volume_envelope_setting(stage, v);
 }
 
 void FMSynth::mod_envelope_setting(ADSREnvelope::stage_t stage, float v) {
-  if (v <= 0)
-    v = 0.000001;
   for (auto& s: mVoices)
     s.mod_envelope_setting(stage, v);
 }

@@ -3,8 +3,8 @@
 #include <cassert>
 
 ADAREnvelope::ADAREnvelope() {
-  mStageSettings[0] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
-  mStageSettings[1] = 1.0 / (0.3 * fm::fsample_rate()); //decay time
+  mStageSettings[ATTACK] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
+  mStageSettings[DECAY_RELEASE] = 1.0 / (0.3 * fm::fsample_rate()); //decay time
 }
 
 float ADAREnvelope::compute() {
@@ -50,7 +50,8 @@ void ADAREnvelope::stage_setting(stage_t stage, float v) {
     return;
   if (v <= 0.0)
     mStageSettings[stage] = 1.0;
-  mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
+  else
+    mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
 }
 
 ADAREnvelope::stage_t ADAREnvelope::stage() const { return mStage; }

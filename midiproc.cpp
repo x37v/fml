@@ -24,36 +24,44 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
   switch (num) {
     case RATIO:
       {
-        int index = (static_cast<int>(val) - 64) / 2;
+        int index = (fval * 2.0 - 1.0) * 4; 
         if (index >= 0) {
           synth.freq_mult(index + 1.0, 1.0);
         } else {
           synth.freq_mult(1.0, -index);
         }
       }
+      cout << "ratio" << endl;
       break;
     case FINE:
       synth.modulator_freq_offset(fval);
+      cout << "fine" << endl;
       break;
     case FBDK:
       synth.feedback(fval);
+      cout << "mod fbdk" << endl;
       break;
     case DEPTH:
       synth.mod_depth(fval);
+      cout << "mod depth " << endl;
       break;
 
     case MOD_ENV_ATK:
       synth.mod_envelope_setting(ADSREnvelope::ATTACK, 2.0 * fval);
+      cout << "mod atk " << endl;
       break;
     case MOD_ENV_DEC:
       synth.mod_envelope_setting(ADSREnvelope::DECAY, 2.0 * fval);
+      cout << "mod dec " << endl;
       break;
 
     case VOL_ENV_ATK:
-      synth.volume_envelope_setting(ADAREnvelope::ATTACK, 0.015 + fval * 2);
+      synth.volume_envelope_setting(ADAREnvelope::ATTACK, 0.015 + fval * 2.0);
+      cout << "vol attack " << endl;
       break;
     case VOL_ENV_DEC:
-      synth.volume_envelope_setting(ADAREnvelope::DECAY_RELEASE, 0.015 + fval * 2);
+      synth.volume_envelope_setting(ADAREnvelope::DECAY_RELEASE, 0.015 + fval * 2.0);
+      cout << "vol dec " << endl;
       break;
     //case VOL_ENV_SUS:
       //synth.volume_envelope_setting(ADSREnvelope::SUSTAIN, fval);
