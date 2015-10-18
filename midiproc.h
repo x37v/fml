@@ -22,7 +22,7 @@ class FMMidiProc {
       VOL_ENV_ATK = 15,
       VOL_ENV_REL = 23,
       //VOL_ENV_SUS = 31,
-      //VOL_ENV_REL = 39,
+      //VOL_ENV_DEC = 39,
     };
 
     FMMidiProc(FMSynth& synth);

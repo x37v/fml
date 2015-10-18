@@ -67,7 +67,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       //synth.volume_envelope_setting(ADSR::env_sustain, fval);
       //break;
     case VOL_ENV_REL:
-      synth.volume_envelope_setting(ADSR::env_release, fval * 4.0);
+      synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 4.0);
       cout << "vol release " << endl;
       break;
     default:
