@@ -27,9 +27,21 @@ FMVoice::FMVoice() {
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
+  /*
   mModEnv.stage_setting(ADSREnvelope::SUSTAIN, 0.1);
   mModEnv.stage_setting(ADSREnvelope::RELEASE, 0.1);
   mAmpEnv.mode(ADAREnvelope::AR);
+  */
+
+  mAmpEnv.setAttackRate(0.1 * 44100.0);
+  mAmpEnv.setDecayRate(0.5 * 44100.0);
+  mAmpEnv.setSustainLevel(0.8);
+  mAmpEnv.setReleaseRate(1.0 * 44100.0);
+
+  mModEnv.setAttackRate(0.1 * 44100.0);
+  mModEnv.setDecayRate(0.1 * 44100.0);
+  mModEnv.setSustainLevel(0.1);
+  mModEnv.setReleaseRate(10.0 * 44100.0);
 
   update_increments();
 
@@ -40,8 +52,8 @@ FMVoice::FMVoice() {
 }
 
 float FMVoice::compute() {
-  float mod_env = mModEnv.compute() * mModDepth * mModVelocity;
-  float car_env = mAmpEnv.compute() * mAmpVelocity;
+  float mod_env = mModEnv.process() * mModDepth * mModVelocity;
+  float car_env = mAmpEnv.process() * mAmpVelocity;
 
   float mod = sin(two_pi * mMPhase) * mod_env;
   float car = sin(two_pi * mCPhase) * car_env;
@@ -68,8 +80,8 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
     mAmpVelocity = remap_amp_velocity(velocity);
     mModVelocity = remap_mod_velocity(velocity);
   }
-  mModEnv.trigger(on);
-  mAmpEnv.trigger(on);
+  mModEnv.gate(on);
+  mAmpEnv.gate(on);
 }
 
 void FMVoice::feedback(float v) {
@@ -92,11 +104,11 @@ void FMVoice::modulator_freq_offset(float v) {
 }
 
 void FMVoice::volume_envelope_setting(ADAREnvelope::stage_t stage, float v) {
-  mAmpEnv.stage_setting(stage, v);
+  //mAmpEnv.stage_setting(stage, v);
 }
 
 void FMVoice::mod_envelope_setting(ADSREnvelope::stage_t stage, float v) {
-  mModEnv.stage_setting(stage, v);
+  //mModEnv.stage_setting(stage, v);
 }
 
 void FMVoice::complete_callback(complete_callback_t cb) {
@@ -104,7 +116,8 @@ void FMVoice::complete_callback(complete_callback_t cb) {
 }
 
 bool FMVoice::active() const {
-  return mAmpEnv.stage() != ADAREnvelope::COMPLETE;
+  //return mAmpEnv.stage() != ADAREnvelope::COMPLETE;
+  return mAmpEnv.getState() != ADSR::env_idle;
 }
 
 void FMVoice::update_increments() {

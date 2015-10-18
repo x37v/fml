@@ -1,6 +1,7 @@
 #ifndef FM_VOICE_HPP
 #define FM_VOICE_HPP
 
+#include "adsr.h"
 #include "envelope.h"
 
 class FMVoice {
@@ -49,8 +50,8 @@ class FMVoice {
 
     float mBaseFreq = 440.0f;
 
-    ADSREnvelope mModEnv;
-    ADAREnvelope mAmpEnv;
+    ADSR mModEnv;
+    ADSR mAmpEnv;
 };
 
 #endif

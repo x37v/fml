@@ -6,6 +6,7 @@ SRC = \
 			fmvoice.cpp \
 			fmsynth.cpp \
 			midiproc.cpp \
+			adsr.cpp \
 			jackcpp/src/jackaudioio.cpp \
 			jackcpp/src/jackmidiport.cpp
 
