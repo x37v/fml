@@ -2,7 +2,6 @@
 #define FM_VOICE_HPP
 
 #include "adsr.h"
-#include "envelope.h"
 
 class FMVoice {
   public:
@@ -18,8 +17,8 @@ class FMVoice {
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
-    void volume_envelope_setting(ADAREnvelope::stage_t stage, float v);
-    void mod_envelope_setting(ADSREnvelope::stage_t stage, float v);
+    void volume_envelope_setting(ADSR::envState stage, float v);
+    void mod_envelope_setting(ADSR::envState stage, float v);
 
     void complete_callback(complete_callback_t cb); 
 

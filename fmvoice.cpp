@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cstdlib>
 
-//phase increment = frequency / sampling_rate
+//phase increment = frequency / sample_rate
 
 namespace {
   const float two_pi = 6.28318530718f;
@@ -34,8 +34,8 @@ FMVoice::FMVoice() {
   */
 
   mAmpEnv.setAttackRate(0.1 * 44100.0);
-  mAmpEnv.setDecayRate(0.5 * 44100.0);
-  mAmpEnv.setSustainLevel(0.8);
+  mAmpEnv.setDecayRate(0.0 * 44100.0);
+  mAmpEnv.setSustainLevel(1.0);
   mAmpEnv.setReleaseRate(1.0 * 44100.0);
 
   mModEnv.setAttackRate(0.1 * 44100.0);
@@ -103,12 +103,44 @@ void FMVoice::modulator_freq_offset(float v) {
   update_increments();
 }
 
-void FMVoice::volume_envelope_setting(ADAREnvelope::stage_t stage, float v) {
-  //mAmpEnv.stage_setting(stage, v);
+void FMVoice::volume_envelope_setting(ADSR::envState stage, float v) {
+  switch (stage) {
+    case ADSR::env_attack:
+      mAmpEnv.setAttackRate(fm::fsample_rate() * v);
+      break;
+    case ADSR::env_decay:
+      mAmpEnv.setDecayRate(fm::fsample_rate() * v);
+      break;
+    case ADSR::env_sustain:
+      mAmpEnv.setSustainLevel(v);
+        break;
+    case ADSR::env_release:
+      mAmpEnv.setReleaseRate(fm::fsample_rate() * v);
+        break;
+    case ADSR::env_idle:
+    default:
+      break;
+  }
 }
 
-void FMVoice::mod_envelope_setting(ADSREnvelope::stage_t stage, float v) {
-  //mModEnv.stage_setting(stage, v);
+void FMVoice::mod_envelope_setting(ADSR::envState stage, float v) {
+  switch (stage) {
+    case ADSR::env_attack:
+      mModEnv.setAttackRate(fm::fsample_rate() * v);
+      break;
+    case ADSR::env_decay:
+      mModEnv.setDecayRate(fm::fsample_rate() * v);
+      break;
+    case ADSR::env_sustain:
+      mModEnv.setSustainLevel(v);
+        break;
+    case ADSR::env_release:
+      mModEnv.setReleaseRate(fm::fsample_rate() * v);
+        break;
+    case ADSR::env_idle:
+    default:
+      break;
+  }
 }
 
 void FMVoice::complete_callback(complete_callback_t cb) {

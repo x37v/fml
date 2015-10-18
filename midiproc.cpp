@@ -47,28 +47,29 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(ADSREnvelope::ATTACK, 2.0 * fval);
+      synth.mod_envelope_setting(ADSR::env_attack, 2.0 * fval);
       cout << "mod atk " << endl;
       break;
     case MOD_ENV_DEC:
-      synth.mod_envelope_setting(ADSREnvelope::DECAY, 2.0 * fval);
+      synth.mod_envelope_setting(ADSR::env_decay, 2.0 * fval);
       cout << "mod dec " << endl;
       break;
 
     case VOL_ENV_ATK:
-      synth.volume_envelope_setting(ADAREnvelope::ATTACK, 0.015 + fval * 2.0);
+      synth.volume_envelope_setting(ADSR::env_attack, 0.015 + fval * 2.0);
       cout << "vol attack " << endl;
       break;
-    case VOL_ENV_DEC:
-      synth.volume_envelope_setting(ADAREnvelope::DECAY_RELEASE, 0.015 + fval * 2.0);
-      cout << "vol dec " << endl;
-      break;
+    //case VOL_ENV_DEC:
+      //synth.volume_envelope_setting(ADSR::env_decay, 0.015 + fval * 2.0);
+      //cout << "vol dec " << endl;
+      //break;
     //case VOL_ENV_SUS:
-      //synth.volume_envelope_setting(ADSREnvelope::SUSTAIN, fval);
+      //synth.volume_envelope_setting(ADSR::env_sustain, fval);
       //break;
-    //case VOL_ENV_REL:
-      //synth.volume_envelope_setting(ADSREnvelope::RELEASE, fval * 2.0);
-      //break;
+    case VOL_ENV_REL:
+      synth.volume_envelope_setting(ADSR::env_release, fval * 4.0);
+      cout << "vol release " << endl;
+      break;
     default:
       break;
   }

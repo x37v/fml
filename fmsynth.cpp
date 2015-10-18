@@ -58,12 +58,12 @@ void FMSynth::modulator_freq_offset(float v) {
     s.modulator_freq_offset(v);
 }
 
-void FMSynth::volume_envelope_setting(ADAREnvelope::stage_t stage, float v) {
+void FMSynth::volume_envelope_setting(ADSR::envState stage, float v) {
   for (auto& s: mVoices)
     s.volume_envelope_setting(stage, v);
 }
 
-void FMSynth::mod_envelope_setting(ADSREnvelope::stage_t stage, float v) {
+void FMSynth::mod_envelope_setting(ADSR::envState stage, float v) {
   for (auto& s: mVoices)
     s.mod_envelope_setting(stage, v);
 }
