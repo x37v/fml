@@ -18,7 +18,7 @@ FMMidiProc::FMMidiProc(FMSynth& synth) {
 }
 
 void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val) {
-  if (channel != mChannel)
+  if (channel != mCCChannel)
     return;
   float fval = static_cast<float>(val) / 127.0;
   switch (num) {
@@ -76,7 +76,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
 }
 
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
-  if (channel != mChannel)
+  if (channel != mNoteChannel)
     return;
   int voice = -1;
 

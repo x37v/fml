@@ -33,7 +33,8 @@ class FMMidiProc {
   private:
     std::deque<std::pair<uint8_t, uint8_t>> mNoteVoiceLRUQueue;
     std::deque<uint8_t> mFreeVoiceQueue;
-    uint8_t mChannel = 0;
+    uint8_t mNoteChannel = 0;
+    uint8_t mCCChannel = 1;
 };
 
 #endif
