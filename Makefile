@@ -27,3 +27,6 @@ fml: ${OBJ}
 
 clean:
 	@rm -f *.o jackcpp/src/*.o ${TARGETS} *.d jackcpp/src/*.d
+
+run: fml
+	eval './fml &' && jack_connect system:midi_capture_4 fm:fml_in && jack_connect system:midi_capture_5 fm:fml_in && wait
