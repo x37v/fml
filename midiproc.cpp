@@ -82,24 +82,34 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
 
   //XXX do we find sounding voices and dealloc them?
   
-  if (on) {
-    //use a free voice or the least recently used sounding voice
-    if (mFreeVoiceQueue.size()) {
-      voice = mFreeVoiceQueue.front();
-      mFreeVoiceQueue.pop_front();
+  if (mMonoMode) {
+    if (on) {
+      synth.trigger(0, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
+      mLastNote = note;
     } else {
-      voice = mNoteVoiceLRUQueue.front().second;
-      mNoteVoiceLRUQueue.pop_front();
-      //XXX what to do about click?
+      if (mLastNote == note)
+        synth.trigger(0, false);
     }
-    mNoteVoiceLRUQueue.push_back({note, voice});
-    synth.trigger(voice, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
   } else {
-    //don't actually take an 'off' note out of the queue because it needs its release time
-    for (auto& nv: mNoteVoiceLRUQueue) {
-      if (nv.first == note) {
-        voice = nv.second;
-        synth.trigger(voice, false);
+    if (on) {
+      //use a free voice or the least recently used sounding voice
+      if (mFreeVoiceQueue.size()) {
+        voice = mFreeVoiceQueue.front();
+        mFreeVoiceQueue.pop_front();
+      } else {
+        voice = mNoteVoiceLRUQueue.front().second;
+        mNoteVoiceLRUQueue.pop_front();
+        //XXX what to do about click?
+      }
+      mNoteVoiceLRUQueue.push_back({note, voice});
+      synth.trigger(voice, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
+    } else {
+      //don't actually take an 'off' note out of the queue because it needs its release time
+      for (auto& nv: mNoteVoiceLRUQueue) {
+        if (nv.first == note) {
+          voice = nv.second;
+          synth.trigger(voice, false);
+        }
       }
     }
   }

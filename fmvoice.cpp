@@ -58,6 +58,9 @@ float FMVoice::compute() {
   float mod = sin(two_pi * mMPhase) * mod_env;
   float car = sin(two_pi * mCPhase) * car_env;
 
+  mAmpVelocity = (3.0 * mAmpVelocity + mAmpVelocityTarget) / 4.0;
+  mModVelocity = (3.0 * mModVelocity + mModVelocityTarget) / 4.0;
+
   mMPhase = mMPhase + mMPhaseInc + mMFeedBack * mMOutLast;
   mCPhase = mCPhase + mCPhaseInc + mod;
   while (mMPhase >= 1.0f)
@@ -74,14 +77,28 @@ float FMVoice::compute() {
 }
 
 void FMVoice::trigger(bool on, float frequency, float velocity) {
+  bool idle = mAmpEnv.getState() == ADSR::env_idle;
+  bool retrigger = idle || mAmpEnv.getState() == ADSR::env_release;
   if (on) {
     mBaseFreq = frequency;
     update_increments();
-    mAmpVelocity = remap_amp_velocity(velocity);
-    mModVelocity = remap_mod_velocity(velocity);
+    //set a target amp velocity, we don't set it directly unless we're off,
+    //otherwise we'll get clicks
+    mAmpVelocityTarget = remap_amp_velocity(velocity);
+    mModVelocityTarget = remap_mod_velocity(velocity);
+    if (idle) {
+      mAmpVelocity = mAmpVelocityTarget;
+      mModVelocity = mModVelocityTarget;
+    }
   }
-  mModEnv.gate(on);
-  mAmpEnv.gate(on);
+  //don't trigger if we're already on
+  if (!on) {
+    mModEnv.gate(false);
+    mAmpEnv.gate(false);
+  } else if (retrigger) {
+    mModEnv.gate(true);
+    mAmpEnv.gate(true);
+  }
 }
 
 void FMVoice::feedback(float v) {
