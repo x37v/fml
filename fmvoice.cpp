@@ -84,9 +84,9 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
     update_increments();
     //set a target amp velocity, we don't set it directly unless we're off,
     //otherwise we'll get clicks
-    mAmpVelocityTarget = remap_amp_velocity(velocity);
-    mModVelocityTarget = remap_mod_velocity(velocity);
-    if (idle) {
+    if (retrigger) {
+      mAmpVelocityTarget = remap_amp_velocity(velocity);
+      mModVelocityTarget = remap_mod_velocity(velocity);
       mAmpVelocity = mAmpVelocityTarget;
       mModVelocity = mModVelocityTarget;
     }
