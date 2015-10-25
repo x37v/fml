@@ -73,6 +73,19 @@ float FMVoice::compute() {
     mCPhase += 1.0f;
   mMOutLast = mod;
 
+  //update the slew
+  if (mCPhaseIncTarget != mCPhaseInc) {
+    if (mCPhaseIncIncAdd) {
+      mCPhaseInc += mCPhaseIncInc;
+      if (mCPhaseInc > mCPhaseIncTarget)
+        mCPhaseInc = mCPhaseIncTarget;
+    } else {
+      mCPhaseInc -= mCPhaseIncInc;
+      if (mCPhaseInc < mCPhaseIncTarget)
+        mCPhaseInc = mCPhaseIncTarget;
+    }
+  }
+
   return car;
 }
 
@@ -171,6 +184,11 @@ bool FMVoice::active() const {
 
 void FMVoice::update_increments() {
   mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
-  mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+  mCPhaseIncTarget = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+
+  //should our incrementing go up or down from current phase inc
+  mCPhaseIncIncAdd = mCPhaseIncTarget > mCPhaseInc;
+  if (mCPhaseIncInc <= 0)
+    mCPhaseIncInc = 0.0000001;
 }
 
