@@ -17,6 +17,8 @@ class FMVoice {
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
+    void slew_increment(float v);
+
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
 

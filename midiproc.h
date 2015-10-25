@@ -14,7 +14,7 @@ class FMMidiProc {
 
       DEPTH = 9,
       VOL = 17,
-      //PORT = 25,
+      SLEW = 25,
 
       MOD_ENV_ATK = 14,
       MOD_ENV_DEC = 22,
@@ -36,7 +36,7 @@ class FMMidiProc {
     uint8_t mNoteChannel = 0;
     uint8_t mCCChannel = 1;
 
-    bool mMonoMode = false;
+    bool mMonoMode = true;
     uint8_t mLastNote = 0;
 };
 

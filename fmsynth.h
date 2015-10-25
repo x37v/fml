@@ -19,6 +19,9 @@ class FMSynth {
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
+    void slew(float v); //0..1
+    void volume(float v); //0..1
+
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
 

@@ -45,6 +45,14 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       synth.mod_depth(fval);
       cout << "mod depth " << endl;
       break;
+    case VOL:
+      synth.volume(fval);
+      cout << "volume" << endl;
+      break;
+    case SLEW:
+      synth.slew(fval);
+      cout << "slew" << endl;
+      break;
 
     case MOD_ENV_ATK:
       synth.mod_envelope_setting(ADSR::env_attack, 2.0 * fval);

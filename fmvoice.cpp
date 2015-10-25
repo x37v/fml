@@ -75,6 +75,7 @@ float FMVoice::compute() {
 
   //update the slew
   if (mCPhaseIncTarget != mCPhaseInc) {
+    //mCPhaseInc = (999.0 * mCPhaseInc + mCPhaseIncTarget) / 1000.0;
     if (mCPhaseIncIncAdd) {
       mCPhaseInc += mCPhaseIncInc;
       if (mCPhaseInc > mCPhaseIncTarget)
@@ -131,6 +132,10 @@ void FMVoice::freq_mult(float mod, float car) {
 void FMVoice::modulator_freq_offset(float v) {
   mMFreqMultOffset = v;
   update_increments();
+}
+
+void FMVoice::slew_increment(float v) {
+  mCPhaseIncInc = v;
 }
 
 void FMVoice::volume_envelope_setting(ADSR::envState stage, float v) {

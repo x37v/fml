@@ -7,6 +7,11 @@
 using std::cout;
 using std::endl;
 
+namespace {
+  const float min_slew = 0.00001;
+  const float max_slew = 0.0000001;
+}
+
 FMSynth::FMSynth() {
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     mVoices[i].complete_callback([this, i] (void) {
@@ -56,6 +61,17 @@ void FMSynth::freq_mult(float mod, float car) {
 void FMSynth::modulator_freq_offset(float v) {
   for (auto& s: mVoices)
     s.modulator_freq_offset(v);
+}
+
+void FMSynth::slew(float v) {
+  float slew = powf(10.0, -(5.0 + 2.0 * v));
+
+  for (auto& s: mVoices)
+    s.slew_increment(slew);
+}
+
+void FMSynth::volume(float v) {
+  //XXX DO IT
 }
 
 void FMSynth::volume_envelope_setting(ADSR::envState stage, float v) {
