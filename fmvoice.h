@@ -37,7 +37,7 @@ class FMVoice {
 
     float mCPhaseInc = 0.0f;
     float mCPhaseIncTarget = 0.0f;
-    float mCPhaseIncInc = 0.0000001;
+    float mCPhaseIncInc = 0.0001;
     bool  mCPhaseIncIncAdd = true; //do we add or subtract to get to the target?
 
     float mMOutLast = 0.0f;
