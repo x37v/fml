@@ -23,8 +23,12 @@ FMSynth::FMSynth() {
 
 float FMSynth::compute() {
   float out = 0;
-  for (auto& s: mVoices)
+  //XXX just a guess.. seems to work okay, the filter
+  mModDepth = (mModDepth * 99.0 + mModDepthTarget) / 100.0;
+  for (auto& s: mVoices) {
+    s.mod_depth(mModDepth);
     out += s.compute();
+  }
   return out / static_cast<float>(mVoices.size());
 }
 
@@ -48,9 +52,7 @@ void FMSynth::feedback(float v) {
 }
 
 void FMSynth::mod_depth(float v) {
-  v = 5.0 * powf(0.5 * v, 2.0);
-  for (auto& s: mVoices)
-    s.mod_depth(v);
+  mModDepthTarget = 5.0 * powf(0.5 * v, 2.0);
 }
 
 void FMSynth::freq_mult(float mod, float car) {

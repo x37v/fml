@@ -31,6 +31,8 @@ class FMSynth {
     void print_active();
 
   private:
+    float mModDepth = 0.0f;
+    float mModDepthTarget = 0.0f;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
 };
