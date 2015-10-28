@@ -92,11 +92,18 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
   
   if (mMonoMode) {
     if (on) {
-      synth.trigger(0, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
+      float freq = midi_note_to_freq(note);
+      if (mLastNote == 255) //only true if we're off
+        synth.trigger(0, true, freq, static_cast<float>(vel) / 127.0f);
+      else
+        synth.frequency(0,  freq);
+
       mLastNote = note;
     } else {
-      if (mLastNote == note)
+      if (mLastNote == note) {
         synth.trigger(0, false);
+        mLastNote = 255;
+      }
     }
   } else {
     if (on) {

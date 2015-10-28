@@ -36,6 +36,14 @@ void FMSynth::trigger(unsigned int voice, bool on, float frequency, float veloci
   mVoices[voice].trigger(on, frequency, velocity);
 }
 
+void FMSynth::frequency(unsigned int voice, float freq) {
+  if (voice >= mVoices.size()) {
+    assert(false);
+    return;
+  }
+  mVoices[voice].frequency(freq);
+}
+
 void FMSynth::feedback(float v) {
   if (v < -1)
     v = -1;

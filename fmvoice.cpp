@@ -91,12 +91,11 @@ float FMVoice::compute() {
   return car;
 }
 
-void FMVoice::trigger(bool on, float frequency, float velocity) {
+void FMVoice::trigger(bool on, float freq, float velocity) {
   bool idle = mAmpEnv.getState() == ADSR::env_idle;
   bool retrigger = idle || mAmpEnv.getState() == ADSR::env_release;
   if (on) {
-    mBaseFreq = frequency;
-    update_increments();
+    frequency(freq);
     //set a target amp velocity, we don't set it directly unless we're off,
     //otherwise we'll get clicks
     if (retrigger) {
@@ -106,6 +105,7 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
       //mModVelocity = mModVelocityTarget;
     }
   }
+
   //don't trigger if we're already on
   if (!on) {
     mModEnv.gate(false);
@@ -114,6 +114,11 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
     mModEnv.gate(true);
     mAmpEnv.gate(true);
   }
+}
+
+void FMVoice::frequency(float f) {
+  mBaseFreq = f;
+  update_increments();
 }
 
 void FMVoice::feedback(float v) {

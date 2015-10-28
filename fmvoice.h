@@ -11,6 +11,7 @@ class FMVoice {
 
     float compute();
     void trigger(bool on, float frequency, float velocity);
+    void frequency(float frequency); //no retrigger
 
     void feedback(float v);
     void mod_depth(float v);
