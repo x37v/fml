@@ -58,8 +58,9 @@ float FMVoice::compute() {
   float mod = sin(two_pi * mMPhase) * mod_env;
   float car = sin(two_pi * mCPhase) * car_env;
 
-  mAmpVelocity = (3.0 * mAmpVelocity + mAmpVelocityTarget) / 4.0;
-  mModVelocity = (3.0 * mModVelocity + mModVelocityTarget) / 4.0;
+  //XXX filtering is totally a guess
+  mAmpVelocity = (99.0 * mAmpVelocity + mAmpVelocityTarget) / 100.0;
+  mModVelocity = (99.0 * mModVelocity + mModVelocityTarget) / 100.0;
 
   mMPhase = mMPhase + mMPhaseInc + mMFeedBack * mMOutLast;
   mCPhase = mCPhase + mCPhaseInc + mod;
@@ -101,8 +102,8 @@ void FMVoice::trigger(bool on, float frequency, float velocity) {
     if (retrigger) {
       mAmpVelocityTarget = remap_amp_velocity(velocity);
       mModVelocityTarget = remap_mod_velocity(velocity);
-      mAmpVelocity = mAmpVelocityTarget;
-      mModVelocity = mModVelocityTarget;
+      //mAmpVelocity = mAmpVelocityTarget;
+      //mModVelocity = mModVelocityTarget;
     }
   }
   //don't trigger if we're already on

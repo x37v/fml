@@ -7,11 +7,6 @@
 using std::cout;
 using std::endl;
 
-namespace {
-  const float min_slew = 0.00001;
-  const float max_slew = 0.0000001;
-}
-
 FMSynth::FMSynth() {
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     mVoices[i].complete_callback([this, i] (void) {
