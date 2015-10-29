@@ -38,8 +38,8 @@ FMVoice::FMVoice() {
   mAmpEnv.setSustainLevel(1.0);
   mAmpEnv.setReleaseRate(1.0 * 44100.0);
 
-  mModEnv.setAttackRate(0.1 * 44100.0);
-  mModEnv.setDecayRate(0.1 * 44100.0);
+  mModEnv.setAttackRate(0);
+  mModEnv.setDecayRate(4 * 44100.0);
   mModEnv.setSustainLevel(0.1);
   mModEnv.setReleaseRate(10.0 * 44100.0);
 
