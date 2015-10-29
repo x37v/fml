@@ -89,9 +89,6 @@ int main(int argc, char * argv[]) {
   JackAudio audio;
   audio.start();
 
-  audio.connectToPhysical(0,0);
-  audio.connectToPhysical(1,1);
-
   while (!should_exit) {
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
