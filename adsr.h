@@ -75,17 +75,24 @@ inline float ADSR::process() {
     case env_idle:
       break;
     case env_attack:
-      output = attackBase + output * attackCoef;
+      if (attackRate <= 0)
+        output = 1.0;
+      else
+        output = attackBase + output * attackCoef;
       if (output >= 1.0) {
         output = 1.0;
         state = env_decay;
       }
       break;
     case env_decay:
-      output = decayBase + output * decayCoef;
-      if (output <= sustainLevel) {
-        output = sustainLevel;
+      if (decayRate == 0) {
         state = env_sustain;
+      } else {
+        output = decayBase + output * decayCoef;
+        if (output <= sustainLevel) {
+          output = sustainLevel;
+          state = env_sustain;
+        }
       }
       break;
     case env_sustain:
