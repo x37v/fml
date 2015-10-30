@@ -3,6 +3,10 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 //phase increment = frequency / sample_rate
 
 namespace {
@@ -193,9 +197,39 @@ bool FMVoice::active() const {
   return mAmpEnv.getState() != ADSR::env_idle;
 }
 
+void FMVoice::mode(mode_t v) {
+  mMode = v;
+  update_increments();
+}
+
+FMVoice::mode_t FMVoice::mode() const {
+  return mMode;
+}
+
 void FMVoice::update_increments() {
-  mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
-  mCPhaseIncTarget = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+ switch(mMode) {
+  case FIXED_MODULATOR: 
+    {
+      float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+      cout << "mod freq " << freq;
+      mMPhaseInc = freq / fm::fsample_rate();
+      mCPhaseIncTarget = mBaseFreq / fm::fsample_rate();
+    }
+    break;
+
+  case FIXED_CARRIER:
+    {
+      float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+      cout << "car freq " << freq;
+      mCPhaseIncTarget = freq / fm::fsample_rate();
+      mMPhaseInc = mBaseFreq / fm::fsample_rate();
+    }
+    break;
+  default:
+    mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
+    mCPhaseIncTarget = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+    break;
+ }
 
   //should our incrementing go up or down from current phase inc
   mCPhaseIncIncAdd = mCPhaseIncTarget > mCPhaseInc;

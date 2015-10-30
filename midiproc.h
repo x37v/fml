@@ -36,7 +36,7 @@ class FMMidiProc {
     uint8_t mNoteChannel = 0;
     uint8_t mCCChannel = 1;
 
-    bool mMonoMode = true;
+    bool mMonoMode = false;
     uint8_t mLastNote = 0;
 };
 

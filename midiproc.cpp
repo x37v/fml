@@ -5,12 +5,6 @@
 using std::cout;
 using std::endl;
 
-namespace {
-  float midi_note_to_freq(uint8_t midi_note) {
-    return powf(2, (midi_note - 69.0) / 12.0) * 440;
-  }
-}
-
 FMMidiProc::FMMidiProc(FMSynth& synth) {
   for (int i = 0; i < FM_VOICES; i++)
     mFreeVoiceQueue.push_back(i);
@@ -35,7 +29,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
     case FINE:
       synth.modulator_freq_offset(fval);
-      cout << "fine" << endl;
+      cout << "fine " << fval << endl;
       break;
     case FBDK:
       synth.feedback(fval);
@@ -92,7 +86,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
   
   if (mMonoMode) {
     if (on) {
-      float freq = midi_note_to_freq(note);
+      float freq = fm::midi_note_to_freq(note);
       if (mLastNote == 255) //only true if we're off
         synth.trigger(0, true, freq, static_cast<float>(vel) / 127.0f);
       else
@@ -117,7 +111,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
         //XXX what to do about click?
       }
       mNoteVoiceLRUQueue.push_back({note, voice});
-      synth.trigger(voice, true, midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
+      synth.trigger(voice, true, fm::midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
     } else {
       //don't actually take an 'off' note out of the queue because it needs its release time
       for (auto& nv: mNoteVoiceLRUQueue) {

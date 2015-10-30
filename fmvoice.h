@@ -6,6 +6,7 @@
 class FMVoice {
   public:
     typedef std::function<void(void)> complete_callback_t;
+    enum mode_t { NORMAL, FIXED_CARRIER, FIXED_MODULATOR };
 
     FMVoice();
 
@@ -26,10 +27,15 @@ class FMVoice {
     void complete_callback(complete_callback_t cb); 
 
     bool active() const;
+    
+    void mode(mode_t v);
+    mode_t mode() const;
   private:
     void update_increments(); //based on frequency or ratio change
 
     complete_callback_t mCompleteCallback = nullptr;
+
+    mode_t mMode = FIXED_MODULATOR;
 
     float mMPhase = 0.0f;
     float mCPhase = 0.0f;
