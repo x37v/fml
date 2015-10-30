@@ -35,7 +35,7 @@ class FMVoice {
 
     complete_callback_t mCompleteCallback = nullptr;
 
-    mode_t mMode = FIXED_MODULATOR;
+    mode_t mMode = NORMAL;
 
     float mMPhase = 0.0f;
     float mCPhase = 0.0f;

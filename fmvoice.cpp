@@ -211,7 +211,6 @@ void FMVoice::update_increments() {
   case FIXED_MODULATOR: 
     {
       float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
-      cout << "mod freq " << freq;
       mMPhaseInc = freq / fm::fsample_rate();
       mCPhaseIncTarget = mBaseFreq / fm::fsample_rate();
     }
@@ -220,7 +219,6 @@ void FMVoice::update_increments() {
   case FIXED_CARRIER:
     {
       float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
-      cout << "car freq " << freq;
       mCPhaseIncTarget = freq / fm::fsample_rate();
       mMPhaseInc = mBaseFreq / fm::fsample_rate();
     }

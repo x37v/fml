@@ -8,7 +8,7 @@
 namespace fm {
   unsigned int sample_rate();
   float fsample_rate();
-  float midi_note_to_freq(uint8_t midi_note);
+  float midi_note_to_freq(float midi_note);
 };
 
 #endif
