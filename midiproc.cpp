@@ -20,7 +20,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       {
         int index = roundf((fval * 2.0 - 1.0) * 4.0); 
         if (abs(index) == 4) {
-          synth.mode(index > 0 ? FMVoice::FIXED_CARRIER : FMVoice::FIXED_MODULATOR);
+          synth.mode(index > 0 ? FMVoice::FIXED_MODULATOR : FMVoice::FIXED_CARRIER);
         } else {
           synth.mode(FMVoice::NORMAL);
           if (index >= 0) {
