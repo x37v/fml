@@ -32,6 +32,10 @@ run: fml
 	eval './fml &' && sleep 1 && \
 		jack_connect fm:output0 system:playback_1 && \
 		jack_connect fm:output0 system:playback_2 && \
-		jack_connect system:midi_capture_4 fm:fml_in && \
-		jack_connect system:midi_capture_5 fm:fml_in && \
+		jack_connect system:midi_capture_1 fm:fml_in ; \
+		jack_connect system:midi_capture_2 fm:fml_in ; \
+		jack_connect system:midi_capture_3 fm:fml_in ; \
+		jack_connect system:midi_capture_4 fm:fml_in ; \
+		jack_connect system:midi_capture_5 fm:fml_in ; \
+		jack_connect system:midi_capture_6 fm:fml_in ; \
 		wait
