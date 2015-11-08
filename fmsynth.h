@@ -15,6 +15,8 @@ class FMSynth {
     void trigger(unsigned int voice, bool on, float frequency = 440, float velocity = 1.0f); //frequency,velocity ignored for off
     void frequency(unsigned int voice, float frequency);
 
+    void mode(FMVoice::mode_t v);
+
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);

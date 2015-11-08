@@ -44,6 +44,11 @@ void FMSynth::frequency(unsigned int voice, float freq) {
   mVoices[voice].frequency(freq);
 }
 
+void FMSynth::mode(FMVoice::mode_t v) {
+  for (auto& s: mVoices)
+    s.mode(v);
+}
+
 void FMSynth::feedback(float v) {
   if (v < -1)
     v = -1;

@@ -18,11 +18,16 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
   switch (num) {
     case RATIO:
       {
-        int index = (fval * 2.0 - 1.0) * 4; 
-        if (index >= 0) {
-          synth.freq_mult(index + 1.0, 1.0);
+        int index = roundf((fval * 2.0 - 1.0) * 4.0); 
+        if (abs(index) == 4) {
+          synth.mode(index > 0 ? FMVoice::FIXED_CARRIER : FMVoice::FIXED_MODULATOR);
         } else {
-          synth.freq_mult(1.0, -index);
+          synth.mode(FMVoice::NORMAL);
+          if (index >= 0) {
+            synth.freq_mult(index + 1.0, 1.0);
+          } else {
+            synth.freq_mult(1.0, -index);
+          }
         }
       }
       cout << "ratio" << endl;
