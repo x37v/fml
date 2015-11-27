@@ -2,6 +2,7 @@
 #include <cmath>
 
 #include <iostream>
+#include <iomanip>
 using std::cout;
 using std::endl;
 
@@ -20,17 +21,25 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       {
         int index = roundf((fval * 2.0 - 1.0) * 4.0); 
         if (abs(index) == 4) {
-          synth.mode(index > 0 ? FMVoice::FIXED_MODULATOR : FMVoice::FIXED_CARRIER);
+          if (index > 0) {
+            synth.mode(FMVoice::FIXED_MODULATOR);
+            cout << "ratio: fixed modulator" << endl;
+          } else {
+            synth.mode(FMVoice::FIXED_CARRIER);
+            cout << "ratio: fixed carrier" << endl;
+          }
         } else {
           synth.mode(FMVoice::NORMAL);
+          float mod = 1.0f, car = 1.0f;
           if (index >= 0) {
-            synth.freq_mult(index + 1.0, 1.0);
+            mod = 1.0 + index;
           } else {
-            synth.freq_mult(1.0, -index);
+            car = -index;
           }
+          synth.freq_mult(mod, car);
+          cout << "ratio: mod: " << mod << std::setprecision(4) << " car: " << car << std::setprecision(4) << endl;
         }
       }
-      cout << "ratio" << endl;
       break;
     case FINE:
       synth.modulator_freq_offset(fval);
