@@ -7,6 +7,11 @@
 using std::cout;
 using std::endl;
 
+namespace {
+  //takes 10ms from 0..1
+  const float volume_increment = 1.0f / (fm::fsample_rate() * 0.01);
+}
+
 FMSynth::FMSynth() {
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     mVoices[i].complete_callback([this, i] (void) {
@@ -20,11 +25,19 @@ float FMSynth::compute() {
   float out = 0;
   //XXX just a guess.. seems to work okay, the filter
   mModDepth = (mModDepth * 99.0 + mModDepthTarget) / 100.0;
+
+  //smooth volume
+  if (fabs(mVolumeTarget - mVolume) <= volume_increment) {
+    mVolume = mVolumeTarget;
+  } else {
+    mVolume += (mVolumeTarget > mVolume) ? volume_increment : -volume_increment;
+  }
+
   for (auto& s: mVoices) {
     s.mod_depth(mModDepth);
     out += s.compute();
   }
-  return out / static_cast<float>(mVoices.size());
+  return mVolume * (out / static_cast<float>(mVoices.size()));
 }
 
 void FMSynth::trigger(unsigned int voice, bool on, float frequency, float velocity) {
@@ -81,7 +94,7 @@ void FMSynth::slew(float v) {
 }
 
 void FMSynth::volume(float v) {
-  //XXX DO IT
+  mVolumeTarget = v;
 }
 
 void FMSynth::volume_envelope_setting(ADSR::envState stage, float v) {
