@@ -58,7 +58,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       cout << "volume" << endl;
       break;
     case SLEW:
-      synth.slew(fval);
+      synth.slew(fval * fval);
       cout << "slew" << endl;
       break;
 
