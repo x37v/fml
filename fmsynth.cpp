@@ -11,7 +11,8 @@ using std::endl;
 namespace {
   //takes 10ms from 0..1
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.01);
-  const float modfreq_increment = 1.0f / (fm::fsample_rate() * 0.01);
+  const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.01);
+  const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.01);
 }
 
 FMSynth::FMSynth() {
@@ -25,12 +26,11 @@ FMSynth::FMSynth() {
 
 float FMSynth::compute() {
   float out = 0;
-  //XXX just a guess.. seems to work okay, the filter
-  mModDepth = (mModDepth * 99.0 + mModDepthTarget) / 100.0;
 
   //smooth
+  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mod_depth_increment);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, volume_increment);
-  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, modfreq_increment);
+  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mod_freq_increment);
 
   for (auto& s: mVoices) {
     s.modulator_freq_offset(mModFreqOffset);
