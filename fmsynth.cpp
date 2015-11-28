@@ -67,7 +67,7 @@ void FMSynth::feedback(float v) {
     v = -1;
   else if (v > 1)
     v = 1;
-  v = powf(v * 0.5, 2.0);
+  v = powf(v, 2.0);
   for (auto& s: mVoices)
     s.feedback(v);
 }
