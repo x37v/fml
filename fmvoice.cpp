@@ -79,20 +79,6 @@ float FMVoice::compute() {
     mCPhase += 1.0f;
   mMOutLast = mod;
 
-  //update the slew
-  if (mCPhaseIncTarget != mCPhaseInc) {
-    //mCPhaseInc = (999.0 * mCPhaseInc + mCPhaseIncTarget) / 1000.0;
-    if (mCPhaseIncIncAdd) {
-      mCPhaseInc += mCPhaseIncInc;
-      if (mCPhaseInc > mCPhaseIncTarget)
-        mCPhaseInc = mCPhaseIncTarget;
-    } else {
-      mCPhaseInc -= mCPhaseIncInc;
-      if (mCPhaseInc < mCPhaseIncTarget)
-        mCPhaseInc = mCPhaseIncTarget;
-    }
-  }
-
   return car;
 }
 
@@ -122,7 +108,7 @@ void FMVoice::trigger(bool on, float freq, float velocity) {
 }
 
 void FMVoice::frequency(float f) {
-  mBaseFreq = f;
+  mBaseFreqTarget = f;
 }
 
 void FMVoice::feedback(float v) {
@@ -143,7 +129,7 @@ void FMVoice::modulator_freq_offset(float v) {
 }
 
 void FMVoice::slew_increment(float v) {
-  mCPhaseIncInc = v;
+  mSlewIncrement = v;
 }
 
 void FMVoice::volume_envelope_setting(ADSR::envState stage, float v) {
@@ -204,31 +190,27 @@ FMVoice::mode_t FMVoice::mode() const {
 }
 
 void FMVoice::update_increments() {
- switch(mMode) {
-  case FIXED_MODULATOR: 
-    {
-      float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
-      mMPhaseInc = freq / fm::fsample_rate();
-      mCPhaseIncTarget = mBaseFreq / fm::fsample_rate();
-    }
-    break;
+  mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
+  switch(mMode) {
+    case FIXED_MODULATOR: 
+      {
+        float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+        mMPhaseInc = freq / fm::fsample_rate();
+        mCPhaseInc = mBaseFreq / fm::fsample_rate();
+      }
+      break;
 
-  case FIXED_CARRIER:
-    {
-      float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
-      mCPhaseIncTarget = freq / fm::fsample_rate();
-      mMPhaseInc = mBaseFreq / fm::fsample_rate();
-    }
-    break;
-  default:
-    mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
-    mCPhaseIncTarget = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
-    break;
- }
-
-  //should our incrementing go up or down from current phase inc
-  mCPhaseIncIncAdd = mCPhaseIncTarget > mCPhaseInc;
-  if (mCPhaseIncInc <= 0)
-    mCPhaseIncInc = 0.0000001;
+    case FIXED_CARRIER:
+      {
+        float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+        mCPhaseInc = freq / fm::fsample_rate();
+        mMPhaseInc = mBaseFreq / fm::fsample_rate();
+      }
+      break;
+    default:
+      mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
+      mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+      break;
+  }
 }
 

@@ -41,11 +41,7 @@ class FMVoice {
     float mCPhase = 0.0f;
 
     float mMPhaseInc = 0.0f;
-
     float mCPhaseInc = 0.0f;
-    float mCPhaseIncTarget = 0.0f;
-    float mCPhaseIncInc = 0.0001;
-    bool  mCPhaseIncIncAdd = true; //do we add or subtract to get to the target?
 
     float mMOutLast = 0.0f;
 
@@ -64,6 +60,9 @@ class FMVoice {
     float mMFreqMultOffset = 0.0f;
 
     float mBaseFreq = 440.0f;
+    float mBaseFreqTarget = 440.0f;
+
+    float mSlewIncrement = 1.0f;
 
     ADSR mModEnv;
     ADSR mAmpEnv;
