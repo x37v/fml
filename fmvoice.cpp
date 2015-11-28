@@ -59,15 +59,15 @@ float FMVoice::compute() {
   float mod_env = mModEnv.process() * mModDepth * mModVelocity;
   float car_env = mAmpEnv.process() * mAmpVelocity;
 
-  float mod = sin(two_pi * mMPhase) * mod_env;
-  float car = sin(two_pi * mCPhase) * car_env;
+  float mod = sin(two_pi * (mMPhase + mMFeedBack * mMOutLast)) * mod_env;
+  float car = sin(two_pi * (mCPhase + mod)) * car_env;
 
   //XXX filtering is totally a guess
   mAmpVelocity = (99.0 * mAmpVelocity + mAmpVelocityTarget) / 100.0;
   mModVelocity = (99.0 * mModVelocity + mModVelocityTarget) / 100.0;
 
-  mMPhase = mMPhase + mMPhaseInc + mMFeedBack * mMOutLast;
-  mCPhase = mCPhase + mCPhaseInc + mod;
+  mMPhase = mMPhase + mMPhaseInc;
+  mCPhase = mCPhase + mCPhaseInc;
   while (mMPhase >= 1.0f)
     mMPhase -= 1.0f;
   while (mCPhase >= 1.0f)
