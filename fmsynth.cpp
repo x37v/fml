@@ -1,4 +1,5 @@
 #include "fmsynth.h"
+#include "util.h"
 #include <cassert>
 
 #include <iostream>
@@ -27,18 +28,9 @@ float FMSynth::compute() {
   //XXX just a guess.. seems to work okay, the filter
   mModDepth = (mModDepth * 99.0 + mModDepthTarget) / 100.0;
 
-  //smooth volume
-  if (fabs(mVolumeTarget - mVolume) <= volume_increment) {
-    mVolume = mVolumeTarget;
-  } else {
-    mVolume += (mVolumeTarget > mVolume) ? volume_increment : -volume_increment;
-  }
-  //smooth freq offset
-  if (fabs(mModFreqOffsetTarget - mModFreqOffset) <= modfreq_increment) {
-    mModFreqOffset = mModFreqOffsetTarget;
-  } else {
-    mModFreqOffset += (mModFreqOffsetTarget > mModFreqOffset) ? modfreq_increment : -modfreq_increment;
-  }
+  //smooth
+  mVolume = fm::lin_smooth(mVolumeTarget, mVolume, volume_increment);
+  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, modfreq_increment);
 
   for (auto& s: mVoices) {
     s.modulator_freq_offset(mModFreqOffset);

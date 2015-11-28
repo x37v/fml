@@ -1,5 +1,6 @@
 #include "fmvoice.h"
 #include "defines.h"
+#include "util.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -11,6 +12,7 @@ using std::endl;
 
 namespace {
   const float two_pi = 6.28318530718f;
+  const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
 
   float remap_amp_velocity(float velocity) {
     if (velocity < 0.5)
@@ -62,9 +64,8 @@ float FMVoice::compute() {
   float mod = sin(two_pi * (mMPhase + mMFeedBack * mMOutLast)) * mod_env;
   float car = sin(two_pi * (mCPhase + mod)) * car_env;
 
-  //XXX filtering is totally a guess
-  mAmpVelocity = (99.0 * mAmpVelocity + mAmpVelocityTarget) / 100.0;
-  mModVelocity = (99.0 * mModVelocity + mModVelocityTarget) / 100.0;
+  mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, velocity_increment);
+  mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, velocity_increment);
 
   mMPhase = mMPhase + mMPhaseInc;
   mCPhase = mCPhase + mCPhaseInc;
