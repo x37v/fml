@@ -71,9 +71,6 @@ class JackAudio : public JackCpp::AudioIO {
       mMidiProc(mFM)
     { 
       mMidiInput.init(this, "fml_in");
-      mFM.freq_mult(2, 1);
-      mFM.feedback(0.001);
-      mFM.mod_depth(0.03);
     }
   private:
     JackCpp::MIDIInPort mMidiInput;
