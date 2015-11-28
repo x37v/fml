@@ -47,8 +47,6 @@ FMVoice::FMVoice() {
   mModEnv.setSustainLevel(0.1);
   mModEnv.setReleaseRate(10.0 * 44100.0);
 
-  update_increments();
-
   mAmpEnv.complete_callback([this] (void) {
     if (mCompleteCallback)
       mCompleteCallback();
@@ -56,6 +54,8 @@ FMVoice::FMVoice() {
 }
 
 float FMVoice::compute() {
+  update_increments();
+
   float mod_env = mModEnv.process() * mModDepth * mModVelocity;
   float car_env = mAmpEnv.process() * mAmpVelocity;
 
@@ -122,7 +122,6 @@ void FMVoice::trigger(bool on, float freq, float velocity) {
 
 void FMVoice::frequency(float f) {
   mBaseFreq = f;
-  update_increments();
 }
 
 void FMVoice::feedback(float v) {
@@ -136,12 +135,10 @@ void FMVoice::mod_depth(float v) {
 void FMVoice::freq_mult(float mod, float car) {
   mMFreqMult = mod;
   mCFreqMult = car;
-  update_increments();
 }
 
 void FMVoice::modulator_freq_offset(float v) {
   mMFreqMultOffset = v;
-  update_increments();
 }
 
 void FMVoice::slew_increment(float v) {
@@ -199,7 +196,6 @@ bool FMVoice::active() const {
 
 void FMVoice::mode(mode_t v) {
   mMode = v;
-  update_increments();
 }
 
 FMVoice::mode_t FMVoice::mode() const {

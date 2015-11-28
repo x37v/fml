@@ -10,6 +10,7 @@ using std::endl;
 namespace {
   //takes 10ms from 0..1
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.01);
+  const float modfreq_increment = 1.0f / (fm::fsample_rate() * 0.01);
 }
 
 FMSynth::FMSynth() {
@@ -32,8 +33,15 @@ float FMSynth::compute() {
   } else {
     mVolume += (mVolumeTarget > mVolume) ? volume_increment : -volume_increment;
   }
+  //smooth freq offset
+  if (fabs(mModFreqOffsetTarget - mModFreqOffset) <= modfreq_increment) {
+    mModFreqOffset = mModFreqOffsetTarget;
+  } else {
+    mModFreqOffset += (mModFreqOffsetTarget > mModFreqOffset) ? modfreq_increment : -modfreq_increment;
+  }
 
   for (auto& s: mVoices) {
+    s.modulator_freq_offset(mModFreqOffset);
     s.mod_depth(mModDepth);
     out += s.compute();
   }
@@ -82,8 +90,7 @@ void FMSynth::freq_mult(float mod, float car) {
 }
 
 void FMSynth::modulator_freq_offset(float v) {
-  for (auto& s: mVoices)
-    s.modulator_freq_offset(v);
+  mModFreqOffsetTarget = v;
 }
 
 void FMSynth::slew(float v) {

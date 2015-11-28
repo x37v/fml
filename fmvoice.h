@@ -31,7 +31,7 @@ class FMVoice {
     void mode(mode_t v);
     mode_t mode() const;
   private:
-    void update_increments(); //based on frequency or ratio change
+    void update_increments();
 
     complete_callback_t mCompleteCallback = nullptr;
 
