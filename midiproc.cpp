@@ -6,6 +6,10 @@
 using std::cout;
 using std::endl;
 
+namespace {
+  const int num_ratios = 5;
+}
+
 FMMidiProc::FMMidiProc(FMSynth& synth) {
   for (int i = 0; i < FM_VOICES; i++)
     mFreeVoiceQueue.push_back(i);
@@ -19,8 +23,8 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
   switch (num) {
     case RATIO:
       {
-        int index = roundf((fval * 2.0 - 1.0) * 4.0); 
-        if (abs(index) == 4) {
+        int index = roundf((fval * 2.0 - 1.0) * static_cast<float>(num_ratios)); 
+        if (abs(index) == num_ratios) {
           if (index > 0) {
             synth.mode(FMVoice::FIXED_MODULATOR);
             cout << "ratio: fixed modulator" << endl;
@@ -31,10 +35,10 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
         } else {
           synth.mode(FMVoice::NORMAL);
           float mod = 1.0f, car = 1.0f;
-          if (index >= 0) {
+          if (index > 0) {
             mod = 1.0 + index;
-          } else {
-            car = -index;
+          } else if (index < 0) {
+            car = 1.0 - index;
           }
           synth.freq_mult(mod, car);
           cout << "ratio: mod: " << mod << std::setprecision(4) << " car: " << car << std::setprecision(4) << endl;
@@ -58,7 +62,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       cout << "volume" << endl;
       break;
     case SLEW:
-      synth.slew(fval * fval);
+      synth.slew(fval);
       cout << "slew" << endl;
       break;
 
