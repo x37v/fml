@@ -190,7 +190,10 @@ FMVoice::mode_t FMVoice::mode() const {
 }
 
 void FMVoice::update_increments() {
-  mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
+  if (mSlewIncrement)
+    mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
+  else
+    mBaseFreq = mBaseFreqTarget;
   switch(mMode) {
     case FIXED_MODULATOR: 
       {
