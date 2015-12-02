@@ -15,7 +15,7 @@ namespace {
   const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.01);
 
   //# of hz per second
-  const float slew_increment_max = 10000.0f / fm::fsample_rate();
+  const float slew_increment_max = 10000.0f / (0.01 * fm::fsample_rate());
   const float slew_increment_min = 100.0f / fm::fsample_rate();
 }
 
