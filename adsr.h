@@ -25,12 +25,20 @@
 
 class ADSR {
   public:
+    enum envState {
+      env_idle = 0,
+      env_attack,
+      env_decay,
+      env_sustain,
+      env_release
+    };
+
     typedef std::function<void(void)> complete_callback_t;
     ADSR();
     ~ADSR();
     float process();
     float getOutput();
-    int getState() const;
+    envState getState() const;
     void gate(bool on);
     void setAttackRate(float rate);
     void setDecayRate(float rate);
@@ -42,16 +50,8 @@ class ADSR {
 
     void complete_callback(complete_callback_t cb); 
 
-    enum envState {
-      env_idle = 0,
-      env_attack,
-      env_decay,
-      env_sustain,
-      env_release
-    };
-
   protected:
-    int state;
+    envState state;
     float output;
     float attackRate;
     float decayRate;
@@ -116,7 +116,7 @@ inline void ADSR::gate(bool gate) {
     state = env_release;
 }
 
-inline int ADSR::getState() const {
+inline ADSR::envState ADSR::getState() const {
   return state;
 }
 
