@@ -27,6 +27,7 @@ class FMVoice {
     void complete_callback(complete_callback_t cb); 
 
     bool active() const;
+    ADSR::envState volume_envelope_state() const;
     
     void mode(mode_t v);
     mode_t mode() const;

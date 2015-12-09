@@ -4,6 +4,7 @@
 #include <array>
 #include "fmvoice.h"
 #include "defines.h"
+#include "adsr.h"
 
 class FMSynth {
   public:
@@ -14,6 +15,8 @@ class FMSynth {
     float compute();
     void trigger(unsigned int voice, bool on, float frequency = 440, float velocity = 1.0f); //frequency,velocity ignored for off
     void frequency(unsigned int voice, float frequency);
+
+    ADSR::envState volume_envelope_state(uint8_t voice) const;
 
     void mode(FMVoice::mode_t v);
 
@@ -29,9 +32,6 @@ class FMSynth {
     void mod_envelope_setting(ADSR::envState stage, float v);
 
     void complete_callback(voice_complete_cb_t cb);
-
-    //XXX debug
-    void print_active();
 
   private:
     float mModDepth = 0.0f;

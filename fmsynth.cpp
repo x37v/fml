@@ -43,7 +43,7 @@ float FMSynth::compute() {
 
 void FMSynth::trigger(unsigned int voice, bool on, float frequency, float velocity) {
   if (voice >= mVoices.size()) {
-    assert(false);
+    assert(voice < mVoices.size());
     return;
   }
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
@@ -56,6 +56,14 @@ void FMSynth::frequency(unsigned int voice, float freq) {
     return;
   }
   mVoices[voice].frequency(freq);
+}
+
+ADSR::envState FMSynth::volume_envelope_state(uint8_t voice) const {
+  if (voice >= mVoices.size()) {
+    assert(false);
+    return ADSR::env_idle;
+  }
+  return mVoices[voice].volume_envelope_state();
 }
 
 void FMSynth::mode(FMVoice::mode_t v) {
@@ -111,14 +119,3 @@ void FMSynth::complete_callback(voice_complete_cb_t cb) {
   mVoiceCompleteCallback = cb;
 }
 
-void FMSynth::print_active() {
-  bool any = false;
-  for (int i = 0; i < mVoices.size(); i++) {
-    if (mVoices[i].active()) {
-      cout << i << "\t";
-      any = true;
-    }
-  }
-  if (any)
-    cout << endl;
-}

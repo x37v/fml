@@ -176,9 +176,8 @@ void FMVoice::complete_callback(complete_callback_t cb) {
   mCompleteCallback = cb;
 }
 
-bool FMVoice::active() const {
-  //return mAmpEnv.stage() != ADAREnvelope::COMPLETE;
-  return mAmpEnv.getState() != ADSR::env_idle;
+ADSR::envState FMVoice::volume_envelope_state() const {
+  return mAmpEnv.getState();
 }
 
 void FMVoice::mode(mode_t v) {
