@@ -3,7 +3,7 @@
 
 #include "fmsynth.h"
 #include "defines.h"
-#include <deque>
+#include <vector>
 
 class FMMidiProc {
   public:
@@ -31,8 +31,7 @@ class FMMidiProc {
 
     void voice_freed(unsigned int voice);
   private:
-    std::deque<std::pair<uint8_t, uint8_t>> mNoteVoiceLRUQueue;
-    std::deque<uint8_t> mFreeVoiceQueue;
+    std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
     uint8_t mNoteChannel = 0;
     uint8_t mCCChannel = 1;
 

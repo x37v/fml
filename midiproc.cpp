@@ -1,6 +1,7 @@
 #include "midiproc.h"
 #include <cmath>
 
+#include <cassert>
 #include <iostream>
 #include <iomanip>
 using std::cout;
@@ -11,8 +12,9 @@ namespace {
 }
 
 FMMidiProc::FMMidiProc(FMSynth& synth) {
-  for (int i = 0; i < FM_VOICES; i++)
-    mFreeVoiceQueue.push_back(i);
+  for (int i = 0; i < FM_VOICES; i++) {
+    mNoteLRUQueue.push_back({0, 0});
+  }
   synth.complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
@@ -98,10 +100,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
   if (channel != mNoteChannel)
     return;
-  int voice = -1;
 
-  //XXX do we find sounding voices and dealloc them?
-  
   if (mMonoMode) {
     if (on) {
       float freq = fm::midi_note_to_freq(note);
@@ -109,7 +108,6 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
         synth.trigger(0, true, freq, static_cast<float>(vel) / 127.0f);
       else
         synth.frequency(0,  freq);
-
       mLastNote = note;
     } else {
       if (mLastNote == note) {
@@ -119,23 +117,46 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
     }
   } else {
     if (on) {
-      //use a free voice or the least recently used sounding voice
-      if (mFreeVoiceQueue.size()) {
-        voice = mFreeVoiceQueue.front();
-        mFreeVoiceQueue.pop_front();
-      } else {
-        voice = mNoteVoiceLRUQueue.front().second;
-        mNoteVoiceLRUQueue.pop_front();
-        //XXX what to do about click?
+      int voice = -1;
+      int same_note = -1;
+      int release_note = -1;
+      uint8_t lru_voice = 0;
+
+      //look for a voice with the same note, a free voice, and the least recently used voice
+      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
+        if (mNoteLRUQueue[i].first == note) {
+          same_note = i;
+          break;
+        }
+        if (mNoteLRUQueue[i].second == 0)
+          voice = i;
+        if (synth.volume_envelope_state(i) == ADSR::env_release)
+          release_note = i;
+        if (mNoteLRUQueue[lru_voice].second < mNoteLRUQueue[i].second)
+          lru_voice = i;
       }
-      mNoteVoiceLRUQueue.push_back({note, voice});
+
+      //same note, then free note, then release note, then least recently used
+      if (same_note >= 0) {
+        voice = same_note;
+      } else if (voice < 0) {
+        voice = release_note >= 0 ? release_note : lru_voice;
+      }
+
+      //increment all indicies that are non zero or the voice
+      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
+        if (i == voice || mNoteLRUQueue[i].second == 0)
+          continue;
+        mNoteLRUQueue[i].second++;
+      }
+
+      mNoteLRUQueue[voice] = {note, 1};
       synth.trigger(voice, true, fm::midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
     } else {
       //don't actually take an 'off' note out of the queue because it needs its release time
-      for (auto& nv: mNoteVoiceLRUQueue) {
-        if (nv.first == note) {
-          voice = nv.second;
-          synth.trigger(voice, false);
+      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
+        if (mNoteLRUQueue[i].first == note) {
+          synth.trigger(i, false);
         }
       }
     }
@@ -145,11 +166,17 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
 }
 
 void FMMidiProc::voice_freed(unsigned int voice) {
-  for (int i = 0; i < mNoteVoiceLRUQueue.size(); i++) {
-    if (mNoteVoiceLRUQueue[i].second == voice) {
-      mFreeVoiceQueue.push_back(voice);
-      mNoteVoiceLRUQueue.erase(mNoteVoiceLRUQueue.begin() + i);
-      break;
+  if (voice >= mNoteLRUQueue.size()) {
+    assert(voice < mNoteLRUQueue.size());
+    return;
+  }
+  //anything greater than our index should get decremented
+  uint8_t index = mNoteLRUQueue[voice].second;
+  if (index > 0) {
+    mNoteLRUQueue[voice] = {0, 0};
+    for (int i = 0; i < mNoteLRUQueue.size(); i++) {
+      if (mNoteLRUQueue[i].second >= index)
+        mNoteLRUQueue[i].second--;
     }
   }
 }
