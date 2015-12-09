@@ -190,7 +190,7 @@ FMVoice::mode_t FMVoice::mode() const {
 }
 
 void FMVoice::update_increments() {
-  if (mSlewIncrement)
+  if (mSlewIncrement > 0)
     mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
   else
     mBaseFreq = mBaseFreqTarget;

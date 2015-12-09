@@ -13,10 +13,6 @@ namespace {
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.01);
   const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.01);
   const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.01);
-
-  //# of hz per second
-  const float slew_increment_max = 10000.0f / (0.01 * fm::fsample_rate());
-  const float slew_increment_min = 100.0f / fm::fsample_rate();
 }
 
 FMSynth::FMSynth() {
@@ -91,9 +87,7 @@ void FMSynth::modulator_freq_offset(float v) {
 }
 
 void FMSynth::slew(float v) {
-  //0 gives max slew increment [minimum perceived slew]
-  //1 gives min slew increment [max perceived slew]
-  float slew = slew_increment_max + v * (slew_increment_min - slew_increment_max);
+  float slew = v > 0 ? (2000.0 / (v * fm::fsample_rate())) : 0.0;
 
   for (auto& s: mVoices)
     s.slew_increment(slew);
