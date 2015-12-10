@@ -14,6 +14,8 @@ namespace {
   const float two_pi = 6.28318530718f;
   const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
   const float offset_increment = 1.0f / (fm::fsample_rate() * 0.015);
+  const float fixed_midi_start = -38.0f;
+  const float fixed_midi_range = 123.0f - fixed_midi_start;
 
   float remap_amp_velocity(float velocity) {
     if (velocity < 0.5)
@@ -198,7 +200,7 @@ void FMVoice::update_increments() {
   switch(mMode) {
     case FIXED_MODULATOR: 
       {
-        float freq = 0.9 + 9900.0 * mMFreqMultOffset;
+        float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
         mMPhaseInc = freq / fm::fsample_rate();
         mCPhaseInc = mBaseFreq / fm::fsample_rate();
       }
@@ -206,7 +208,7 @@ void FMVoice::update_increments() {
 
     case FIXED_CARRIER:
       {
-        float freq = 0.9 + 9900.0 * mMFreqMultOffset;
+        float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
         mCPhaseInc = freq / fm::fsample_rate();
         mMPhaseInc = mBaseFreq / fm::fsample_rate();
       }
