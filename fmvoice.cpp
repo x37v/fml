@@ -13,6 +13,7 @@ using std::endl;
 namespace {
   const float two_pi = 6.28318530718f;
   const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
+  const float offset_increment = 1.0f / (fm::fsample_rate() * 0.015);
 
   float remap_amp_velocity(float velocity) {
     if (velocity < 0.5)
@@ -125,7 +126,7 @@ void FMVoice::freq_mult(float mod, float car) {
 }
 
 void FMVoice::modulator_freq_offset(float v) {
-  mMFreqMultOffset = v;
+  mMFreqMultOffsetTarget = v;
 }
 
 void FMVoice::slew_increment(float v) {
@@ -193,10 +194,11 @@ void FMVoice::update_increments() {
     mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
   else
     mBaseFreq = mBaseFreqTarget;
+  mMFreqMultOffset = fm::lin_smooth(mMFreqMultOffsetTarget, mMFreqMultOffset, offset_increment);
   switch(mMode) {
     case FIXED_MODULATOR: 
       {
-        float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+        float freq = 0.9 + 9900.0 * mMFreqMultOffset;
         mMPhaseInc = freq / fm::fsample_rate();
         mCPhaseInc = mBaseFreq / fm::fsample_rate();
       }
@@ -204,7 +206,7 @@ void FMVoice::update_increments() {
 
     case FIXED_CARRIER:
       {
-        float freq = fm::midi_note_to_freq((mMFreqMultOffset * 160.0 - 80.0));
+        float freq = 0.9 + 9900.0 * mMFreqMultOffset;
         mCPhaseInc = freq / fm::fsample_rate();
         mMPhaseInc = mBaseFreq / fm::fsample_rate();
       }

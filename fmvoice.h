@@ -59,6 +59,7 @@ class FMVoice {
     float mAmpVelocityTarget = 1.0f;
 
     float mMFreqMultOffset = 0.0f;
+    float mMFreqMultOffsetTarget = 0.0f;
 
     float mBaseFreq = 440.0f;
     float mBaseFreqTarget = 440.0f;
