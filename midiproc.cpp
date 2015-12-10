@@ -8,7 +8,7 @@ using std::cout;
 using std::endl;
 
 namespace {
-  const int num_ratios = 5;
+  const int num_ratios = 11;
 }
 
 FMMidiProc::FMMidiProc(FMSynth& synth) {
