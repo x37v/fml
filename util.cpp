@@ -2,10 +2,14 @@
 #include <cmath>
 
 float fm::lin_smooth(float target, float current, float increment) {
-  if (fabs(target - current) <= increment) {
-    current = target;
+  if (increment > 0) {
+    if (target <= current)
+      return target;
   } else {
-    current += (target > current) ? increment : -increment;
+    if (target >= current)
+      return target;
   }
-  return current;
+ 
+  return current + increment;
 }
+
