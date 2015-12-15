@@ -85,11 +85,28 @@ float FMVoice::compute() {
   return car;
 }
 
-void FMVoice::trigger(bool on, float freq, float velocity) {
+void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {
   bool idle = mAmpEnv.getState() == ADSR::env_idle;
   bool retrigger = idle || mAmpEnv.getState() == ADSR::env_release;
+
   if (on) {
-    frequency(freq);
+    mMidiNoteTarget = midi_note;
+    mMidiNote = slew_note; //XXX what about not idle?
+
+    if (mSlewSecondsPerOctave > 0) {
+      float diff = mMidiNoteTarget - mMidiNote;
+      float sec = fabs(diff / 12.0) * mSlewSecondsPerOctave;
+      if (sec > 0)
+        mSlewIncrement = diff / (sec * fm::fsample_rate());
+      else
+        mSlewIncrement = 0;
+    } else {
+      mMidiNote = mMidiNoteTarget;
+      mSlewIncrement = 0;
+    }
+
+    cout << "target: " << mMidiNoteTarget << " start: " << mMidiNote << " increment: " << mSlewIncrement << endl;
+
     //set a target amp velocity, we don't set it directly unless we're off,
     //otherwise we'll get clicks
     if (retrigger) {
@@ -111,7 +128,6 @@ void FMVoice::trigger(bool on, float freq, float velocity) {
 }
 
 void FMVoice::frequency(float f) {
-  mBaseFreqTarget = f;
 }
 
 void FMVoice::feedback(float v) {
@@ -131,8 +147,8 @@ void FMVoice::modulator_freq_offset(float v) {
   mMFreqMultOffsetTarget = v;
 }
 
-void FMVoice::slew_increment(float v) {
-  mSlewIncrement = v;
+void FMVoice::slew_rate(float seconds_per_octave) {
+  mSlewSecondsPerOctave = seconds_per_octave;
 }
 
 void FMVoice::volume_envelope_setting(ADSR::envState stage, float v) {
@@ -192,17 +208,20 @@ FMVoice::mode_t FMVoice::mode() const {
 }
 
 void FMVoice::update_increments() {
-  if (mSlewIncrement > 0)
-    mBaseFreq = fm::lin_smooth(mBaseFreqTarget, mBaseFreq, mSlewIncrement);
+  if (mSlewIncrement != 0)
+    mMidiNote = fm::lin_smooth(mMidiNoteTarget, mMidiNote, mSlewIncrement);
   else
-    mBaseFreq = mBaseFreqTarget;
+    mMidiNote = mMidiNoteTarget;
+
+  float base_freq = fm::midi_note_to_freq(mMidiNote);
+
   mMFreqMultOffset = fm::lin_smooth(mMFreqMultOffsetTarget, mMFreqMultOffset, offset_increment);
   switch(mMode) {
     case FIXED_MODULATOR: 
       {
         float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
         mMPhaseInc = freq / fm::fsample_rate();
-        mCPhaseInc = mBaseFreq / fm::fsample_rate();
+        mCPhaseInc = base_freq / fm::fsample_rate();
       }
       break;
 
@@ -210,12 +229,12 @@ void FMVoice::update_increments() {
       {
         float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
         mCPhaseInc = freq / fm::fsample_rate();
-        mMPhaseInc = mBaseFreq / fm::fsample_rate();
+        mMPhaseInc = base_freq / fm::fsample_rate();
       }
       break;
     default:
-      mMPhaseInc = (mBaseFreq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
-      mCPhaseInc = (mBaseFreq * mCFreqMult) / fm::fsample_rate();
+      mMPhaseInc = (base_freq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
+      mCPhaseInc = (base_freq * mCFreqMult) / fm::fsample_rate();
       break;
   }
 }

@@ -64,7 +64,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       cout << "volume" << endl;
       break;
     case SLEW:
-      synth.slew(fval);
+      synth.slew_rate(fval * 0.25);
       cout << "slew" << endl;
       break;
 
@@ -105,7 +105,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
     if (on) {
       float freq = fm::midi_note_to_freq(note);
       if (mLastNote == 255) //only true if we're off
-        synth.trigger(0, true, freq, static_cast<float>(vel) / 127.0f);
+        synth.trigger(0, true, note, static_cast<float>(vel) / 127.0f);
       else
         synth.frequency(0,  freq);
       mLastNote = note;
@@ -151,7 +151,7 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
       }
 
       mNoteLRUQueue[voice] = {note, 1};
-      synth.trigger(voice, true, fm::midi_note_to_freq(note), static_cast<float>(vel) / 127.0f);
+      synth.trigger(voice, true, note, static_cast<float>(vel) / 127.0f);
     } else {
       //don't actually take an 'off' note out of the queue because it needs its release time
       for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {

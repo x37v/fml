@@ -22,7 +22,7 @@ FMSynth::FMSynth() {
         mVoiceCompleteCallback(i);
     });
   }
-  slew(0.0f);
+  slew_rate(0.0f);
 }
 
 float FMSynth::compute() {
@@ -41,13 +41,31 @@ float FMSynth::compute() {
   return mVolume * (out / static_cast<float>(mVoices.size()));
 }
 
-void FMSynth::trigger(unsigned int voice, bool on, float frequency, float velocity) {
+void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velocity) {
   if (voice >= mVoices.size()) {
     assert(voice < mVoices.size());
     return;
   }
+
+  if (mSlewNote == UINT8_MAX)
+    mSlewNote = midi_note;
+
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
-  mVoices[voice].trigger(on, frequency, velocity);
+  mVoices[voice].trigger(on, midi_note, velocity, mNotesDown == 0 ? midi_note : mSlewNote);
+
+  if (mNotesDown == 0) {
+    if (on) {
+      mNotesDown++;
+    } else {
+      assert(false);
+    }
+  } else {
+    mNotesDown += (on ? 1 : -1);
+  }
+  
+  if (on) {
+    mSlewNote = midi_note;
+  }
 }
 
 void FMSynth::frequency(unsigned int voice, float freq) {
@@ -94,11 +112,9 @@ void FMSynth::modulator_freq_offset(float v) {
   mModFreqOffsetTarget = v;
 }
 
-void FMSynth::slew(float v) {
-  float slew = v > 0 ? (2000.0 / (v * fm::fsample_rate())) : 0.0;
-
+void FMSynth::slew_rate(float seconds_per_octave) {
   for (auto& s: mVoices)
-    s.slew_increment(slew);
+    s.slew_rate(seconds_per_octave);
 }
 
 void FMSynth::volume(float v) {

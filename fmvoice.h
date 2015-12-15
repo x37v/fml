@@ -11,7 +11,7 @@ class FMVoice {
     FMVoice();
 
     float compute();
-    void trigger(bool on, float frequency, float velocity);
+    void trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note = UINT8_MAX);
     void frequency(float frequency); //no retrigger
 
     void feedback(float v);
@@ -19,7 +19,7 @@ class FMVoice {
     void freq_mult(float mod, float car);
     void modulator_freq_offset(float v);
 
-    void slew_increment(float v);
+    void slew_rate(float seconds_per_octave);
 
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
@@ -44,6 +44,9 @@ class FMVoice {
     float mMPhaseInc = 0.0f;
     float mCPhaseInc = 0.0f;
 
+    float mMidiNote = 0.0f;
+    float mMidiNoteTarget = 0.0f;
+
     float mMOutLast = 0.0f;
 
     float mMFeedBack = 0.01f;
@@ -61,10 +64,8 @@ class FMVoice {
     float mMFreqMultOffset = 0.0f;
     float mMFreqMultOffsetTarget = 0.0f;
 
-    float mBaseFreq = 440.0f;
-    float mBaseFreqTarget = 440.0f;
-
     float mSlewIncrement = 1.0f;
+    float mSlewSecondsPerOctave = 0.0f;
 
     ADSR mModEnv;
     ADSR mAmpEnv;
