@@ -29,10 +29,8 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
         if (abs(index) == num_ratios) {
           if (index > 0) {
             synth.mode(FMVoice::FIXED_MODULATOR);
-            cout << "ratio: fixed modulator" << endl;
           } else {
             synth.mode(FMVoice::FIXED_CARRIER);
-            cout << "ratio: fixed carrier" << endl;
           }
         } else {
           synth.mode(FMVoice::NORMAL);
@@ -43,54 +41,43 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
             car = 1.0 - index;
           }
           synth.freq_mult(mod, car);
-          cout << "ratio: mod: " << mod << std::setprecision(4) << " car: " << car << std::setprecision(4) << endl;
         }
       }
       break;
     case FINE:
       synth.modulator_freq_offset(fval);
-      cout << "fine " << fval << endl;
       break;
     case FBDK:
       synth.feedback(fval);
-      cout << "mod fbdk" << endl;
       break;
     case DEPTH:
       synth.mod_depth(fval);
-      cout << "mod depth " << endl;
       break;
     case VOL:
       synth.volume(fval);
-      cout << "volume" << endl;
       break;
     case SLEW:
       synth.slew_rate(fval * 0.25);
-      cout << "slew" << endl;
       break;
 
     case MOD_ENV_ATK:
       synth.mod_envelope_setting(ADSR::env_attack, 2.0 * fval);
-      cout << "mod atk " << endl;
       break;
     case MOD_ENV_DEC:
       synth.mod_envelope_setting(ADSR::env_decay, 2.0 * fval);
-      cout << "mod dec " << endl;
       break;
 
     case VOL_ENV_ATK:
       synth.volume_envelope_setting(ADSR::env_attack, 0.015 + fval * 2.0);
-      cout << "vol attack " << endl;
       break;
     //case VOL_ENV_DEC:
       //synth.volume_envelope_setting(ADSR::env_decay, 0.015 + fval * 2.0);
-      //cout << "vol dec " << endl;
       //break;
     //case VOL_ENV_SUS:
       //synth.volume_envelope_setting(ADSR::env_sustain, fval);
       //break;
     case VOL_ENV_REL:
       synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
-      cout << "vol release " << endl;
       break;
     default:
       break;
@@ -161,8 +148,6 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
       }
     }
   }
-
-  //cout << voice << " note " << (on ? "on  " : "off ") << static_cast<int>(note) << endl;
 }
 
 void FMMidiProc::voice_freed(unsigned int voice) {
