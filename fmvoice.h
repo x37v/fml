@@ -12,7 +12,7 @@ class FMVoice {
 
     float compute();
     void trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note = UINT8_MAX);
-    void frequency(float frequency); //no retrigger
+    void note(uint8_t midi_node);
 
     void feedback(float v);
     void mod_depth(float v);

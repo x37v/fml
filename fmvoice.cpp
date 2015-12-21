@@ -86,26 +86,12 @@ float FMVoice::compute() {
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {
-  bool idle = mAmpEnv.getState() == ADSR::env_idle;
-  bool retrigger = idle || mAmpEnv.getState() == ADSR::env_release;
+  bool retrigger = mAmpEnv.getState() == ADSR::env_idle || mAmpEnv.getState() == ADSR::env_release;
 
   if (on) {
-    mMidiNoteTarget = midi_note;
-    if (idle)
+    if (mAmpEnv.getState() == ADSR::env_idle)
       mMidiNote = slew_note;
-
-    if (mSlewSecondsPerOctave > 0) {
-      float diff = mMidiNoteTarget - mMidiNote;
-      float sec = fabs(diff / 12.0) * mSlewSecondsPerOctave;
-      if (sec > 0)
-        mSlewIncrement = diff / (sec * fm::fsample_rate());
-      else
-        mSlewIncrement = 0;
-    } else {
-      mMidiNote = mMidiNoteTarget;
-      mSlewIncrement = 0;
-    }
-
+    note(midi_note);
     //set a target amp velocity, we don't set it directly unless we're off,
     //otherwise we'll get clicks
     if (retrigger) {
@@ -126,7 +112,20 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
   }
 }
 
-void FMVoice::frequency(float f) {
+void FMVoice::note(uint8_t midi_note) {
+  mMidiNoteTarget = midi_note;
+
+  if (mSlewSecondsPerOctave > 0) {
+    float diff = mMidiNoteTarget - mMidiNote;
+    float sec = fabs(diff / 12.0) * mSlewSecondsPerOctave;
+    if (sec > 0)
+      mSlewIncrement = diff / (sec * fm::fsample_rate());
+    else
+      mSlewIncrement = 0;
+  } else {
+    mMidiNote = mMidiNoteTarget;
+    mSlewIncrement = 0;
+  }
 }
 
 void FMVoice::feedback(float v) {
