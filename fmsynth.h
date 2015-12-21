@@ -38,6 +38,7 @@ class FMSynth {
     uint8_t mNotesDown = 0;
     float mModDepth = 0.0f;
     float mModDepthTarget = 0.0f;
+    float mModDepthIncrement = 0.0f;
     float mModFreqOffset = 0.0f;
     float mModFreqOffsetTarget = 0.0f;
     float mVolume = 1.0f;

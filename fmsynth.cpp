@@ -12,7 +12,7 @@ namespace {
   //takes 10ms from 0..1
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.01);
   const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.01);
-  const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.01);
+  const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.05);
 }
 
 FMSynth::FMSynth() {
@@ -23,13 +23,15 @@ FMSynth::FMSynth() {
     });
   }
   slew_rate(0.0f);
+
+  mModDepthIncrement = mod_depth_increment;
 }
 
 float FMSynth::compute() {
   float out = 0;
 
   //smooth
-  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mod_depth_increment);
+  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, volume_increment);
   mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mod_freq_increment);
 
@@ -101,6 +103,7 @@ void FMSynth::feedback(float v) {
 
 void FMSynth::mod_depth(float v) {
   mModDepthTarget = 5.0 * powf(0.5 * v, 2.0);
+  mModDepthIncrement = (mModDepthTarget > mModDepth) ? mod_depth_increment : -mod_depth_increment;
 }
 
 void FMSynth::freq_mult(float mod, float car) {
