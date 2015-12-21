@@ -41,8 +41,10 @@ class FMSynth {
     float mModDepthIncrement = 0.0f;
     float mModFreqOffset = 0.0f;
     float mModFreqOffsetTarget = 0.0f;
+    float mModFreqIncrement = 0.0f;
     float mVolume = 1.0f;
     float mVolumeTarget = 1.0f;
+    float mVolumeIncrement = 0.0f;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
