@@ -35,6 +35,8 @@ class FMSynth {
     void complete_callback(voice_complete_cb_t cb);
 
     void all_off();
+    //require a note to be held to slew?
+    void slew_held_only(bool v);
 
   private:
     uint8_t mNotesDown = 0;
@@ -47,6 +49,7 @@ class FMSynth {
     float mVolume = 1.0f;
     float mVolumeTarget = 1.0f;
     float mVolumeIncrement = 0.0f;
+    bool mSlewHeldOnly = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;

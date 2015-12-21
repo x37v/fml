@@ -55,7 +55,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mSlewNote = midi_note;
 
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
-  mVoices[voice].trigger(on, midi_note, velocity, mNotesDown == 0 ? midi_note : mSlewNote);
+  mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && mNotesDown == 0) ? midi_note : mSlewNote);
 
   if (mNotesDown == 0) {
     if (on) {
@@ -146,3 +146,6 @@ void FMSynth::all_off() {
     s.trigger(false, 64, 127.0);
 }
 
+void FMSynth::slew_held_only(bool v) {
+  mSlewHeldOnly = v;
+}
