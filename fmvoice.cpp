@@ -91,7 +91,8 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
 
   if (on) {
     mMidiNoteTarget = midi_note;
-    mMidiNote = slew_note; //XXX what about not idle?
+    if (idle)
+      mMidiNote = slew_note;
 
     if (mSlewSecondsPerOctave > 0) {
       float diff = mMidiNoteTarget - mMidiNote;
