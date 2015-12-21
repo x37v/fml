@@ -24,7 +24,7 @@ class FMMidiProc {
       //VOL_ENV_SUS = 31,
       //VOL_ENV_DEC = 39,
 
-      MONO_MODE = 50,
+      MONO_MODE = 58,
     };
 
     FMMidiProc(FMSynth& synth);
