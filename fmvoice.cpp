@@ -47,10 +47,10 @@ FMVoice::FMVoice() {
   mAmpEnv.setSustainLevel(1.0);
   mAmpEnv.setReleaseRate(1.0 * 44100.0);
 
-  mModEnv.setAttackRate(0);
-  mModEnv.setDecayRate(4 * 44100.0);
+  mModEnv.setAttackRate(fm::fsample_rate() * 0.01);
+  mModEnv.setDecayRate(fm::fsample_rate() * 0.01);
+  mModEnv.setReleaseRate(fm::fsample_rate() * 0.01);
   mModEnv.setSustainLevel(0.1);
-  mModEnv.setReleaseRate(10.0 * 44100.0);
 
   mAmpEnv.complete_callback([this] (void) {
     if (mCompleteCallback)
@@ -105,8 +105,6 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
       mMidiNote = mMidiNoteTarget;
       mSlewIncrement = 0;
     }
-
-    cout << "target: " << mMidiNoteTarget << " start: " << mMidiNote << " increment: " << mSlewIncrement << endl;
 
     //set a target amp velocity, we don't set it directly unless we're off,
     //otherwise we'll get clicks
