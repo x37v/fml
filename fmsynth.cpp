@@ -60,8 +60,6 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
   if (mNotesDown == 0) {
     if (on) {
       mNotesDown++;
-    } else {
-      assert(false);
     }
   } else {
     mNotesDown += (on ? 1 : -1);
@@ -72,12 +70,12 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
   }
 }
 
-void FMSynth::frequency(unsigned int voice, float freq) {
+void FMSynth::note(unsigned int voice, uint8_t midi_note) {
   if (voice >= mVoices.size()) {
     assert(false);
     return;
   }
-  mVoices[voice].frequency(freq);
+  mVoices[voice].note(midi_note);
 }
 
 ADSR::envState FMSynth::volume_envelope_state(uint8_t voice) const {
@@ -140,5 +138,11 @@ void FMSynth::mod_envelope_setting(ADSR::envState stage, float v) {
 
 void FMSynth::complete_callback(voice_complete_cb_t cb) {
   mVoiceCompleteCallback = cb;
+}
+
+void FMSynth::all_off() {
+  mNotesDown = 0;
+  for (auto& s: mVoices)
+    s.trigger(false, 64, 127.0);
 }
 

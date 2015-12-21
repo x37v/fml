@@ -15,7 +15,7 @@ class FMSynth {
     float compute();
     void trigger(unsigned int voice, bool on,
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
-    void frequency(unsigned int voice, float frequency);
+    void note(unsigned int voice, uint8_t note);
 
     ADSR::envState volume_envelope_state(uint8_t voice) const;
 
@@ -33,6 +33,8 @@ class FMSynth {
     void mod_envelope_setting(ADSR::envState stage, float v);
 
     void complete_callback(voice_complete_cb_t cb);
+
+    void all_off();
 
   private:
     uint8_t mNotesDown = 0;

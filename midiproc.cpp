@@ -83,6 +83,9 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     case VOL_ENV_REL:
       synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
       break;
+    case MONO_MODE:
+      mMonoMode = (val != 0);
+      synth.all_off();
     default:
       break;
   }
@@ -94,11 +97,10 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
 
   if (mMonoMode) {
     if (on) {
-      float freq = fm::midi_note_to_freq(note);
-      if (mLastNote == 255) //only true if we're off
+      if (mLastNote == 255)
         synth.trigger(0, true, note, static_cast<float>(vel) / 127.0f);
       else
-        synth.frequency(0,  freq);
+        synth.note(0, note);
       mLastNote = note;
     } else {
       if (mLastNote == note) {
