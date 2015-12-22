@@ -97,8 +97,7 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
   bool retrigger = mAmpEnv.getState() == ADSR::env_idle || mAmpEnv.getState() == ADSR::env_release;
 
   if (on) {
-    if (mAmpEnv.getState() == ADSR::env_idle)
-      mMidiNote = slew_note;
+    mMidiNote = slew_note;
     note(midi_note);
 
     mAmpVelocityTarget = remap_amp_velocity(velocity);
