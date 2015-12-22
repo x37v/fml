@@ -24,6 +24,8 @@ class FMMidiProc {
       //VOL_ENV_SUS = 31,
       //VOL_ENV_DEC = 39,
 
+      TRANSPOSE = 10,
+
       MONO_MODE = 58,
     };
 

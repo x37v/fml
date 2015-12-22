@@ -22,6 +22,7 @@ class FMSynth {
     void mode(FMVoice::mode_t v);
 
     void bend(float v);
+    void transpose(int16_t midi_note);
 
     void feedback(float v);
     void mod_depth(float v);
@@ -51,6 +52,12 @@ class FMSynth {
     float mVolume = 1.0f;
     float mVolumeTarget = 1.0f;
     float mVolumeIncrement = 0.0f;
+    float mTranspose = 0.0f;
+    float mTransposeTarget = 0.0f;
+    float mTransposeIncrement = 0.0f;
+    float mBend = 0.0f;
+    float mBendTarget = 0.0f;
+    float mBendIncrement = 0.0f;
     bool mSlewHeldOnly = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;

@@ -13,6 +13,8 @@ namespace {
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.05);
+  const float transpose_increment = 1.0f / (fm::fsample_rate() * 0.005);
+  const float bend_increment = 1.0f / (fm::fsample_rate() * 0.015);
 }
 
 FMSynth::FMSynth() {
@@ -36,10 +38,14 @@ float FMSynth::compute() {
   mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
   mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement);
+  mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement);
+  mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
 
   for (auto& s: mVoices) {
     s.modulator_freq_offset(mModFreqOffset);
     s.mod_depth(mModDepth);
+    s.transpose(mTranspose);
+    s.bend(mBend);
     out += s.compute();
   }
   return mVolume * (out / static_cast<float>(mVoices.size()));
@@ -92,8 +98,13 @@ void FMSynth::mode(FMVoice::mode_t v) {
 }
 
 void FMSynth::bend(float v) {
-  for (auto& s: mVoices)
-    s.bend(v);
+  mBendTarget = v * 12.0;
+  mBendIncrement = (mBendTarget > mBend) ? bend_increment : -bend_increment;
+}
+
+void FMSynth::transpose(int16_t midi_note) {
+  mTransposeTarget = midi_note;
+  mTransposeIncrement = (mTransposeTarget > mTranspose) ? transpose_increment : -transpose_increment;
 }
 
 void FMSynth::feedback(float v) {

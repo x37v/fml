@@ -83,6 +83,9 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     case VOL_ENV_REL:
       synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
       break;
+    case TRANSPOSE:
+      synth.transpose(((int16_t)val - 64) / 2);
+      break;
     case MONO_MODE:
       mMonoMode = (val != 0);
       synth.all_off();
