@@ -58,14 +58,12 @@ class JackAudio : public JackCpp::AudioIO {
       }
 
       for (unsigned int j = 0; j < nframes; j++) {
-        float v = mFM.compute() * mVolume;
-        for (unsigned int i = 0; i < outBufs.size(); i++) {
-          outBufs[i][j] = v;
-        }
-        if (mActiveCounter-- <= 0) {
-          mActiveCounter = 44100 * 2;
-          //mFM.print_active();
-        }
+        float left, right;
+        mFM.compute(left, right);
+        left *= mVolume;
+        right *= mVolume;
+        outBufs[0][j] = left;
+        outBufs[1][j] = right;
       }
       return 0;
     }
@@ -80,7 +78,6 @@ class JackAudio : public JackCpp::AudioIO {
     FMSynth mFM;
     FMMidiProc mMidiProc;
     float mVolume = 0.33f;
-    int mActiveCounter = 44100 * 2;
 };
 
 int main(int argc, char * argv[]) {

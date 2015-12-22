@@ -59,7 +59,7 @@ FMVoice::FMVoice() {
   });
 }
 
-float FMVoice::compute() {
+void FMVoice::compute(float& left, float& right) {
   update_increments();
 
   float mod_env = mModEnv.process() * mModDepth * mModVelocity;
@@ -83,7 +83,8 @@ float FMVoice::compute() {
     mCPhase += 1.0f;
   mMOutLast = mod;
 
-  return car;
+  left += car;
+  right += car;
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {

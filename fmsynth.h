@@ -12,7 +12,7 @@ class FMSynth {
 
     FMSynth();
 
-    float compute();
+    void compute(float& left, float& right);
     void trigger(unsigned int voice, bool on,
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     void note(unsigned int voice, uint8_t note);

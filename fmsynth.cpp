@@ -31,9 +31,8 @@ FMSynth::FMSynth() {
   mVolumeIncrement = volume_increment;
 }
 
-float FMSynth::compute() {
-  float out = 0;
-
+void FMSynth::compute(float& left, float& right) {
+  left = right = 0;
   //smooth
   mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
@@ -46,9 +45,11 @@ float FMSynth::compute() {
     s.mod_depth(mModDepth);
     s.transpose(mTranspose);
     s.bend(mBend);
-    out += s.compute();
+    s.compute(left, right);
   }
-  return mVolume * (out / static_cast<float>(mVoices.size()));
+  float vol = mVolume / static_cast<float>(mVoices.size());
+  left *= vol;
+  right *= vol;
 }
 
 void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velocity) {
