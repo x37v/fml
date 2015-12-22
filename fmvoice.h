@@ -42,6 +42,7 @@ class FMVoice {
 
     float mMPhase = 0.0f;
     float mCPhase = 0.0f;
+    float mCPhase2 = 0.0f;
 
     float mMPhaseInc = 0.0f;
     float mCPhaseInc = 0.0f;
