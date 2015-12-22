@@ -39,4 +39,5 @@ run: fml
 		jack_connect system:midi_capture_4 fm:fml_in ; \
 		jack_connect system:midi_capture_5 fm:fml_in ; \
 		jack_connect system:midi_capture_6 fm:fml_in ; \
+		jack_connect system:midi_capture_7 fm:fml_in ; \
 		wait

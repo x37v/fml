@@ -29,6 +29,7 @@ class FMMidiProc {
 
     FMMidiProc(FMSynth& synth);
     void process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val);
+    void process_bend(FMSynth& synth, uint8_t channel, uint8_t num0, uint8_t num1);
     void process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel);
 
     void voice_freed(unsigned int voice);

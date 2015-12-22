@@ -13,6 +13,7 @@ class FMVoice {
     float compute();
     void trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note = UINT8_MAX);
     void note(uint8_t midi_node);
+    void bend(float v);
 
     void feedback(float v);
     void mod_depth(float v);
@@ -66,6 +67,10 @@ class FMVoice {
 
     float mSlewIncrement = 1.0f;
     float mSlewSecondsPerOctave = 0.0f;
+
+    float mBend = 0.0f;
+    float mBendTarget = 0.0f;
+    float mBendIncrement = 0.0f;
 
     ADSR mModEnv;
     ADSR mAmpEnv;

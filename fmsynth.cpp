@@ -91,6 +91,11 @@ void FMSynth::mode(FMVoice::mode_t v) {
     s.mode(v);
 }
 
+void FMSynth::bend(float v) {
+  for (auto& s: mVoices)
+    s.bend(v);
+}
+
 void FMSynth::feedback(float v) {
   if (v < -1)
     v = -1;

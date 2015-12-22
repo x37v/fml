@@ -14,6 +14,8 @@ namespace {
   const float two_pi = 6.28318530718f;
   const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
   const float offset_increment = 1.0f / (fm::fsample_rate() * 0.015);
+  const float bend_increment = 1.0f / (fm::fsample_rate() * 0.015);
+
   const float fixed_midi_start = -38.0f;
   const float fixed_midi_range = 123.0f - fixed_midi_start;
 
@@ -128,6 +130,11 @@ void FMVoice::note(uint8_t midi_note) {
   }
 }
 
+void FMVoice::bend(float v) {
+  mBendTarget = v;
+  mBendIncrement = (mBendTarget > mBend) ? bend_increment : -bend_increment;
+}
+
 void FMVoice::feedback(float v) {
   mMFeedBack = v;
 }
@@ -211,8 +218,9 @@ void FMVoice::update_increments() {
   else
     mMidiNote = mMidiNoteTarget;
 
-  float base_freq = fm::midi_note_to_freq(mMidiNote);
+  float base_freq = fm::midi_note_to_freq(mMidiNote + mBend * 12.0f);
 
+  mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
   mMFreqMultOffset = fm::lin_smooth(mMFreqMultOffsetTarget, mMFreqMultOffset, offset_increment);
   switch(mMode) {
     case FIXED_MODULATOR: 

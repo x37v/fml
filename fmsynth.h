@@ -21,6 +21,8 @@ class FMSynth {
 
     void mode(FMVoice::mode_t v);
 
+    void bend(float v);
+
     void feedback(float v);
     void mod_depth(float v);
     void freq_mult(float mod, float car);

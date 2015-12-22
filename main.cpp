@@ -48,6 +48,9 @@ class JackAudio : public JackCpp::AudioIO {
                 case JackCpp::MIDIPort::CC:
                   mMidiProc.process_cc(mFM, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
                   break;
+                case JackCpp::MIDIPort::PITCHBEND:
+                  mMidiProc.process_bend(mFM, JackCpp::MIDIPort::channel(evt), evt.buffer[1], evt.buffer[2]);
+                  break;
               }
             }
           }

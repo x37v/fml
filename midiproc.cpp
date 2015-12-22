@@ -92,6 +92,14 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
   }
 }
 
+void FMMidiProc::process_bend(FMSynth& synth, uint8_t channel, uint8_t num0, uint8_t num1) {
+  if (channel != mNoteChannel)
+    return;
+  uint16_t p = ((uint16_t)num1 << 7) | num0;
+  float v = ((float)p - 8192.0f) / 8192.0f;
+  synth.bend(v);
+}
+
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
   if (channel != mNoteChannel)
     return;
