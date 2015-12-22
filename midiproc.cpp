@@ -88,7 +88,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
     case MONO_MODE:
       mMonoMode = (val != 0);
-      synth.all_off();
+      mLastNote = 255;
       synth.slew_held_only(!mMonoMode);
     default:
       break;
