@@ -74,7 +74,7 @@ void FMVoice::compute(float& left, float& right) {
 
   mMPhase = mMPhase + mMPhaseInc;
   mCPhase = mCPhase + mCPhaseInc;
-  mCPhase2 = mCPhase2 + (mCPhaseInc * 1.001);
+  mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
   while (mMPhase >= 1.0f)
     mMPhase -= 1.0f;
   while (mCPhase >= 1.0f)
