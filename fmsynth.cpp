@@ -58,7 +58,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     return;
   }
 
-  if (mSlewNote == UINT8_MAX)
+  if (mSlewNote == UINT8_MAX || (mSlewFromFirstHeld && mSlewHeldOnly && on && mNotesDown == 0))
     mSlewNote = midi_note;
 
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
@@ -72,7 +72,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mNotesDown += (on ? 1 : -1);
   }
   
-  if (on) {
+  if (on && !(mSlewFromFirstHeld && mSlewHeldOnly)) {
     mSlewNote = midi_note;
   }
 }

@@ -59,6 +59,7 @@ class FMSynth {
     float mBendTarget = 0.0f;
     float mBendIncrement = 0.0f;
     bool mSlewHeldOnly = true;
+    bool mSlewFromFirstHeld = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
