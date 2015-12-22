@@ -69,8 +69,8 @@ void FMVoice::compute(float& left, float& right) {
   float car = sin(two_pi * (mCPhase + mod)) * car_env;
   float car2 = sin(two_pi * (mCPhase2 + mod)) * car_env;
 
-  mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, velocity_increment);
-  mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, velocity_increment);
+  mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
+  mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);
 
   mMPhase = mMPhase + mMPhaseInc;
   mCPhase = mCPhase + mCPhaseInc;
@@ -100,14 +100,11 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
     if (mAmpEnv.getState() == ADSR::env_idle)
       mMidiNote = slew_note;
     note(midi_note);
-    //set a target amp velocity, we don't set it directly unless we're off,
-    //otherwise we'll get clicks
-    if (retrigger) {
-      mAmpVelocityTarget = remap_amp_velocity(velocity);
-      mModVelocityTarget = remap_mod_velocity(velocity);
-      //mAmpVelocity = mAmpVelocityTarget;
-      //mModVelocity = mModVelocityTarget;
-    }
+
+    mAmpVelocityTarget = remap_amp_velocity(velocity);
+    mModVelocityTarget = remap_mod_velocity(velocity);
+    mAmpVelocityIncrement = (mAmpVelocityTarget > mAmpVelocity) ? velocity_increment : -velocity_increment;
+    mModVelocityIncrement = (mModVelocityTarget > mModVelocity) ? velocity_increment : -velocity_increment;
   }
 
   //don't trigger if we're already on
