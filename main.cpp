@@ -79,7 +79,7 @@ class JackAudio : public JackCpp::AudioIO {
     JackCpp::MIDIInPort mMidiInput;
     FMSynth mFM;
     FMMidiProc mMidiProc;
-    float mVolume = 0.2;
+    float mVolume = 0.33f;
     int mActiveCounter = 44100 * 2;
 };
 
