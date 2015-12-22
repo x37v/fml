@@ -155,7 +155,7 @@ void FMVoice::freq_mult(float mod, float car) {
 
 void FMVoice::modulator_freq_offset(float v) {
   mMFreqMultOffsetTarget = v;
-  mMFreqMultOffsetIncrement = (mMFreqMultOffsetTarget > mMFreqMultOffset) : offset_increment : -offset_increment;
+  mMFreqMultOffsetIncrement = (mMFreqMultOffsetTarget > mMFreqMultOffset) ? offset_increment : -offset_increment;
 }
 
 void FMVoice::slew_rate(float seconds_per_octave) {
