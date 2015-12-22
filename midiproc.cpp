@@ -61,18 +61,18 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(ADSR::env_attack, 0.01 + 2.0 * fval);
+      synth.mod_envelope_setting(ADSR::env_attack, 0.01 + 4.0 * fval);
       break;
     case MOD_ENV_DEC:
       {
-        float v = 2.0 * fval;
+        float v = 4.0 * fval;
         synth.mod_envelope_setting(ADSR::env_decay, 0.01 + v);
         synth.mod_envelope_setting(ADSR::env_release, 0.01 + v);
       }
       break;
 
     case VOL_ENV_ATK:
-      synth.volume_envelope_setting(ADSR::env_attack, 0.015 + fval * 2.0);
+      synth.volume_envelope_setting(ADSR::env_attack, 0.015 + fval * 4.0);
       break;
     //case VOL_ENV_DEC:
       //synth.volume_envelope_setting(ADSR::env_decay, 0.015 + fval * 2.0);
