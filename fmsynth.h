@@ -40,9 +40,9 @@ class FMSynth {
     void all_off();
     //require a note to be held to slew?
     void slew_held_only(bool v);
+    void slew_from_first(bool v);
 
   private:
-    uint8_t mNotesDown = 0;
     float mModDepth = 0.0f;
     float mModDepthTarget = 0.0f;
     float mModDepthIncrement = 0.0f;
@@ -58,7 +58,7 @@ class FMSynth {
     float mBend = 0.0f;
     float mBendTarget = 0.0f;
     float mBendIncrement = 0.0f;
-    bool mSlewHeldOnly = true;
+    bool mSlewHeldOnly = false;
     bool mSlewFromFirstHeld = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;

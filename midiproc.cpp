@@ -88,8 +88,8 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
     case MONO_MODE:
       mMonoMode = (val != 0);
-      mLastNote = 255;
-      synth.slew_held_only(!mMonoMode);
+      synth.slew_held_only(mMonoMode);
+      synth.slew_from_first(!mMonoMode);
     default:
       break;
   }
@@ -107,22 +107,11 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
   if (channel != mNoteChannel)
     return;
 
-  if (mMonoMode) {
-    if (on) {
-      if (mLastNote == 255)
-        synth.trigger(0, true, note, static_cast<float>(vel) / 127.0f);
-      else
-        synth.note(0, note);
-      mLastNote = note;
+  if (on) {
+    int voice = -1;
+    if (mMonoMode) {
+      voice = 0;
     } else {
-      if (mLastNote == note) {
-        synth.trigger(0, false);
-        mLastNote = 255;
-      }
-    }
-  } else {
-    if (on) {
-      int voice = -1;
       int same_note = -1;
       int release_note = -1;
       uint8_t lru_voice = 0;
@@ -154,15 +143,19 @@ void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t 
           continue;
         mNoteLRUQueue[i].second++;
       }
+    }
 
-      mNoteLRUQueue[voice] = {note, 1};
+    mNoteLRUQueue[voice] = {note, 1};
+    auto vstate = synth.volume_envelope_state(voice);
+    if (mMonoMode && !((vstate == ADSR::env_idle || vstate == ADSR::env_release)))
+      synth.note(voice, note);
+    else
       synth.trigger(voice, true, note, static_cast<float>(vel) / 127.0f);
-    } else {
-      //don't actually take an 'off' note out of the queue because it needs its release time
-      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-        if (mNoteLRUQueue[i].first == note) {
-          synth.trigger(i, false);
-        }
+  } else {
+    //don't actually take an 'off' note out of the queue because it needs its release time
+    for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
+      if (mNoteLRUQueue[i].first == note) {
+        synth.trigger(i, false);
       }
     }
   }

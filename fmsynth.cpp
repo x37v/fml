@@ -58,22 +58,26 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     return;
   }
 
-  if (mSlewNote == UINT8_MAX || (mSlewFromFirstHeld && mSlewHeldOnly && on && mNotesDown == 0))
+  uint8_t voices_on = 0;
+  for (auto v: mVoices) {
+    if (!(v.volume_envelope_state() == ADSR::env_idle || v.volume_envelope_state() == ADSR::env_release))
+      voices_on += 1;
+  }
+
+  if (mSlewNote == UINT8_MAX || (on && voices_on == 0 && mSlewHeldOnly)) {
     mSlewNote = midi_note;
+  }
 
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
-  mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && mNotesDown == 0) ? midi_note : mSlewNote);
+  mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && voices_on == 0) ? midi_note : mSlewNote);
 
-  if (mNotesDown == 0) {
-    if (on) {
-      mNotesDown++;
+  if (on) {
+    if (mSlewFromFirstHeld) {
+      if (voices_on == 0)
+        mSlewNote = midi_note;
+    } else {
+      mSlewNote = midi_note;
     }
-  } else {
-    mNotesDown += (on ? 1 : -1);
-  }
-  
-  if (on && !(mSlewFromFirstHeld && mSlewHeldOnly)) {
-    mSlewNote = midi_note;
   }
 }
 
@@ -158,7 +162,6 @@ void FMSynth::complete_callback(voice_complete_cb_t cb) {
 }
 
 void FMSynth::all_off() {
-  mNotesDown = 0;
   for (auto& s: mVoices)
     s.trigger(false, 64, 127.0);
 }
@@ -166,3 +169,8 @@ void FMSynth::all_off() {
 void FMSynth::slew_held_only(bool v) {
   mSlewHeldOnly = v;
 }
+
+void FMSynth::slew_from_first(bool v) {
+  mSlewFromFirstHeld = v;
+}
+
