@@ -37,6 +37,7 @@ class FMSynth {
 
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
+    void mod_env_linear(bool v);
 
     void complete_callback(voice_complete_cb_t cb);
 

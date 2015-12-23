@@ -30,6 +30,8 @@ class FMVoice {
 
     bool active() const;
     ADSR::envState volume_envelope_state() const;
+
+    void mod_env_linear(bool v);
     
     void mode(mode_t v);
     mode_t mode() const;

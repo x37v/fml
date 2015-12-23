@@ -37,6 +37,8 @@ FMVoice::FMVoice() {
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
+  mod_env_linear(false);
+
   /*
   mModEnv.stage_setting(ADSREnvelope::SUSTAIN, 0.1);
   mModEnv.stage_setting(ADSREnvelope::RELEASE, 0.1);
@@ -208,6 +210,16 @@ void FMVoice::complete_callback(complete_callback_t cb) {
 
 ADSR::envState FMVoice::volume_envelope_state() const {
   return mAmpEnv.getState();
+}
+
+void FMVoice::mod_env_linear(bool v) {
+  if (v) {
+    mModEnv.setTargetRatioA(100);
+    mModEnv.setTargetRatioDR(100);
+  } else {
+    mModEnv.setTargetRatioA(0.0001);
+    mModEnv.setTargetRatioDR(0.0001);
+  }
 }
 
 void FMVoice::mode(mode_t v) {

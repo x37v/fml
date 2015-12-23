@@ -84,6 +84,10 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       break;
     case MONO_MODE:
       synth.mono_mode(val != 0);
+      break;
+    case MOD_ENV_LINEAR:
+      synth.mod_env_linear(val != 0);
+      break;
     default:
       break;
   }

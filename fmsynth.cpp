@@ -160,6 +160,11 @@ void FMSynth::mod_envelope_setting(ADSR::envState stage, float v) {
     s.mod_envelope_setting(stage, v);
 }
 
+void FMSynth::mod_env_linear(bool v) {
+  for (auto& s: mVoices)
+    s.mod_env_linear(v);
+}
+
 void FMSynth::complete_callback(voice_complete_cb_t cb) {
   mVoiceCompleteCallback = cb;
 }

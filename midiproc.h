@@ -27,6 +27,8 @@ class FMMidiProc {
       TRANSPOSE = 10,
 
       MONO_MODE = 58,
+
+      MOD_ENV_LINEAR = 59,
     };
 
     FMMidiProc(FMSynth& synth);

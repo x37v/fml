@@ -65,6 +65,7 @@ void ADSR::setTargetRatioA(float targetRatio) {
     targetRatio = 0.000000001;  // -180 dB
   targetRatioA = targetRatio;
   attackBase = (1.0 + targetRatioA) * (1.0 - attackCoef);
+  setAttackRate(attackRate);
 }
 
 void ADSR::setTargetRatioDR(float targetRatio) {
@@ -73,6 +74,8 @@ void ADSR::setTargetRatioDR(float targetRatio) {
   targetRatioDR = targetRatio;
   decayBase = (sustainLevel - targetRatioDR) * (1.0 - decayCoef);
   releaseBase = -targetRatioDR * (1.0 - releaseCoef);
+  setDecayRate(decayRate);
+  setReleaseRate(releaseRate);
 }
 
 
