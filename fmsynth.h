@@ -72,6 +72,7 @@ class FMSynth {
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
+    std::array<uint8_t, 16> mNotesDown;
 
     std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
 };

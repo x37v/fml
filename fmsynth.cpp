@@ -27,6 +27,7 @@ FMSynth::FMSynth() {
   }
   slew_rate(0.0f);
 
+  mNotesDown.fill(0);
   mModDepthIncrement = mod_depth_increment;
   mModFreqIncrement = mod_freq_increment;
   mVolumeIncrement = volume_increment;
@@ -189,6 +190,13 @@ void FMSynth::mono_mode(bool v) {
 }
 
 void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t vel) {
+  //update the 'down' mask
+  if (on) {
+    mNotesDown[midi_note / 8] |= (1 << (midi_note % 8));
+  } else {
+    mNotesDown[midi_note / 8] &= ~(1 << (midi_note % 8));
+  }
+
   if (on) {
     int voice = -1;
     if (mMonoMode) {
