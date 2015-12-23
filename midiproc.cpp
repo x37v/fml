@@ -84,7 +84,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
       break;
     case TRANSPOSE:
-      synth.transpose(((int16_t)val - 64) / 2);
+      synth.transpose(12 * (((int16_t)val - 64) / 24));
       break;
     case MONO_MODE:
       mMonoMode = (val != 0);
