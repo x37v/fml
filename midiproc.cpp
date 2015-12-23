@@ -12,10 +12,6 @@ namespace {
 }
 
 FMMidiProc::FMMidiProc(FMSynth& synth) {
-  for (int i = 0; i < FM_VOICES; i++) {
-    mNoteLRUQueue.push_back({0, 0});
-  }
-  synth.complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
 void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_t val) {
@@ -87,9 +83,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
       synth.transpose(12 * (((int16_t)val - 64) / 24));
       break;
     case MONO_MODE:
-      mMonoMode = (val != 0);
-      synth.slew_held_only(mMonoMode);
-      synth.slew_from_first(!mMonoMode);
+      synth.mono_mode(val != 0);
     default:
       break;
   }
@@ -106,74 +100,6 @@ void FMMidiProc::process_bend(FMSynth& synth, uint8_t channel, uint8_t num0, uin
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
   if (channel != mNoteChannel)
     return;
-
-  if (on) {
-    int voice = -1;
-    if (mMonoMode) {
-      voice = 0;
-    } else {
-      int same_note = -1;
-      int release_note = -1;
-      uint8_t lru_voice = 0;
-
-      //look for a voice with the same note, a free voice, and the least recently used voice
-      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-        if (mNoteLRUQueue[i].first == note) {
-          same_note = i;
-          break;
-        }
-        if (mNoteLRUQueue[i].second == 0)
-          voice = i;
-        if (synth.volume_envelope_state(i) == ADSR::env_release)
-          release_note = i;
-        if (mNoteLRUQueue[lru_voice].second < mNoteLRUQueue[i].second)
-          lru_voice = i;
-      }
-
-      //same note, then free note, then release note, then least recently used
-      if (same_note >= 0) {
-        voice = same_note;
-      } else if (voice < 0) {
-        voice = release_note >= 0 ? release_note : lru_voice;
-      }
-
-      //increment all indicies that are non zero or the voice
-      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-        if (i == voice || mNoteLRUQueue[i].second == 0)
-          continue;
-        mNoteLRUQueue[i].second++;
-      }
-    }
-
-    mNoteLRUQueue[voice] = {note, 1};
-    auto vstate = synth.volume_envelope_state(voice);
-    if (mMonoMode && !((vstate == ADSR::env_idle || vstate == ADSR::env_release)))
-      synth.note(voice, note);
-    else
-      synth.trigger(voice, true, note, static_cast<float>(vel) / 127.0f);
-  } else {
-    //don't actually take an 'off' note out of the queue because it needs its release time
-    for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-      if (mNoteLRUQueue[i].first == note) {
-        synth.trigger(i, false);
-      }
-    }
-  }
-}
-
-void FMMidiProc::voice_freed(unsigned int voice) {
-  if (voice >= mNoteLRUQueue.size()) {
-    assert(voice < mNoteLRUQueue.size());
-    return;
-  }
-  //anything greater than our index should get decremented
-  uint8_t index = mNoteLRUQueue[voice].second;
-  if (index > 0) {
-    mNoteLRUQueue[voice] = {0, 0};
-    for (int i = 0; i < mNoteLRUQueue.size(); i++) {
-      if (mNoteLRUQueue[i].second >= index)
-        mNoteLRUQueue[i].second--;
-    }
-  }
+  synth.process_note(on, channel, note, vel);
 }
 

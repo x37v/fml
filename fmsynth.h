@@ -6,6 +6,9 @@
 #include "defines.h"
 #include "adsr.h"
 
+#include <vector>
+#include <inttypes.h>
+
 class FMSynth {
   public:
     typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
@@ -15,7 +18,7 @@ class FMSynth {
     void compute(float& left, float& right);
     void trigger(unsigned int voice, bool on,
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
-    void note(unsigned int voice, uint8_t note);
+    void note(unsigned int voice, uint8_t midi_note);
 
     ADSR::envState volume_envelope_state(uint8_t voice) const;
 
@@ -42,7 +45,12 @@ class FMSynth {
     void slew_held_only(bool v);
     void slew_from_first(bool v);
 
+    void mono_mode(bool v);
+
+    void process_note(bool on, uint8_t channel, uint8_t note, uint8_t vel);
+    void voice_freed(unsigned int voice);
   private:
+    bool mMonoMode = false;
     float mModDepth = 0.0f;
     float mModDepthTarget = 0.0f;
     float mModDepthIncrement = 0.0f;
@@ -63,6 +71,8 @@ class FMSynth {
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
+
+    std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
 };
 
 #endif
