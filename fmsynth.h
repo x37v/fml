@@ -64,6 +64,9 @@ class FMSynth {
     float mTranspose = 0.0f;
     float mTransposeTarget = 0.0f;
     float mTransposeIncrement = 0.0f;
+    float mFeedback = 0.0f;
+    float mFeedbackTarget = 0.0f;
+    float mFeedbackIncrement = 0.0f;
     float mBend = 0.0f;
     float mBendTarget = 0.0f;
     float mBendIncrement = 0.0f;

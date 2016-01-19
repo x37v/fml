@@ -14,6 +14,7 @@ namespace {
   const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float transpose_increment = 1.0f / (fm::fsample_rate() * 0.005);
+  const float feedback_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float bend_increment = 1.0f / (fm::fsample_rate() * 0.015);
 }
 
@@ -42,12 +43,14 @@ void FMSynth::compute(float& left, float& right) {
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
   mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement);
   mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement);
+  mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement);
   mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
 
   for (auto& s: mVoices) {
     s.modulator_freq_offset(mModFreqOffset);
     s.mod_depth(mModDepth);
     s.transpose(mTranspose);
+    s.feedback(mFeedback);
     s.bend(mBend);
     s.compute(left, right);
   }
@@ -122,8 +125,8 @@ void FMSynth::feedback(float v) {
   else if (v > 1)
     v = 1;
   v = powf(v, 2.0);
-  for (auto& s: mVoices)
-    s.feedback(v);
+  mFeedbackTarget = v;
+  mFeedbackIncrement = (mFeedbackTarget > mFeedback) ? feedback_increment : -feedback_increment;
 }
 
 void FMSynth::mod_depth(float v) {
@@ -195,6 +198,20 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
     mNotesDown[midi_note / 8] |= (1 << (midi_note % 8));
   } else {
     mNotesDown[midi_note / 8] &= ~(1 << (midi_note % 8));
+  }
+
+  //in mono mode, any key down or up just re-scans all down keys and picks out the highest
+  if (mMonoMode) {
+    bool found = false;
+    for (int i = 15; i >= 0 && !found; i--) {
+      for (int j = 7; j >= 0; j--) {
+        if (mNotesDown[i] & (1 << j)) {
+          found = on = true;
+          midi_note = i * 8 + j;
+          break;
+        }
+      }
+    }
   }
 
   if (on) {
