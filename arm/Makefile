@@ -118,5 +118,5 @@ clean:
 openocd:
 	xterm -e "openocd -f stm32f4xx-openOCD.cfg" &
 	
-debug: proj
+gdb: proj
 	$(GDB)
