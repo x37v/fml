@@ -8,7 +8,7 @@ S_SRCS =
 
 # Project name
 
-PROJ_NAME = stm32f4xx-gcc-barebones
+PROJ_NAME = fml
 OUTPATH = build
 
 OUTPATH := $(abspath $(OUTPATH))
