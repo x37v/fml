@@ -1,6 +1,6 @@
 target extended-remote localhost:3333
 
-file ./build/stm32f4xx-gcc-barebones.elf
+file ./build/fml.elf
 monitor reset halt
 load
 monitor reset init
