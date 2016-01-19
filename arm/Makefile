@@ -36,6 +36,7 @@ LD=$(BINPATH)arm-none-eabi-gcc
 OBJCOPY=$(BINPATH)arm-none-eabi-objcopy
 OBJDUMP=$(BINPATH)arm-none-eabi-objdump
 SIZE=$(BINPATH)arm-none-eabi-size
+GDB=$(BINPATH)arm-none-eabi-gdb
 
 LINKER_SCRIPT = stm32_flash.ld
 
@@ -90,7 +91,7 @@ all: lib proj
 lib:
 	$(MAKE) -C lib FLOAT_TYPE=$(FLOAT_TYPE) BINPATH=$(BINPATH) DEVICE_DEF=$(DEVICE_DEF) BASEDIR=$(BASEDIR)
 
-proj: $(OUTPATH)/$(PROJ_NAME).elf
+proj: lib $(OUTPATH)/$(PROJ_NAME).elf
 
 .s.o:
 	$(AS) $(CPU) -o $(addprefix $(OUTPATH)/, $@) $<
@@ -113,4 +114,9 @@ clean:
 	rm -f $(OUTPATH)/$(PROJ_NAME).map
 	# Remove this line if you don't want to clean the libs as well
 	$(MAKE) clean -C lib
+
+openocd:
+	xterm -e "openocd -f stm32f4xx-openOCD.cfg" &
 	
+debug: proj
+	$(GDB)
