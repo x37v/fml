@@ -32,7 +32,8 @@ int main(void) {
 
   for(;;) {
     for (int i = 0; i < 3; i++) {
-      if (GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin)) {
+      uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
+      if (val) {
         GPIO_SetBits(leds[i].port, leds[i].pin);
       } else {
         GPIO_ResetBits(leds[i].port, leds[i].pin);
@@ -51,10 +52,10 @@ void setup_leds() {
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 
-  for (int i = 0; i < 4; i++) {
-    GPIO_InitStructure.GPIO_Pin = leds[i].pin;
-    GPIO_Init(leds[i].port, &GPIO_InitStructure);
-    GPIO_ResetBits(leds[i].port, leds[i].pin);
+  for (auto led: leds) {
+    GPIO_InitStructure.GPIO_Pin = led.pin;
+    GPIO_Init(led.port, &GPIO_InitStructure);
+    GPIO_ResetBits(led.port, led.pin);
   }
 }
 
@@ -65,9 +66,9 @@ void setup_buttons() {
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
 
-  for (int i = 0; i < 3; i++) {
-    GPIO_InitStructure.GPIO_Pin = buttons[i].pin;
-    GPIO_Init(buttons[i].port, &GPIO_InitStructure);
+  for (auto button: buttons) {
+    GPIO_InitStructure.GPIO_Pin = button.pin;
+    GPIO_Init(button.port, &GPIO_InitStructure);
   }
 }
 
@@ -88,6 +89,7 @@ void init() {
   setup_buttons();
 }
 
+extern "C"
 void SysTick_Handler(void)
 {
   if (time_var1) {
@@ -108,6 +110,7 @@ void Delay(volatile uint32_t nCount) {
 /*
  * Dummy function to avoid compiler error
  */
+extern "C"
 void _init() {
 
 }

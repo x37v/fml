@@ -1,6 +1,7 @@
 # Sources
 
-SRCS = main.c stm32f4xx_it.c system_stm32f4xx.c startup_stm32f4xx.c
+SRCS = stm32f4xx_it.c system_stm32f4xx.c startup_stm32f4xx.c
+P_SRCS = main.cpp 
 S_SRCS = 
 
 # USB
@@ -32,6 +33,7 @@ endif
 
 AS=$(BINPATH)arm-none-eabi-as
 CC=$(BINPATH)arm-none-eabi-gcc
+CXX=$(BINPATH)arm-none-eabi-g++
 LD=$(BINPATH)arm-none-eabi-gcc
 OBJCOPY=$(BINPATH)arm-none-eabi-objcopy
 OBJDUMP=$(BINPATH)arm-none-eabi-objdump
@@ -42,7 +44,7 @@ LINKER_SCRIPT = stm32_flash.ld
 
 CPU = -mcpu=cortex-m4 -mthumb
 
-CFLAGS  = $(CPU) -c -std=gnu99 -g -O2 -Wall
+CFLAGS  = $(CPU) -c -g -O0 -Wall
 LDFLAGS  = $(CPU) -mlittle-endian -mthumb-interwork -nostartfiles -Wl,--gc-sections,-Map=$(OUTPATH)/$(PROJ_NAME).map,--cref --specs=nano.specs
 
 ifeq ($(FLOAT_TYPE), hard)
@@ -58,6 +60,8 @@ DEVICE_DEF = STM32F40_41xxx
 endif
 
 CFLAGS += -D$(DEVICE_DEF)
+
+CPPFLAGS      = -fno-exceptions -fno-rtti
 
 #vpath %.c src
 vpath %.a lib
@@ -80,6 +84,7 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
 
 OBJS = $(SRCS:.c=.o)
 OBJS += $(S_SRCS:.s=.o)
+OBJS += $(P_SRCS:.cpp=.o)
 
 ###################################################
 
@@ -95,6 +100,9 @@ proj: lib $(OUTPATH)/$(PROJ_NAME).elf
 
 .s.o:
 	$(AS) $(CPU) -o $(addprefix $(OUTPATH)/, $@) $<
+
+.cpp.o:
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $(addprefix  $(OUTPATH)/, $@) $<
 
 .c.o:
 	$(CC) $(CFLAGS) -std=gnu99 $(INCLUDE_PATHS) -o $(addprefix  $(OUTPATH)/, $@) $<
