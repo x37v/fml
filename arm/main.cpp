@@ -3,6 +3,26 @@
 
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
+#include "dac.h"
+
+
+/*
+ *
+ *   POTS  LED  BUTTONS  DAC  MIDI       DIP switch
+ *   PC0   PB2  PE8      PA4  PB11 (Rx)  PD8
+ *   PC1   PE7  PE9      PA5             PD9
+ *   PA0   PE10 PE11                     PD10
+ *   PA1   PE12                          PD11
+ *   PA2
+ *   PA3
+ *   PA6
+ *   PA7
+ *   PC4
+ *   PC5
+ *   PB0
+ *   PB1
+ *
+ */
 
 volatile uint32_t time_var1, time_var2;
 // Private function prototypes
@@ -87,6 +107,7 @@ void init() {
 
   setup_leds();
   setup_buttons();
+  setup_dac();
 }
 
 extern "C"
@@ -114,4 +135,3 @@ extern "C"
 void _init() {
 
 }
-

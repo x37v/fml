@@ -1,7 +1,7 @@
 # Sources
 
 SRCS = stm32f4xx_it.c system_stm32f4xx.c startup_stm32f4xx.c
-P_SRCS = main.cpp 
+P_SRCS = main.cpp dac.cpp
 S_SRCS = 
 
 # USB
