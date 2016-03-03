@@ -116,7 +116,7 @@ void setup_dac() {
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
