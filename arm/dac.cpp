@@ -10,7 +10,7 @@
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
 #define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
 
-const uint16_t function[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
+uint16_t function[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
                                       2984, 3069, 3151, 3230, 3307, 3381, 3451, 3518, 3581, 3640,
                                       3696, 3748, 3795, 3838, 3877, 3911, 3941, 3966, 3986, 4002,
                                       4013, 4019, 4020, 4016, 4008, 3995, 3977, 3954, 3926, 3894,
@@ -80,13 +80,12 @@ static void DAC1_Config(void)
   DMA_Init(DMA1_Stream5, &DMA_INIT);
 
   /* Enable DMA Stream Half Transfer and Transfer Complete interrupts */
-  DMA_ITConfig(DMA1_Stream5, DMA_IT_HT, ENABLE);
-  DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE);
+  DMA_ITConfig(DMA1_Stream5, DMA_IT_HT | DMA_IT_TC, ENABLE);
 
   DMA_Cmd(DMA1_Stream5, ENABLE);
   DAC_Cmd(DAC_Channel_1, ENABLE);
-  DAC_DMACmd(DAC_Channel_1, ENABLE);
 
+  DAC_DMACmd(DAC_Channel_1, ENABLE);
 }
 
 extern "C"
@@ -125,3 +124,4 @@ void setup_dac() {
   TIM6_Config();
   DAC1_Config();
 }
+
