@@ -53,8 +53,8 @@ void NVIC_Configuration(void) {
 
 static void DAC1_Config(void)
 {
-  DAC_InitTypeDef DAC_INIT;
-  DMA_InitTypeDef DMA_INIT;
+  DAC_InitTypeDef DAC_INIT = {};
+  DMA_InitTypeDef DMA_INIT = {};
 
   DAC_INIT.DAC_Trigger        = DAC_Trigger_T6_TRGO;
   DAC_INIT.DAC_WaveGeneration = DAC_WaveGeneration_None;
@@ -92,16 +92,16 @@ extern "C"
 void DMA1_Stream5_IRQHandler(void)
 {
   /* Test on DMA Stream Half Transfer interrupt */
-  if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_HTIF0)) {
+  if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_HTIF5)) {
     /* Clear DMA Stream Half Transfer interrupt pending bit */
-    DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_HTIF0);
+    DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_HTIF5);
     /* Add code to process First Half of Buffer */
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
-  if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF0)) {
+  if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
-    DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF0);
+    DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
 
     /* Add code to process Second Half of Buffer */
   }
