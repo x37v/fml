@@ -4,13 +4,16 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx_dma.h"
 
+#include <math.h>
+
 #define   OUT_FREQ          5000                                 // Output waveform frequency
 #define   SINE_RES          128                                  // Waveform resolution
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
 #define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
 
-uint16_t function[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
+#define TWO_PI 6.283185307179586
+uint16_t dac_table[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
                                       2984, 3069, 3151, 3230, 3307, 3381, 3451, 3518, 3581, 3640,
                                       3696, 3748, 3795, 3838, 3877, 3911, 3941, 3966, 3986, 4002,
                                       4013, 4019, 4020, 4016, 4008, 3995, 3977, 3954, 3926, 3894,
@@ -64,7 +67,7 @@ static void DAC1_Config(void)
   DMA_DeInit(DMA1_Stream5);
   DMA_INIT.DMA_Channel            = DMA_Channel_7;
   DMA_INIT.DMA_PeripheralBaseAddr = (uint32_t)DAC_DHR12R1_ADDR;
-  DMA_INIT.DMA_Memory0BaseAddr    = (uint32_t)&function;
+  DMA_INIT.DMA_Memory0BaseAddr    = (uint32_t)&dac_table;
   DMA_INIT.DMA_DIR                = DMA_DIR_MemoryToPeripheral;
   DMA_INIT.DMA_BufferSize         = SINE_RES;
   DMA_INIT.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
@@ -88,6 +91,17 @@ static void DAC1_Config(void)
   DAC_DMACmd(DAC_Channel_1, ENABLE);
 }
 
+void compute_sine(uint16_t * mem, uint16_t bytes) {
+  static double index = 0.0f;
+  for (uint16_t i = 0; i < bytes; i++) {
+    double v = sin(index * TWO_PI);
+    mem[i] = 2048.0 * (v + 1.0);
+    index += 340.0 / 5000.0;
+    while (index >= 1.0)
+      index -= 1.0;
+  }
+}
+
 extern "C"
 void DMA1_Stream5_IRQHandler(void)
 {
@@ -96,14 +110,15 @@ void DMA1_Stream5_IRQHandler(void)
     /* Clear DMA Stream Half Transfer interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_HTIF5);
     /* Add code to process First Half of Buffer */
+    compute_sine(dac_table, SINE_RES / 2);
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
   if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
-
     /* Add code to process Second Half of Buffer */
+    compute_sine(dac_table + SINE_RES / 2, SINE_RES / 2);
   }
 }
 

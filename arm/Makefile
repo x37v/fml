@@ -75,7 +75,7 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf
 LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver
 
 # Libraries to link
-LIBS = -lstdperiph -lc -lgcc -lnosys
+LIBS = -lstdperiph -lc -lgcc -lnosys -lm
 
 # Extra includes
 INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
