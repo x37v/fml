@@ -12,7 +12,7 @@
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
 #define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
 
-#define SINE_FREQ 100.0f
+#define SINE_FREQ 220.0f
 #define SR 44100.0f
 
 static __IO uint16_t TIM6ARRValue = 544; /* 44.1KHz = 24MHz / 544 */
