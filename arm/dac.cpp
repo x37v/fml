@@ -6,11 +6,16 @@
 
 #include <math.h>
 
-#define   OUT_FREQ          5000                                 // Output waveform frequency
+#define   OUT_FREQ          440                                 // Output waveform frequency
 #define   SINE_RES          128                                  // Waveform resolution
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
 #define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
+
+#define SINE_FREQ 100.0f
+#define SR 44100.0f
+
+static __IO uint16_t TIM6ARRValue = 544; /* 44.1KHz = 24MHz / 544 */
 
 #define TWO_PI 6.283185307179586
 uint16_t dac_table[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
@@ -29,9 +34,10 @@ uint16_t dac_table[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717,
 
 static void TIM6_Config(void)
 {
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+  /*
   TIM_TimeBaseInitTypeDef TIM6_TimeBase;
 
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 
   TIM_TimeBaseStructInit(&TIM6_TimeBase);
   TIM6_TimeBase.TIM_Period        = (uint16_t)TIM_PERIOD;
@@ -39,7 +45,12 @@ static void TIM6_Config(void)
   TIM6_TimeBase.TIM_ClockDivision = 0;
   TIM6_TimeBase.TIM_CounterMode   = TIM_CounterMode_Up;
   TIM_TimeBaseInit(TIM6, &TIM6_TimeBase);
+  */
+
+  TIM_DeInit(TIM6);
+  TIM_SetAutoreload(TIM6, TIM6ARRValue);
   TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
+  TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
 
   TIM_Cmd(TIM6, ENABLE);
 }
@@ -56,8 +67,12 @@ void NVIC_Configuration(void) {
 
 static void DAC1_Config(void)
 {
-  DAC_InitTypeDef DAC_INIT = {};
-  DMA_InitTypeDef DMA_INIT = {};
+  DAC_DeInit();
+
+  DAC_InitTypeDef DAC_INIT;
+  DMA_InitTypeDef DMA_INIT;
+
+  DAC_StructInit(&DAC_INIT);
 
   DAC_INIT.DAC_Trigger        = DAC_Trigger_T6_TRGO;
   DAC_INIT.DAC_WaveGeneration = DAC_WaveGeneration_None;
@@ -91,12 +106,12 @@ static void DAC1_Config(void)
   DAC_DMACmd(DAC_Channel_1, ENABLE);
 }
 
-void compute_sine(uint16_t * mem, uint16_t bytes) {
+void compute_sine(uint16_t * mem, uint16_t size) {
   static double index = 0.0f;
-  for (uint16_t i = 0; i < bytes; i++) {
+  for (uint16_t i = 0; i < size; i++) {
     double v = sin(index * TWO_PI);
     mem[i] = 2048.0 * (v + 1.0);
-    index += 340.0 / 5000.0;
+    index += (SINE_FREQ / SR);
     while (index >= 1.0)
       index -= 1.0;
   }
