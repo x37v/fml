@@ -7,10 +7,10 @@
 #include <math.h>
 
 #define   OUT_FREQ          440                                 // Output waveform frequency
-#define   SINE_RES          128                                  // Waveform resolution
+#define   DAC_BUFFER_SIZE          128                                  // Waveform resolution
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
-#define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
+#define   TIM_PERIOD        ((CNT_FREQ)/((DAC_BUFFER_SIZE)*(OUT_FREQ))) // Autoreload reg value
 
 #define SINE_FREQ 420.0f
 #define SR 44100.0f
@@ -19,7 +19,7 @@
 static __IO uint16_t TIM6ARRValue = 1900;
 
 #define TWO_PI 6.283185307179586
-uint16_t dac_table[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
+uint16_t dac_table[DAC_BUFFER_SIZE] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
                                       2984, 3069, 3151, 3230, 3307, 3381, 3451, 3518, 3581, 3640,
                                       3696, 3748, 3795, 3838, 3877, 3911, 3941, 3966, 3986, 4002,
                                       4013, 4019, 4020, 4016, 4008, 3995, 3977, 3954, 3926, 3894,
@@ -86,7 +86,7 @@ static void DAC1_Config(void)
   DMA_INIT.DMA_PeripheralBaseAddr = (uint32_t)DAC_DHR12R1_ADDR;
   DMA_INIT.DMA_Memory0BaseAddr    = (uint32_t)&dac_table;
   DMA_INIT.DMA_DIR                = DMA_DIR_MemoryToPeripheral;
-  DMA_INIT.DMA_BufferSize         = SINE_RES;
+  DMA_INIT.DMA_BufferSize         = DAC_BUFFER_SIZE;
   DMA_INIT.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
   DMA_INIT.DMA_MemoryInc          = DMA_MemoryInc_Enable;
   DMA_INIT.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -108,14 +108,19 @@ static void DAC1_Config(void)
   DAC_DMACmd(DAC_Channel_1, ENABLE);
 }
 
+float sine_freq = SINE_FREQ;
+
 void compute_sine(uint16_t * mem, uint16_t size) {
   static double index = 0.0f;
   for (uint16_t i = 0; i < size; i++) {
     double v = sin(index * TWO_PI);
     mem[i] = 2048.0 * (v + 1.0);
-    index += (SINE_FREQ / SR);
+    index += (sine_freq / SR);
     while (index >= 1.0)
       index -= 1.0;
+    sine_freq += 0.01;
+    if (sine_freq > 4000)
+      sine_freq = 20.0f;
   }
 }
 
@@ -127,7 +132,7 @@ void DMA1_Stream5_IRQHandler(void)
     /* Clear DMA Stream Half Transfer interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_HTIF5);
     /* Add code to process First Half of Buffer */
-    compute_sine(dac_table, SINE_RES / 2);
+    compute_sine(dac_table, DAC_BUFFER_SIZE / 2);
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
@@ -135,7 +140,7 @@ void DMA1_Stream5_IRQHandler(void)
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
     /* Add code to process Second Half of Buffer */
-    compute_sine(dac_table + SINE_RES / 2, SINE_RES / 2);
+    compute_sine(dac_table + DAC_BUFFER_SIZE / 2, DAC_BUFFER_SIZE / 2);
   }
 }
 
@@ -157,7 +162,7 @@ void setup_dac() {
   DAC1_Config();
 
   /*
-  for (int i = 0; i < SINE_RES; i++)
+  for (int i = 0; i < DAC_BUFFER_SIZE; i++)
     dac_table[i] = i % 2 ? 0 : 2048;
     */
 }
