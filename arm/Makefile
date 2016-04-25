@@ -59,7 +59,7 @@ ifeq ($(DEVICE_DEF), )
 DEVICE_DEF = STM32F40_41xxx
 endif
 
-CFLAGS += -D$(DEVICE_DEF)
+CFLAGS += -D$(DEVICE_DEF) -DARM_MATH_CM4
 
 CPPFLAGS      = -fno-exceptions -fno-rtti
 
@@ -75,7 +75,7 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf
 LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver
 
 # Libraries to link
-LIBS = -lstdperiph -lc -lgcc -lnosys -lm
+LIBS = -lstdperiph -lc -lgcc -lnosys -lm ./cmsis/CMSIS/Lib/GCC/libarm_cortexM4l_math.a
 
 # Extra includes
 INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc

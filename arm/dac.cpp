@@ -4,9 +4,10 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx_dma.h"
 
-#include <math.h>
+//#include <math.h>
+#include "arm_math.h"
 
-#define   DAC_BUFFER_SIZE          64
+#define   DAC_BUFFER_SIZE          128
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   DAC_DHR12RD_Address 0x40007420
 
@@ -105,36 +106,25 @@ static void DAC1_Config(void)
 float sine_freq = SINE_FREQ;
 
 void compute_sine(uint32_t * mem, uint16_t size) {
-  /*
-  for (int i = 0; i < DAC_BUFFER_SIZE; i++) {
-    double v = sin(((double)i / (DAC_BUFFER_SIZE - 1)) * TWO_PI);
-    int32_t iv = 2048.0 * (v + 1.0);
-    dac_table[i] = iv << 16;
-  }
-  */
-
   static double index[2] = {0.0f, 0.0f};
+  double inc = (440.0f / SR);
 
   for (int i = 0; i < size; i++) {
-    double v = sin(index[0] * TWO_PI);
+    double v = arm_sin_f32(index[0] * TWO_PI);
     int32_t iv = 2048.0 * (v + 1.0);
     mem[i] = iv;
+
+    v = arm_sin_f32(index[1] * TWO_PI);
+    iv = 2048.0 * (v + 1.0);
     mem[i] |= (iv << 16);
 
-    //v = sin(index[1] * TWO_PI);
-    //iv = 2048.0 * (v + 1.0);
-    //mem[i] |= (iv << 16);
-
     index[0] += (sine_freq / SR);
+    index[1] += inc;
 
     while (index[0] >= 1.0)
       index[0] -= 1.0;
-
-    /*
-    index[1] += (440.0f / SR);
     while (index[1] >= 1.0)
       index[1] -= 1.0;
-      */
 
     sine_freq += 0.01;
     if (sine_freq > 4000)
