@@ -6,11 +6,8 @@
 
 #include <math.h>
 
-#define   OUT_FREQ          440                                 // Output waveform frequency
-#define   DAC_BUFFER_SIZE          128                                  // Waveform resolution
+#define   DAC_BUFFER_SIZE          128
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
-#define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
-#define   TIM_PERIOD        ((CNT_FREQ)/((DAC_BUFFER_SIZE)*(OUT_FREQ))) // Autoreload reg value
 
 #define SINE_FREQ 420.0f
 #define SR 44100.0f
@@ -36,17 +33,6 @@ uint16_t dac_table[DAC_BUFFER_SIZE] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624
 static void TIM6_Config(void)
 {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
-  /*
-  TIM_TimeBaseInitTypeDef TIM6_TimeBase;
-
-
-  TIM_TimeBaseStructInit(&TIM6_TimeBase);
-  TIM6_TimeBase.TIM_Period        = (uint16_t)TIM_PERIOD;
-  TIM6_TimeBase.TIM_Prescaler     = 0;
-  TIM6_TimeBase.TIM_ClockDivision = 0;
-  TIM6_TimeBase.TIM_CounterMode   = TIM_CounterMode_Up;
-  TIM_TimeBaseInit(TIM6, &TIM6_TimeBase);
-  */
 
   TIM_DeInit(TIM6);
   TIM_SetAutoreload(TIM6, TIM6ARRValue);
