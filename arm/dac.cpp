@@ -12,10 +12,11 @@
 #define   CNT_FREQ          42000000                             // TIM6 counter clock (prescaled APB1)
 #define   TIM_PERIOD        ((CNT_FREQ)/((SINE_RES)*(OUT_FREQ))) // Autoreload reg value
 
-#define SINE_FREQ 220.0f
+#define SINE_FREQ 420.0f
 #define SR 44100.0f
 
-static __IO uint16_t TIM6ARRValue = 544; /* 44.1KHz = 24MHz / 544 */
+//XXX approximately 44100, need to tune this value
+static __IO uint16_t TIM6ARRValue = 1900;
 
 #define TWO_PI 6.283185307179586
 uint16_t dac_table[SINE_RES] = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
@@ -76,7 +77,8 @@ static void DAC1_Config(void)
 
   DAC_INIT.DAC_Trigger        = DAC_Trigger_T6_TRGO;
   DAC_INIT.DAC_WaveGeneration = DAC_WaveGeneration_None;
-  DAC_INIT.DAC_OutputBuffer   = DAC_OutputBuffer_Enable;
+  DAC_INIT.DAC_OutputBuffer   = DAC_OutputBuffer_Disable;
+  //DAC_INIT.DAC_OutputBuffer   = DAC_OutputBuffer_Enable; //XXX caused some distortion
   DAC_Init(DAC_Channel_1, &DAC_INIT);
 
   DMA_DeInit(DMA1_Stream5);
@@ -153,5 +155,10 @@ void setup_dac() {
   NVIC_Configuration();
   TIM6_Config();
   DAC1_Config();
+
+  /*
+  for (int i = 0; i < SINE_RES; i++)
+    dac_table[i] = i % 2 ? 0 : 2048;
+    */
 }
 
