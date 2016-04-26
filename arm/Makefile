@@ -1,7 +1,7 @@
 # Sources
 
-SRCS = stm32f4xx_it.c system_stm32f4xx.c startup_stm32f4xx.c
-P_SRCS = main.cpp dac.cpp
+SRCS = src/stm32f4xx_it.c src/system_stm32f4xx.c src/startup_stm32f4xx.c
+P_SRCS = src/main.cpp src/dac.cpp
 S_SRCS = 
 
 # USB
@@ -40,7 +40,7 @@ OBJDUMP=$(BINPATH)arm-none-eabi-objdump
 SIZE=$(BINPATH)arm-none-eabi-size
 GDB=$(BINPATH)arm-none-eabi-gdb
 
-LINKER_SCRIPT = stm32_flash.ld
+LINKER_SCRIPT = ./src/stm32_flash.ld
 
 CPU = -mcpu=cortex-m4 -mthumb
 
@@ -82,9 +82,10 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
 
 #CFLAGS += -Map $(OUTPATH)/$(PROJ_NAME).map
 
-OBJS = $(SRCS:.c=.o)
-OBJS += $(S_SRCS:.s=.o)
-OBJS += $(P_SRCS:.cpp=.o)
+OBJS = $(SRCS:src/%.c=build/%.o)
+OBJS += $(S_SRCS:src/%.s=build/%.o)
+OBJS += $(P_SRCS:src/%.cpp=build/%.o)
+
 
 ###################################################
 
@@ -98,17 +99,22 @@ lib:
 
 proj: lib $(OUTPATH)/$(PROJ_NAME).elf
 
-.s.o:
-	$(AS) $(CPU) -o $(addprefix $(OUTPATH)/, $@) $<
+build/%.o: src/%.s
+	$(AS) $(CPU) -o $@ $<
 
-.cpp.o:
-	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $(addprefix  $(OUTPATH)/, $@) $<
+build/%.o: src/%.cpp
+	echo $@
+	echo $<
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 
-.c.o:
-	$(CC) $(CFLAGS) -std=gnu99 $(INCLUDE_PATHS) -o $(addprefix  $(OUTPATH)/, $@) $<
+build/%.o: src/%.c
+	echo $(OBJS)
+	echo $@
+	echo $<
+	$(CC) $(CFLAGS) -std=gnu99 $(INCLUDE_PATHS) -o $@ $<
 
 $(OUTPATH)/$(PROJ_NAME).elf: $(OBJS)
-	$(LD) $(LDFLAGS) -T$(LINKER_SCRIPT) $(LIBPATHS) -o $@ $(addprefix $(OUTPATH)/, $^) $(LIBS) $(LD_SYS_LIBS)
+	$(LD) $(LDFLAGS) -T$(LINKER_SCRIPT) $(LIBPATHS) -o $@ $^ $(LIBS) $(LD_SYS_LIBS)
 	$(OBJCOPY) -O ihex $(OUTPATH)/$(PROJ_NAME).elf $(OUTPATH)/$(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(OUTPATH)/$(PROJ_NAME).elf $(OUTPATH)/$(PROJ_NAME).bin
 	$(OBJDUMP) -S --disassemble $(OUTPATH)/$(PROJ_NAME).elf > $(OUTPATH)/$(PROJ_NAME).dis
