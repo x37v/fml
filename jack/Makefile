@@ -1,18 +1,18 @@
 CXX = clang++
 SRC = \
 			main.cpp \
-			defines.cpp \
-			envelope.cpp \
-			fmvoice.cpp \
-			fmsynth.cpp \
-			midiproc.cpp \
-			adsr.cpp \
-			util.cpp \
+			../src/defines.cpp \
+			../src/envelope.cpp \
+			../src/fmvoice.cpp \
+			../src/fmsynth.cpp \
+			../src/midiproc.cpp \
+			../src/adsr.cpp \
+			../src/util.cpp \
 			jackcpp/src/jackaudioio.cpp \
 			jackcpp/src/jackmidiport.cpp
 
 CXXFLAGS += -std=c++11 -g -Wall
-CXXFLAGS += -Ijackcpp/include/
+CXXFLAGS += -Ijackcpp/include/ -I../src/
 LDFLAGS += -ljack
 OBJ = ${SRC:.cpp=.o}
 

@@ -1,6 +1,6 @@
 /test
 *.d
-/fml
-/connect.sh
+/jack/fml
+/jack/connect.sh
 *.a
 build/
