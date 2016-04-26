@@ -27,7 +27,7 @@ fml: ${OBJ}
 	${CXX} -MM $(CXXFLAGS) $*.cpp > $*.d
 
 clean:
-	@rm -f *.o jackcpp/src/*.o ${TARGETS} *.d jackcpp/src/*.d
+	@rm -f *.o ../src/*.o ../src/*.d jackcpp/src/*.o ${TARGETS} *.d jackcpp/src/*.d
 
 run: fml
 	eval './fml &' && sleep 1 && \
