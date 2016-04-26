@@ -75,7 +75,7 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf
 LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver
 
 # Libraries to link
-LIBS = -lstdperiph -lc -lgcc -lnosys -lm ./cmsis/CMSIS/Lib/GCC/libarm_cortexM4l_math.a
+LIBS = -lstdperiph -lc -lgcc -lnosys -lm ./libarm_cortexM4l_math.a
 
 # Extra includes
 INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
