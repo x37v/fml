@@ -7,7 +7,7 @@
 //#include <math.h>
 #include "arm_math.h"
 
-#define   DAC_BUFFER_SIZE          128
+#define   DAC_BUFFER_SIZE          256
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   DAC_DHR12RD_Address 0x40007420
 
