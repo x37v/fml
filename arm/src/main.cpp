@@ -51,7 +51,6 @@ int main(void) {
   init();
 
   for(;;) {
-    dac_process();
     for (int i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       if (val) {
@@ -60,6 +59,7 @@ int main(void) {
         GPIO_ResetBits(leds[i].port, leds[i].pin);
       }
     }
+    Delay(10);
   }
 
   return 0;
