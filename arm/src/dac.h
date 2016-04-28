@@ -1,6 +1,6 @@
 #ifndef FM_DAC_H
 #define FM_DAC_H
 
-void setup_dac();
+void dac_setup();
 
 #endif

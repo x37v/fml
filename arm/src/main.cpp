@@ -51,6 +51,7 @@ int main(void) {
   init();
 
   for(;;) {
+    dac_process();
     for (int i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       if (val) {
@@ -59,13 +60,12 @@ int main(void) {
         GPIO_ResetBits(leds[i].port, leds[i].pin);
       }
     }
-    Delay(10);
   }
 
   return 0;
 }
 
-void setup_leds() {
+void leds_setup() {
   GPIO_InitTypeDef GPIO_InitStructure;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -79,7 +79,7 @@ void setup_leds() {
   }
 }
 
-void setup_buttons() {
+void buttons_setup() {
   GPIO_InitTypeDef GPIO_InitStructure;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -93,21 +93,22 @@ void setup_buttons() {
 }
 
 void init() {
-
+  /*
   // ---------- SysTick timer -------- //
   if (SysTick_Config(SystemCoreClock / 1000)) {
     // Capture error
     while (1){};
   }
+  */
 
   // ---------- GPIO -------- //
   // GIPO Periph clock enable
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 
-  setup_leds();
-  setup_buttons();
-  setup_dac();
+  leds_setup();
+  buttons_setup();
+  dac_setup();
 }
 
 extern "C"

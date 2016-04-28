@@ -8,6 +8,7 @@
 #include "arm_math.h"
 
 #define   DAC_BUFFER_SIZE          256
+#define   DAC_BUFFER_SIZE_2        128
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   DAC_DHR12RD_Address 0x40007420
 
@@ -19,6 +20,7 @@ static __IO uint16_t TIM6ARRValue = 1900;
 
 #define TWO_PI 6.283185307179586
 uint32_t dac_table[DAC_BUFFER_SIZE];
+
 /*
 = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
                                       2984, 3069, 3151, 3230, 3307, 3381, 3451, 3518, 3581, 3640,
@@ -105,17 +107,24 @@ static void DAC1_Config(void)
 
 float sine_freq = SINE_FREQ;
 
-void compute_sine(uint32_t * mem, uint16_t size) {
+//could later do table lookup??
+inline float compute_sine(float index, float offset) {
+  return arm_sin_f32(index * TWO_PI + offset);
+}
+
+inline uint32_t to_i(float v) {
+  return static_cast<uint32_t>(2047.0f * (v + 1.0f));
+}
+
+void fill_buffer(uint32_t * mem, uint16_t size) {
   static double index[2] = {0.0f, 0.0f};
   double inc = (440.0f / SR);
 
   for (int i = 0; i < size; i++) {
-    double v = arm_sin_f32(index[0] * TWO_PI);
-    int32_t iv = 2048.0 * (v + 1.0);
+    uint32_t iv = to_i(compute_sine(index[0], 0));
     mem[i] = iv;
 
-    v = arm_sin_f32(index[1] * TWO_PI);
-    iv = 2048.0 * (v + 1.0);
+    iv = to_i(compute_sine(index[1], 0));
     mem[i] |= (iv << 16);
 
     index[0] += (sine_freq / SR);
@@ -140,7 +149,7 @@ void DMA1_Stream6_IRQHandler(void)
     /* Clear DMA Stream Half Transfer interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_HTIF6);
     /* Add code to process First Half of Buffer */
-    compute_sine(dac_table, DAC_BUFFER_SIZE / 2);
+    fill_buffer(dac_table, DAC_BUFFER_SIZE_2);
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
@@ -148,12 +157,12 @@ void DMA1_Stream6_IRQHandler(void)
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
     /* Add code to process Second Half of Buffer */
-    compute_sine(dac_table + DAC_BUFFER_SIZE / 2, DAC_BUFFER_SIZE / 2);
+    fill_buffer(dac_table + DAC_BUFFER_SIZE_2, DAC_BUFFER_SIZE_2);
   }
 }
 
 
-void setup_dac() {
+void dac_setup() {
   GPIO_InitTypeDef GPIO_InitStructure;
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -174,10 +183,5 @@ void setup_dac() {
     int32_t iv = 2048.0 * (v + 1.0);
     dac_table[i] = iv << 16;
   }
-  /*
-  dac_table[0] = 2048 << 16;
-  dac_table[DAC_BUFFER_SIZE / 2] = 2048;
-  dac_table[3 * DAC_BUFFER_SIZE / 4] = 2048;
-  */
 }
 
