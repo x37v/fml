@@ -2,10 +2,12 @@
 #define FM_VOICE_HPP
 
 #include "adsr.h"
+#include <inttypes.h>
 
 class FMVoice {
   public:
-    typedef std::function<void(void)> complete_callback_t;
+    //typedef std::function<void(void)> complete_callback_t;
+    typedef void (*complete_callback_t)(void);
     enum mode_t { NORMAL, FIXED_CARRIER, FIXED_MODULATOR };
 
     FMVoice();

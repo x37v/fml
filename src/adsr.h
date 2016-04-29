@@ -21,8 +21,6 @@
 #ifndef ADSR_H
 #define ADSR_H
 
-#include <functional>
-
 class ADSR {
   public:
     enum envState {
@@ -33,7 +31,8 @@ class ADSR {
       env_release
     };
 
-    typedef std::function<void(void)> complete_callback_t;
+    //typedef std::function<void(void)> complete_callback_t;
+    typedef void (*complete_callback_t)(void);
     ADSR();
     ~ADSR();
     float process();

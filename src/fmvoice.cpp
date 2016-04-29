@@ -4,10 +4,6 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
 //phase increment = frequency / sample_rate
 
 namespace {
@@ -55,10 +51,13 @@ FMVoice::FMVoice() {
   mModEnv.setReleaseRate(fm::fsample_rate() * 0.01);
   mModEnv.setSustainLevel(0.1);
 
+  /*
+   * XXX
   mAmpEnv.complete_callback([this] (void) {
     if (mCompleteCallback)
       mCompleteCallback();
   });
+  */
 }
 
 void FMVoice::compute(float& left, float& right) {

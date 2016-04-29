@@ -2,6 +2,12 @@
 
 SRCS = src/stm32f4xx_it.c src/system_stm32f4xx.c src/startup_stm32f4xx.c
 P_SRCS = src/main.cpp src/dac.cpp
+P_SRCS += ../src/defines.cpp \
+					../src/util.cpp \
+					../src/envelope.cpp \
+					../src/adsr.cpp \
+					../src/fmvoice.cpp
+
 S_SRCS = 
 
 # USB
@@ -69,7 +75,7 @@ vpath %.a lib
 
 # Includes
 INCLUDE_PATHS = -I$(BASEDIR)/inc -I$(BASEDIR)/lib/cmsis/stm32f4xx -I$(BASEDIR)/lib/cmsis/include
-INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf
+INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf -I../src/
 
 # Library paths
 LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver
@@ -84,7 +90,7 @@ INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
 
 OBJS = $(SRCS:src/%.c=build/%.o)
 OBJS += $(S_SRCS:src/%.s=build/%.o)
-OBJS += $(P_SRCS:src/%.cpp=build/%.o)
+OBJS += $(addsuffix .o, $(basename $(addprefix build/, $(notdir $(P_SRCS)))))
 
 
 ###################################################
@@ -93,6 +99,9 @@ OBJS += $(P_SRCS:src/%.cpp=build/%.o)
 
 all: lib proj
 	$(SIZE) $(OUTPATH)/$(PROJ_NAME).elf
+
+blah:
+	echo $(OBJS)
 
 lib:
 	$(MAKE) -C lib FLOAT_TYPE=$(FLOAT_TYPE) BINPATH=$(BINPATH) DEVICE_DEF=$(DEVICE_DEF) BASEDIR=$(BASEDIR)
@@ -103,6 +112,10 @@ build/%.o: src/%.s build
 	$(AS) $(CPU) -o $@ $<
 
 build/%.o: src/%.cpp build
+	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
+
+#there has got to be a better way
+build/%.o: ../src/%.cpp build
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 
 build/%.o: src/%.c build

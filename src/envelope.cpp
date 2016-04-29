@@ -22,7 +22,7 @@ float ADAREnvelope::compute() {
           mPosition = 1;
         }
       }
-      return val;
+      break;
     case DECAY_RELEASE:
       val = mPosition;
       mPosition -= mStageSettings[DECAY_RELEASE];
@@ -32,8 +32,9 @@ float ADAREnvelope::compute() {
         if (mCompleteCallback)
           mCompleteCallback();
       }
-      return val;
+      break;
   }
+  return val;
 }
 
 void ADAREnvelope::trigger(bool start) {
@@ -69,7 +70,7 @@ ADSREnvelope::ADSREnvelope() {
   mStageSettings[SUSTAIN] = 0.8; //sustain level
   mStageSettings[RELEASE] = 1.0 / (1.0 * fm::fsample_rate()); //release time
 
-  for (int i = 0; i < mStageSettings.size(); i++) {
+  for (unsigned int i = 0; i < mStageSettings.size(); i++) {
     if (mStageSettings[i] <= 0) {
       assert(false);
     }
