@@ -99,19 +99,17 @@ lib:
 
 proj: lib $(OUTPATH)/$(PROJ_NAME).elf
 
-build/%.o: src/%.s
+build/%.o: src/%.s build
 	$(AS) $(CPU) -o $@ $<
 
-build/%.o: src/%.cpp
-	echo $@
-	echo $<
+build/%.o: src/%.cpp build
 	$(CXX) $(CFLAGS) $(CPPFLAGS) -std=c++11 $(INCLUDE_PATHS) -o $@ $<
 
-build/%.o: src/%.c
-	echo $(OBJS)
-	echo $@
-	echo $<
+build/%.o: src/%.c build
 	$(CC) $(CFLAGS) -std=gnu99 $(INCLUDE_PATHS) -o $@ $<
+
+build:
+	mkdir -p build
 
 $(OUTPATH)/$(PROJ_NAME).elf: $(OBJS)
 	$(LD) $(LDFLAGS) -T$(LINKER_SCRIPT) $(LIBPATHS) -o $@ $^ $(LIBS) $(LD_SYS_LIBS)
