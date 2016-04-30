@@ -54,19 +54,24 @@ Programming instructions (using openOCD and gdb)
 ----
 
 Connect using openOCD and the included configuration file.
-$ openocd -f stm32f4xx-openOCD.cfg
+
+    $ openocd -f stm32f4xx-openOCD.cfg
 
 On a separate terminal window, run arm-none-eabi-gdb
-$ arm-none-eabi-gdb 
+
+    $ arm-none-eabi-gdb 
 
 Connect to openOCD
-(gdb) target extended-remote localhost:3333
+
+    (gdb) target extended-remote localhost:3333
 
 Load program the stm32f4xx
-(gdb) file build/stm32f4xx-gcc-barebones.elf
-(gdb) monitor reset halt
-(gdb) load
-(gdb) monitor reset init
+
+    (gdb) file build/stm32f4xx-gcc-barebones.elf
+    (gdb) monitor reset halt
+    (gdb) load
+    (gdb) monitor reset init
 
 To run you program:
-(gdb) continue
+
+    (gdb) continue
