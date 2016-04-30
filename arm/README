@@ -6,6 +6,8 @@ https://silver.arm.com/
 or direct:
 https://silver.arm.com/browse/CMSIS
 
+/usr/bin/arm-none-eabi-g++ -v
+gcc version 4.9.3 20150529 (release) [ARM/embedded-4_9-branch revision 227977] (GNU Tools for ARM Embedded Processors)
 
 
 ===stm32f4xx GCC Barebones Project===
