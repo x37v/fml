@@ -6,13 +6,13 @@ The dev tools for ubuntu are not quite right, so I used this PPA:
 
 https://launchpad.net/~terry.guo/+archive/ubuntu/gcc-arm-embedded
 
-* sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
-* sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
-* sudo apt-get update
+    sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
+    sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
+    sudo apt-get update
 
 To install, on 15.10 Wily, I did:
 
-* sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q3-1wily1
+    sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q3-1wily1
 
 
 Requirements
