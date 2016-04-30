@@ -6,7 +6,8 @@ P_SRCS += ../src/defines.cpp \
 					../src/util.cpp \
 					../src/envelope.cpp \
 					../src/adsr.cpp \
-					../src/fmvoice.cpp
+					../src/fmvoice.cpp \
+					../src/fmsynth.cpp
 
 S_SRCS = 
 
@@ -131,7 +132,7 @@ $(OUTPATH)/$(PROJ_NAME).elf: $(OBJS)
 	$(OBJDUMP) -S --disassemble $(OUTPATH)/$(PROJ_NAME).elf > $(OUTPATH)/$(PROJ_NAME).dis
 
 clean:
-	rm -f $(OUTPATH)/*.o
+	rm -f $(OUTPATH)/*.o $(OBJ)
 	rm -f $(OUTPATH)/$(PROJ_NAME).elf
 	rm -f $(OUTPATH)/$(PROJ_NAME).hex
 	rm -f $(OUTPATH)/$(PROJ_NAME).bin

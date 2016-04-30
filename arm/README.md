@@ -1,3 +1,21 @@
+
+Build Env, Ubuntu 
+====
+
+The dev tools for ubuntu are not quite right, so I used this PPA:
+https://launchpad.net/~terry.guo/+archive/ubuntu/gcc-arm-embedded?field.series_filter=wily
+
+sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
+sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
+sudo apt-get update
+
+on wily, 15.10 I did:
+sudo apt-get install gcc-arm-none-eabi=4.9.3.2015q3-1wily1
+
+
+Requirements
+====
+
 requires the file libarm_cortexM4l_math.a which is from the 'cmsis' distribution.
 
 You must register then go to downloads in the self-service portal here:
@@ -6,11 +24,13 @@ https://silver.arm.com/
 or direct:
 https://silver.arm.com/browse/CMSIS
 
-/usr/bin/arm-none-eabi-g++ -v
-gcc version 4.9.3 20150529 (release) [ARM/embedded-4_9-branch revision 227977] (GNU Tools for ARM Embedded Processors)
 
 
-===stm32f4xx GCC Barebones Project===
+Info from the project I forked for the arm stuff
+====
+
+stm32f4xx GCC Barebones Project
+----
 
 Very basic project to get started with GCC and the stm32f4xx (Discovery board, in this case)
 It includes the 1.3.0 STM32F4xx Standard Peripheral Driver Library, but DOES NOT include USB support (it is a 'barebones' project after all)
@@ -19,7 +39,8 @@ If you want a slightly more useful(but also complex) project, check out the othe
 usb-device - Simple usb device example using CDC. 
 usb-console - Same as usb-device, but includes some command parsing code to make adding functionality simpler.
 
---Build instructions
+Build instructions
+----
 
 Make sure you have the arm-none-eabi(gcc, etc...) tools installed: https://launchpad.net/gcc-arm-embedded
 
@@ -27,7 +48,8 @@ Running make on the top directory should build both the driver library, support 
 Output files are in the build/ directory
 
 
---Programming instructions (using openOCD and gdb)
+Programming instructions (using openOCD and gdb)
+----
 
 Connect using openOCD and the included configuration file.
 $ openocd -f stm32f4xx-openOCD.cfg
