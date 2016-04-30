@@ -2,8 +2,9 @@
 #include "util.h"
 #include <cassert>
 
-#include <iostream>
 #include <cmath>
+
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -20,11 +21,13 @@ namespace {
 
 FMSynth::FMSynth() {
   for (unsigned int i = 0; i < mVoices.size(); i++) {
+    /*
     mVoices[i].complete_callback([this, i] (void) {
       if (mVoiceCompleteCallback)
         mVoiceCompleteCallback(i);
     });
     mNoteLRUQueue.push_back({0, 0});
+    */
   }
   slew_rate(0.0f);
 
@@ -33,11 +36,10 @@ FMSynth::FMSynth() {
   mModFreqIncrement = mod_freq_increment;
   mVolumeIncrement = volume_increment;
 
-  complete_callback([this] (unsigned int voice) { voice_freed(voice); });
+  //complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
-void FMSynth::compute(float& left, float& right) {
-  left = right = 0;
+void FMSynth::compute(float * interleaved, uint16_t length) {
   //smooth
   mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
@@ -46,17 +48,26 @@ void FMSynth::compute(float& left, float& right) {
   mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement);
   mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
 
-  for (auto& s: mVoices) {
-    s.modulator_freq_offset(mModFreqOffset);
-    s.mod_depth(mModDepth);
-    s.transpose(mTranspose);
-    s.feedback(mFeedback);
-    s.bend(mBend);
-    s.compute(left, right);
+    for (auto& s: mVoices) {
+      s.modulator_freq_offset(mModFreqOffset);
+      s.mod_depth(mModDepth);
+      s.transpose(mTranspose);
+      s.feedback(mFeedback);
+      s.bend(mBend);
+    }
+
+  float left, right;
+  const float vol = mVolume / static_cast<float>(mVoices.size());
+  for (uint16_t i = 0; i < length; i++) {
+    left = right = 0;
+    for (auto& s: mVoices) {
+      s.compute(left, right);
+    }
+    left *= vol;
+    right *= vol;
+    interleaved[i] = left;
+    interleaved[i + length] = right;
   }
-  float vol = mVolume / static_cast<float>(mVoices.size());
-  left *= vol;
-  right *= vol;
 }
 
 void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velocity) {
@@ -75,7 +86,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mSlewNote = midi_note;
   }
 
-  //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
+  cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
   mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && voices_on == 0) ? midi_note : mSlewNote);
 
   if (on) {
@@ -214,6 +225,11 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
     }
   }
 
+#if 1
+    if (on)
+      note(0, midi_note);
+    trigger(0, on, midi_note, 1.0);
+#else
   if (on) {
     int voice = -1;
     if (mMonoMode) {
@@ -266,9 +282,11 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
       }
     }
   }
+#endif
 }
 
 void FMSynth::voice_freed(unsigned int voice) {
+#if 0
   if (voice >= mNoteLRUQueue.size()) {
     assert(voice < mNoteLRUQueue.size());
     return;
@@ -277,10 +295,11 @@ void FMSynth::voice_freed(unsigned int voice) {
   uint8_t index = mNoteLRUQueue[voice].second;
   if (index > 0) {
     mNoteLRUQueue[voice] = {0, 0};
-    for (int i = 0; i < mNoteLRUQueue.size(); i++) {
+    for (size_t i = 0; i < mNoteLRUQueue.size(); i++) {
       if (mNoteLRUQueue[i].second >= index)
         mNoteLRUQueue[i].second--;
     }
   }
+#endif
 }
 

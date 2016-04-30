@@ -6,16 +6,19 @@
 #include "defines.h"
 #include "adsr.h"
 
-#include <vector>
 #include <inttypes.h>
+//#include <vector>
 
 class FMSynth {
   public:
-    typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
+    //typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
+    typedef void(*voice_complete_cb_t)(unsigned int);
+    //typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
 
     FMSynth();
 
-    void compute(float& left, float& right);
+    //interleaved buffer, length = length of interleaved / 2
+    void compute(float * interleaved, uint16_t length);
     void trigger(unsigned int voice, bool on,
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     void note(unsigned int voice, uint8_t midi_note);
@@ -77,7 +80,7 @@ class FMSynth {
     voice_complete_cb_t mVoiceCompleteCallback = nullptr;
     std::array<uint8_t, 16> mNotesDown;
 
-    std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
+    //std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
 };
 
 #endif

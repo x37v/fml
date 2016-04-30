@@ -1,6 +1,7 @@
 #ifndef FM_DAC_H
 #define FM_DAC_H
 
-void dac_setup();
+class FMSynth;
+void dac_setup(FMSynth * synth);
 
 #endif

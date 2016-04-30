@@ -57,13 +57,11 @@ class JackAudio : public JackCpp::AudioIO {
         }
       }
 
-      for (unsigned int j = 0; j < nframes; j++) {
-        float left, right;
-        mFM.compute(left, right);
-        left *= mVolume;
-        right *= mVolume;
-        outBufs[0][j] = left;
-        outBufs[1][j] = right;
+      const size_t len = std::min(static_cast<size_t>(nframes), mAudioBuffer.size() / 2);
+      mFM.compute(&mAudioBuffer.front(), len);
+      for (auto i = 0; i < len; i++) {
+        outBufs[0][i] = mVolume * mAudioBuffer[i];
+        outBufs[1][i] = mVolume * mAudioBuffer[i + len];
       }
       return 0;
     }
@@ -78,6 +76,7 @@ class JackAudio : public JackCpp::AudioIO {
     FMSynth mFM;
     FMMidiProc mMidiProc;
     float mVolume = 0.33f;
+    std::array<float, 4096> mAudioBuffer;
 };
 
 int main(int argc, char * argv[]) {

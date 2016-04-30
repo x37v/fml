@@ -102,6 +102,7 @@ void FMMidiProc::process_bend(FMSynth& synth, uint8_t channel, uint8_t num0, uin
 }
 
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {
+  cout << "note: " << (int)channel << " " << (int)note << endl;
   if (channel != mNoteChannel)
     return;
   synth.process_note(on, channel, note, vel);

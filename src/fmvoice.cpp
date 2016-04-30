@@ -7,7 +7,6 @@
 //phase increment = frequency / sample_rate
 
 namespace {
-  const float two_pi = 6.28318530718f;
   const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
   const float offset_increment = 1.0f / (fm::fsample_rate() * 0.015);
 
@@ -66,9 +65,9 @@ void FMVoice::compute(float& left, float& right) {
   float mod_env = mModEnv.process() * mModDepth * mModVelocity;
   float car_env = mAmpEnv.process() * mAmpVelocity;
 
-  float mod = sin(two_pi * (mMPhase + mMFeedBack * mMOutLast)) * mod_env;
-  float car = sin(two_pi * (mCPhase + mod)) * car_env;
-  float car2 = sin(two_pi * (mCPhase2 + mod)) * car_env;
+  float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
+  float car = fm::sine(mCPhase + mod) * car_env;
+  float car2 = fm::sine(mCPhase2 + mod) * car_env;
 
   mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
   mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);

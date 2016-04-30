@@ -6,6 +6,7 @@
 
 //#include <math.h>
 #include "arm_math.h"
+#include "fmsynth.h"
 
 #define   DAC_BUFFER_SIZE          256
 #define   DAC_BUFFER_SIZE_2        128
@@ -20,6 +21,11 @@ static __IO uint16_t TIM6ARRValue = 1900;
 
 #define TWO_PI 6.283185307179586
 uint32_t dac_table[DAC_BUFFER_SIZE];
+
+//we only compute 1/2 the buffer at a time so this is 1/2 of a buffer of stereo, interleaved
+float synth_buffer[DAC_BUFFER_SIZE];
+
+FMSynth * _synth;
 
 /*
 = { 2048, 2145, 2242, 2339, 2435, 2530, 2624, 2717, 2808, 2897,
@@ -107,16 +113,18 @@ static void DAC1_Config(void)
 
 float sine_freq = SINE_FREQ;
 
-//could later do table lookup??
-inline float compute_sine(float index, float offset) {
-  return arm_sin_f32(index * TWO_PI + offset);
-}
-
 inline uint32_t to_i(float v) {
   return static_cast<uint32_t>(2047.0f * (v + 1.0f));
 }
 
 void fill_buffer(uint32_t * mem, uint16_t size) {
+#if 1
+  _synth->compute(synth_buffer, size);
+
+  for (uint16_t i = 0; i < size; i++) {
+    mem[i] = to_i(synth_buffer[i << 1]) << 16 | to_i(synth_buffer[(i << 1) + 1]);
+  }
+#else
   static double index[2] = {0.0f, 0.0f};
   double inc = (440.0f / SR);
 
@@ -139,6 +147,7 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
     if (sine_freq > 4000)
       sine_freq = 20.0f;
   }
+#endif
 }
 
 extern "C"
@@ -162,7 +171,9 @@ void DMA1_Stream6_IRQHandler(void)
 }
 
 
-void dac_setup() {
+void dac_setup(FMSynth * synth) {
+  _synth = synth;
+
   GPIO_InitTypeDef GPIO_InitStructure;
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);

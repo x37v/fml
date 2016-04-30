@@ -4,6 +4,7 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 #include "dac.h"
+#include "fmsynth.h"
 
 
 /*
@@ -27,7 +28,7 @@
 volatile uint32_t time_var1, time_var2;
 // Private function prototypes
 void Delay(volatile uint32_t nCount);
-void init();
+void init(FMSynth * synth);
 
 struct io_mapping {
   GPIO_TypeDef* port;
@@ -47,19 +48,32 @@ struct io_mapping leds[4] = {
   {GPIOE, GPIO_Pin_12}
 };
 
+
 int main(void) {
-  init();
+  FMSynth synth;
+  uint8_t button_down = 0;
+
+  init(&synth);
 
   for(;;) {
-    for (int i = 0; i < 3; i++) {
+    for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
+      uint8_t mask = (1 << i);
       if (val) {
-        GPIO_SetBits(leds[i].port, leds[i].pin);
+        if (!(button_down & mask)) {
+          //synth.process_note(true, 0, 64 + i, 127);
+          button_down |= mask;
+          GPIO_SetBits(leds[i].port, leds[i].pin);
+        }
       } else {
-        GPIO_ResetBits(leds[i].port, leds[i].pin);
+        if (button_down & mask) {
+          //synth.process_note(false, 0, 64 + i, 127);
+          button_down &= ~mask;
+          GPIO_ResetBits(leds[i].port, leds[i].pin);
+        }
       }
     }
-    Delay(10);
+    //Delay(10);
   }
 
   return 0;
@@ -92,7 +106,7 @@ void buttons_setup() {
   }
 }
 
-void init() {
+void init(FMSynth * synth) {
   /*
   // ---------- SysTick timer -------- //
   if (SysTick_Config(SystemCoreClock / 1000)) {
@@ -108,7 +122,7 @@ void init() {
 
   leds_setup();
   buttons_setup();
-  dac_setup();
+  dac_setup(synth);
 }
 
 extern "C"
