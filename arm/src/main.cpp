@@ -56,18 +56,19 @@ int main(void) {
   init(&synth);
 
   for(;;) {
+    dac_compute();
     for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       uint8_t mask = (1 << i);
       if (val) {
         if (!(button_down & mask)) {
-          //synth.process_note(true, 0, 64 + i, 127);
+          synth.process_note(false, 0, 64 + i * 10, 127);
           button_down |= mask;
           GPIO_SetBits(leds[i].port, leds[i].pin);
         }
       } else {
         if (button_down & mask) {
-          //synth.process_note(false, 0, 64 + i, 127);
+          synth.process_note(true, 0, 64 + i * 10, 127);
           button_down &= ~mask;
           GPIO_ResetBits(leds[i].port, leds[i].pin);
         }

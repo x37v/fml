@@ -4,11 +4,6 @@
 
 #include <cmath>
 
-#include <iostream>
-
-using std::cout;
-using std::endl;
-
 namespace {
   //takes 10ms from 0..1
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.05);
@@ -86,7 +81,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mSlewNote = midi_note;
   }
 
-  cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
+  //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
   mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && voices_on == 0) ? midi_note : mSlewNote);
 
   if (on) {

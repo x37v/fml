@@ -122,7 +122,8 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
   _synth->compute(synth_buffer, size);
 
   for (uint16_t i = 0; i < size; i++) {
-    mem[i] = to_i(synth_buffer[i << 1]) << 16 | to_i(synth_buffer[(i << 1) + 1]);
+    uint16_t off = i << 1;
+    mem[i] = to_i(synth_buffer[off]) << 16 | to_i(synth_buffer[off + 1]);
   }
 #else
   static double index[2] = {0.0f, 0.0f};
@@ -150,6 +151,8 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
 #endif
 }
 
+uint32_t * compute_buffer = 0;
+
 extern "C"
 void DMA1_Stream6_IRQHandler(void)
 {
@@ -158,7 +161,7 @@ void DMA1_Stream6_IRQHandler(void)
     /* Clear DMA Stream Half Transfer interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_HTIF6);
     /* Add code to process First Half of Buffer */
-    fill_buffer(dac_table, DAC_BUFFER_SIZE_2);
+    compute_buffer = dac_table;
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
@@ -166,10 +169,17 @@ void DMA1_Stream6_IRQHandler(void)
     /* Clear DMA Stream Transfer Complete interrupt pending bit */
     DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
     /* Add code to process Second Half of Buffer */
-    fill_buffer(dac_table + DAC_BUFFER_SIZE_2, DAC_BUFFER_SIZE_2);
+    compute_buffer = dac_table + DAC_BUFFER_SIZE_2;
   }
 }
 
+void dac_compute() {
+  if (compute_buffer) {
+    uint32_t * buffer = compute_buffer;
+    compute_buffer = 0;
+    fill_buffer(buffer, DAC_BUFFER_SIZE_2);
+  }
+}
 
 void dac_setup(FMSynth * synth) {
   _synth = synth;

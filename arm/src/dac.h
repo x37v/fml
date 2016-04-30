@@ -3,5 +3,6 @@
 
 class FMSynth;
 void dac_setup(FMSynth * synth);
+void dac_compute();
 
 #endif
