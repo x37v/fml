@@ -22,7 +22,11 @@ requires the file libarm_cortexM4l_math.a which is from the 'cmsis' distribution
 
 You must register then go to downloads in the self-service portal here:
 https://silver.arm.com/
-	Downloads -> ARM and AMBA Architecture -> CMSIS MCU Software Standard
+
+* Downloads
+	* ARM and AMBA Architecture
+		* CMSIS MCU Software Standard
+
 or direct:
 https://silver.arm.com/browse/CMSIS
 
