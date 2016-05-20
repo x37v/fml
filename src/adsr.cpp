@@ -52,7 +52,7 @@ void ADSR::setReleaseRate(float rate) {
 }
 
 float ADSR::calcCoef(float rate, float targetRatio) {
-  return exp(-log((1.0 + targetRatio) / targetRatio) / rate);
+  return expf(-logf((1.0 + targetRatio) / targetRatio) / rate);
 }
 
 void ADSR::setSustainLevel(float level) {
