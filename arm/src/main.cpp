@@ -51,10 +51,10 @@ struct io_mapping leds[4] = {
 
 int main(void) {
   FMSynth synth;
-  uint8_t button_down = 0;
+  //uint8_t button_down = 0;
 
   init(&synth);
-  synth.process_note(true, 0, 64, 100);
+  synth.process_note(true, 0, 60, 100);
 
   for(;;) {
     dac_compute();
