@@ -67,30 +67,31 @@ void FMVoice::compute(float& left, float& right) {
 
   float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
   float car = fm::sine(mCPhase + mod) * car_env;
-  float car2 = fm::sine(mCPhase2 + mod) * car_env;
+  //float car2 = fm::sine(mCPhase2 + mod) * car_env;
 
   mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
   mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);
 
   mMPhase = mMPhase + mMPhaseInc;
   mCPhase = mCPhase + mCPhaseInc;
-  mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
+  //mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
   while (mMPhase >= 1.0f)
     mMPhase -= 1.0f;
   while (mCPhase >= 1.0f)
     mCPhase -= 1.0f;
-  while (mCPhase2 >= 1.0f)
-    mCPhase2 -= 1.0f;
+  //while (mCPhase2 >= 1.0f)
+    //mCPhase2 -= 1.0f;
   while (mMPhase < 0.0f)
     mMPhase += 1.0f;
   while (mCPhase < 0.0f)
     mCPhase += 1.0f;
-  while (mCPhase2 < 0.0f)
-    mCPhase2 += 1.0f;
+  //while (mCPhase2 < 0.0f)
+    //mCPhase2 += 1.0f;
   mMOutLast = mod;
 
   left += car;
-  right += car2;
+  right += car;
+  //right += car2;
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {
