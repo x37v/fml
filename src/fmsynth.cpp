@@ -199,6 +199,10 @@ void FMSynth::mono_mode(bool v) {
 }
 
 void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t vel) {
+  //XXX
+  trigger(0, on, midi_note, 1.0);
+  return;
+
   //update the 'down' mask
   if (on) {
     mNotesDown[midi_note / 8] |= (1 << (midi_note % 8));

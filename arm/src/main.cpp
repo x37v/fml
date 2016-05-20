@@ -54,9 +54,11 @@ int main(void) {
   uint8_t button_down = 0;
 
   init(&synth);
+  synth.process_note(true, 0, 64, 100);
 
   for(;;) {
     dac_compute();
+    /*
     for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       uint8_t mask = (1 << i);
@@ -74,6 +76,7 @@ int main(void) {
         }
       }
     }
+    */
     //Delay(10);
   }
 
