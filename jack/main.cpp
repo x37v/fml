@@ -58,12 +58,21 @@ class JackAudio : public JackCpp::AudioIO {
       }
 
       const size_t len = std::min(static_cast<size_t>(nframes), mAudioBuffer.size() / 2);
+#if 0
+      for (auto i = 0; i < len; i++) {
+        mAudioBuffer[0] = mAudioBuffer[1] = 0;
+        mFM.compute(&mAudioBuffer.front(), 1);
+        outBufs[0][i] = mVolume * mAudioBuffer[0];
+        outBufs[1][i] = mVolume * mAudioBuffer[1];
+      }
+#else
       memset(&mAudioBuffer.front(), 0, sizeof(float) * len * 2);
       mFM.compute(&mAudioBuffer.front(), len);
       for (auto i = 0; i < len; i++) {
         outBufs[0][i] = mVolume * mAudioBuffer[i];
         outBufs[1][i] = mVolume * mAudioBuffer[i + len];
       }
+#endif
       return 0;
     }
     JackAudio() : JackCpp::AudioIO("fm", 0, 2),
