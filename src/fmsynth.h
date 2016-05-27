@@ -13,8 +13,8 @@ class FMSynth {
   public:
     FMSynth();
 
-    //interleaved buffer, length = length of interleaved / 2
-    void compute(float * interleaved, uint16_t length);
+    //stereo buffer, left[length] right[length]
+    void compute(float * buffer, uint16_t length);
     void trigger(unsigned int voice, bool on,
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     void note(unsigned int voice, uint8_t midi_note);

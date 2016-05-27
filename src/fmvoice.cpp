@@ -51,39 +51,41 @@ FMVoice::FMVoice() {
   mModEnv.setSustainLevel(0.1);
 }
 
-void FMVoice::compute(float& left, float& right) {
-  update_increments();
+void FMVoice::compute(unsigned int nframes, float* left, float* right) {
+  for (unsigned int i = 0; i < nframes; i++) {
+    update_increments();
 
-  float mod_env = mModEnv.process() * mModDepth * mModVelocity;
-  float car_env = mAmpEnv.process() * mAmpVelocity;
+    float mod_env = mModEnv.process() * mModDepth * mModVelocity;
+    float car_env = mAmpEnv.process() * mAmpVelocity;
 
-  float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
-  float car = fm::sine(mCPhase + mod) * car_env;
-  //float car2 = fm::sine(mCPhase2 + mod) * car_env;
+    float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
+    float car = fm::sine(mCPhase + mod) * car_env;
+    //float car2 = fm::sine(mCPhase2 + mod) * car_env;
 
-  mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
-  mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);
+    mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
+    mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);
 
-  mMPhase = mMPhase + mMPhaseInc;
-  mCPhase = mCPhase + mCPhaseInc;
-  //mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
-  while (mMPhase >= 1.0f)
-    mMPhase -= 1.0f;
-  while (mCPhase >= 1.0f)
-    mCPhase -= 1.0f;
-  //while (mCPhase2 >= 1.0f)
+    mMPhase = mMPhase + mMPhaseInc;
+    mCPhase = mCPhase + mCPhaseInc;
+    //mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
+    while (mMPhase >= 1.0f)
+      mMPhase -= 1.0f;
+    while (mCPhase >= 1.0f)
+      mCPhase -= 1.0f;
+    //while (mCPhase2 >= 1.0f)
     //mCPhase2 -= 1.0f;
-  while (mMPhase < 0.0f)
-    mMPhase += 1.0f;
-  while (mCPhase < 0.0f)
-    mCPhase += 1.0f;
-  //while (mCPhase2 < 0.0f)
+    while (mMPhase < 0.0f)
+      mMPhase += 1.0f;
+    while (mCPhase < 0.0f)
+      mCPhase += 1.0f;
+    //while (mCPhase2 < 0.0f)
     //mCPhase2 += 1.0f;
-  mMOutLast = mod;
+    mMOutLast = mod;
 
-  left += car;
-  right += car;
-  //right += car2;
+    left[i] += car;
+    right[i] += car;
+    //right[i] += car2;
+  }
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {

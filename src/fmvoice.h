@@ -10,7 +10,7 @@ class FMVoice {
 
     FMVoice();
 
-    void compute(float& left, float& right);
+    void compute(unsigned int nframes, float* left, float* right);
     void trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note = UINT8_MAX);
     void note(uint8_t midi_node);
     void bend(float v);

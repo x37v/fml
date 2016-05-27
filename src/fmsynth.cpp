@@ -34,7 +34,8 @@ FMSynth::FMSynth() {
   //complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
-void FMSynth::compute(float * interleaved, uint16_t length) {
+void FMSynth::compute(float * buffer, uint16_t length) {
+  //XXX gonna be steppy based on buffer length..
   //smooth
   mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
   mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
@@ -43,25 +44,23 @@ void FMSynth::compute(float * interleaved, uint16_t length) {
   mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement);
   mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
 
-    for (auto& s: mVoices) {
-      s.modulator_freq_offset(mModFreqOffset);
-      s.mod_depth(mModDepth);
-      s.transpose(mTranspose);
-      s.feedback(mFeedback);
-      s.bend(mBend);
-    }
+  for (auto& s: mVoices) {
+    s.modulator_freq_offset(mModFreqOffset);
+    s.mod_depth(mModDepth);
+    s.transpose(mTranspose);
+    s.feedback(mFeedback);
+    s.bend(mBend);
+  }
 
-  float left, right;
   const float vol = mVolume / static_cast<float>(mVoices.size());
-  for (uint16_t i = 0; i < length; i++) {
-    left = right = 0;
-    for (auto& s: mVoices) {
-      s.compute(left, right);
-    }
-    left *= vol;
-    right *= vol;
-    interleaved[i] = left;
-    interleaved[i + length] = right;
+  for (auto& s: mVoices) {
+    s.compute(length, buffer, buffer + length);
+  }
+
+  //XXX could maybe do some sort of vector multiply here??
+  for (unsigned int i = 0; i < length; i++) {
+    buffer[i] *= vol;
+    buffer[i + length] *= vol;
   }
 }
 
