@@ -221,8 +221,6 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
   }
 
 #if 1
-    if (on)
-      note(0, midi_note);
     trigger(0, on, midi_note, 1.0);
 #else
   if (on) {
