@@ -1,0 +1,63 @@
+#N canvas 0 49 1364 717 10;
+#X obj 242 196 pack f f;
+#X obj 241 221 noteout 1;
+#X obj 241 26 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 243 171 makenote 127 100;
+#X obj 243 52 metro 400;
+#X obj 242 97 random 20;
+#X obj 241 125 + 50;
+#X obj 486 71 hsl 128 15 0 127 0 0 empty empty ratio -2 -8 0 10 -262144
+-1 -1 5300 1;
+#X obj 633 69 hsl 128 15 0 127 0 0 empty empty fine -2 -8 0 10 -262144
+-1 -1 1500 1;
+#X obj 777 69 hsl 128 15 0 127 0 0 empty empty fbdk -2 -8 0 10 -262144
+-1 -1 4400 1;
+#X obj 628 116 ctlout 16 2;
+#X obj 772 116 ctlout 24 2;
+#X obj 483 159 hsl 128 15 0 127 0 0 empty empty depth -2 -8 0 10 -262144
+-1 -1 12400 1;
+#X obj 630 157 hsl 128 15 0 127 0 0 empty empty vol -2 -8 0 10 -262144
+-1 -1 11100 1;
+#X obj 774 157 hsl 128 15 0 127 0 0 empty empty slew -2 -8 0 10 -262144
+-1 -1 0 1;
+#X obj 477 206 ctlout 9 2;
+#X obj 626 204 ctlout 17 2;
+#X obj 769 204 ctlout 25 2;
+#X obj 480 118 ctlout 8 2;
+#X obj 457 415 ctlout 14 2;
+#X obj 538 414 ctlout 22 2;
+#X obj 460 260 vsl 15 128 0 127 0 0 empty empty mod_atk 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 512 259 vsl 15 128 0 127 0 0 empty empty mod_dec 0 -9 0 10 -262144
+-1 -1 1800 1;
+#X obj 627 261 vsl 15 128 0 127 0 0 empty empty vol_atk 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 679 260 vsl 15 128 0 127 0 0 empty empty vol_dec 0 -9 0 10 -262144
+-1 -1 500 1;
+#X obj 624 416 ctlout 15 2;
+#X obj 705 415 ctlout 23 2;
+#X obj 1016 154 hsl 128 15 0 127 0 0 empty empty trans -2 -8 0 10 -262144
+-1 -1 6100 1;
+#X obj 1010 200 ctlout 10 2;
+#X obj 300 29 hsl 128 15 50 800 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 2800 1;
+#X connect 0 0 1 0;
+#X connect 2 0 4 0;
+#X connect 3 0 0 0;
+#X connect 3 1 0 1;
+#X connect 4 0 5 0;
+#X connect 5 0 6 0;
+#X connect 6 0 3 0;
+#X connect 7 0 18 0;
+#X connect 8 0 10 0;
+#X connect 9 0 11 0;
+#X connect 12 0 15 0;
+#X connect 13 0 16 0;
+#X connect 14 0 17 0;
+#X connect 21 0 19 0;
+#X connect 22 0 20 0;
+#X connect 23 0 25 0;
+#X connect 24 0 26 0;
+#X connect 27 0 28 0;
+#X connect 29 0 4 1;
