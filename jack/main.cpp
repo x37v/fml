@@ -58,6 +58,7 @@ class JackAudio : public JackCpp::AudioIO {
       }
 
       const size_t len = std::min(static_cast<size_t>(nframes), mAudioBuffer.size() / 2);
+      memset(&mAudioBuffer.front(), 0, sizeof(float) * len * 2);
       mFM.compute(&mAudioBuffer.front(), len);
       for (auto i = 0; i < len; i++) {
         outBufs[0][i] = mVolume * mAudioBuffer[i];

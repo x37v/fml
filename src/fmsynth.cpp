@@ -50,17 +50,13 @@ void FMSynth::compute(float * buffer, uint16_t length) {
     s.transpose(mTranspose);
     s.feedback(mFeedback);
     s.bend(mBend);
-  }
-
-  const float vol = mVolume / static_cast<float>(mVoices.size());
-  for (auto& s: mVoices) {
     s.compute(length, buffer, buffer + length);
   }
 
   //XXX could maybe do some sort of vector multiply here??
   for (unsigned int i = 0; i < length; i++) {
-    buffer[i] *= vol;
-    buffer[i + length] *= vol;
+    buffer[i] *= mVolume;
+    buffer[i + length] *= mVolume;
   }
 }
 
@@ -155,7 +151,7 @@ void FMSynth::slew_rate(float seconds_per_octave) {
 }
 
 void FMSynth::volume(float v) {
-  mVolumeTarget = v;
+  mVolumeTarget = v / static_cast<float>(mVoices.size());
   mVolumeIncrement = (mVolumeTarget > mVolume) ? volume_increment : -volume_increment;
 }
 

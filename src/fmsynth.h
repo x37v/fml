@@ -55,7 +55,7 @@ class FMSynth {
     float mModFreqOffset = 0.0f;
     float mModFreqOffsetTarget = 0.0f;
     float mModFreqIncrement = 0.0f;
-    float mVolume = 1.0f;
+    float mVolume = 0.3f;
     float mVolumeTarget = 1.0f;
     float mVolumeIncrement = 0.0f;
     float mTranspose = 0.0f;
