@@ -49,14 +49,6 @@ FMVoice::FMVoice() {
   mModEnv.setDecayRate(fm::fsample_rate() * 0.01);
   mModEnv.setReleaseRate(fm::fsample_rate() * 0.01);
   mModEnv.setSustainLevel(0.1);
-
-  /*
-   * XXX
-  mAmpEnv.complete_callback([this] (void) {
-    if (mCompleteCallback)
-      mCompleteCallback();
-  });
-  */
 }
 
 void FMVoice::compute(float& left, float& right) {
@@ -203,8 +195,8 @@ void FMVoice::mod_envelope_setting(ADSR::envState stage, float v) {
   }
 }
 
-void FMVoice::complete_callback(complete_callback_t cb) {
-  mCompleteCallback = cb;
+bool FMVoice::active() const {
+  return mAmpEnv.getState() == ADSR::env_idle;
 }
 
 ADSR::envState FMVoice::volume_envelope_state() const {

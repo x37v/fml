@@ -6,8 +6,6 @@
 
 class FMVoice {
   public:
-    //typedef std::function<void(void)> complete_callback_t;
-    typedef void (*complete_callback_t)(void);
     enum mode_t { NORMAL, FIXED_CARRIER, FIXED_MODULATOR };
 
     FMVoice();
@@ -28,8 +26,6 @@ class FMVoice {
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
 
-    void complete_callback(complete_callback_t cb); 
-
     bool active() const;
     ADSR::envState volume_envelope_state() const;
 
@@ -39,8 +35,6 @@ class FMVoice {
     mode_t mode() const;
   private:
     void update_increments();
-
-    complete_callback_t mCompleteCallback = nullptr;
 
     mode_t mMode = NORMAL;
 

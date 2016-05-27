@@ -175,10 +175,6 @@ void FMSynth::mod_env_linear(bool v) {
     s.mod_env_linear(v);
 }
 
-void FMSynth::complete_callback(voice_complete_cb_t cb) {
-  mVoiceCompleteCallback = cb;
-}
-
 void FMSynth::all_off() {
   for (auto& s: mVoices)
     s.trigger(false, 64, 127.0);

@@ -11,10 +11,6 @@
 
 class FMSynth {
   public:
-    //typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
-    typedef void(*voice_complete_cb_t)(unsigned int);
-    //typedef std::function<void(unsigned int voice)> voice_complete_cb_t;
-
     FMSynth();
 
     //interleaved buffer, length = length of interleaved / 2
@@ -41,8 +37,6 @@ class FMSynth {
     void volume_envelope_setting(ADSR::envState stage, float v);
     void mod_envelope_setting(ADSR::envState stage, float v);
     void mod_env_linear(bool v);
-
-    void complete_callback(voice_complete_cb_t cb);
 
     void all_off();
     //require a note to be held to slew?
@@ -77,7 +71,6 @@ class FMSynth {
     bool mSlewFromFirstHeld = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
-    voice_complete_cb_t mVoiceCompleteCallback = nullptr;
     std::array<uint8_t, 16> mNotesDown;
 
     //std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
