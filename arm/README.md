@@ -18,7 +18,7 @@ To install, on 15.10 Wily, I did:
 Requirements
 ====
 
-requires the file libarm_cortexM4l_math.a which is from the 'cmsis' distribution.
+requires the file libarm_cortexM4lf_math.a which is from the 'cmsis' distribution.
 
 You must register then go to downloads in the self-service portal here:
 https://silver.arm.com/
