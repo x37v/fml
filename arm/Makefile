@@ -31,8 +31,8 @@ BASEDIR := $(abspath ./)
 # binary compatible
 ifneq ($(FLOAT_TYPE), hard)
 ifneq ($(FLOAT_TYPE), soft)
-#override FLOAT_TYPE = hard
-override FLOAT_TYPE = soft
+override FLOAT_TYPE = hard
+#override FLOAT_TYPE = soft
 endif
 endif
 
@@ -51,11 +51,11 @@ LINKER_SCRIPT = ./src/stm32_flash.ld
 
 CPU = -mcpu=cortex-m4 -mthumb
 
-CFLAGS  = $(CPU) -c -g -O0 -Wall
+CFLAGS  = $(CPU) -c -g -O0 -Wall -D__FPU_PRESENT
 LDFLAGS  = $(CPU) -mlittle-endian -mthumb-interwork -nostartfiles -Wl,--gc-sections,-Map=$(OUTPATH)/$(PROJ_NAME).map,--cref --specs=nano.specs
 
 ifeq ($(FLOAT_TYPE), hard)
-CFLAGS += -fsingle-precision-constant -Wdouble-promotion
+CFLAGS += -fsingle-precision-constant -Wdouble-promotion -funroll-loops
 CFLAGS += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 else
 CFLAGS += -msoft-float
@@ -79,10 +79,10 @@ INCLUDE_PATHS = -I$(BASEDIR)/inc -I$(BASEDIR)/lib/cmsis/stm32f4xx -I$(BASEDIR)/l
 INCLUDE_PATHS += -I$(BASEDIR)/lib/Conf -I../src/
 
 # Library paths
-LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver
+LIBPATHS = -L$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver -L/usr/bin/../lib/gcc/arm-none-eabi/4.9.3/../../../../arm-none-eabi/lib/armv7e-m/fpu/
 
 # Libraries to link
-LIBS = -lstdperiph -lc -lgcc -lnosys -lm ./libarm_cortexM4l_math.a
+LIBS = -lstdperiph -lc -lgcc -lnosys -lm ./libarm_cortexM4lf_math.a
 
 # Extra includes
 INCLUDE_PATHS += -I$(BASEDIR)/lib/STM32F4xx_StdPeriph_Driver/inc
