@@ -44,8 +44,8 @@ struct io_mapping buttons[3] = {
 struct io_mapping leds[4] = {
   {GPIOB, GPIO_Pin_2},
   {GPIOE, GPIO_Pin_7},
-  {GPIOE, GPIO_Pin_10},
-  {GPIOE, GPIO_Pin_12}
+  {GPIOE, GPIO_Pin_12}, //XXX TMP
+  {GPIOE, GPIO_Pin_13} //XXX TMP
 };
 
 
@@ -54,7 +54,8 @@ int main(void) {
   //uint8_t button_down = 0;
 
   init(&synth);
-  synth.process_note(true, 0, 60, 100);
+  synth.process_note(true, 0, 50, 100);
+  //synth.process_note(true, 0, 60, 100);
 
   for(;;) {
     dac_compute();

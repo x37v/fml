@@ -151,33 +151,40 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
 #endif
 }
 
-uint32_t * compute_buffer = 0;
+volatile uint32_t * compute_buffer = 0;
 
 extern "C"
 void DMA1_Stream6_IRQHandler(void)
 {
   /* Test on DMA Stream Half Transfer interrupt */
   if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_HTIF6)) {
-    /* Clear DMA Stream Half Transfer interrupt pending bit */
-    DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_HTIF6);
+    GPIO_SetBits(GPIOE, GPIO_Pin_12);
+    GPIO_SetBits(GPIOE, GPIO_Pin_13);
     /* Add code to process First Half of Buffer */
     compute_buffer = dac_table;
+    /* Clear DMA Stream Half Transfer interrupt pending bit */
+    DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_HTIF6);
   }
 
   /* Test on DMA Stream Transfer Complete interrupt */
   if (DMA_GetITStatus(DMA1_Stream6, DMA_IT_TCIF6)) {
-    /* Clear DMA Stream Transfer Complete interrupt pending bit */
-    DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
+    GPIO_ResetBits(GPIOE, GPIO_Pin_12);
+    GPIO_SetBits(GPIOE, GPIO_Pin_13);
     /* Add code to process Second Half of Buffer */
     compute_buffer = dac_table + DAC_BUFFER_SIZE_2;
+    /* Clear DMA Stream Transfer Complete interrupt pending bit */
+    DMA_ClearITPendingBit(DMA1_Stream6, DMA_IT_TCIF6);
   }
+
 }
 
 void dac_compute() {
+  static int on = 0;
   if (compute_buffer) {
-    uint32_t * buffer = compute_buffer;
+    uint32_t * buffer = (uint32_t *)compute_buffer;
     compute_buffer = 0;
     fill_buffer(buffer, DAC_BUFFER_SIZE_2);
+    GPIO_ResetBits(GPIOE, GPIO_Pin_13);
   }
 }
 
