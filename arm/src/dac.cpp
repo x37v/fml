@@ -179,7 +179,6 @@ void DMA1_Stream6_IRQHandler(void)
 }
 
 void dac_compute() {
-  static int on = 0;
   if (compute_buffer) {
     uint32_t * buffer = (uint32_t *)compute_buffer;
     compute_buffer = 0;
@@ -207,8 +206,8 @@ void dac_setup(FMSynth * synth) {
   DAC1_Config();
 
   for (int i = 0; i < DAC_BUFFER_SIZE; i++) {
-    double v = sin(((double)i / (DAC_BUFFER_SIZE - 1)) * TWO_PI);
-    int32_t iv = 2048.0 * (v + 1.0);
+    float v = sin(((float)i / (DAC_BUFFER_SIZE - 1)) * TWO_PI);
+    int32_t iv = 2048.0f * (v + 1.0f);
     dac_table[i] = iv << 16;
   }
 }

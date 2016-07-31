@@ -116,7 +116,7 @@ void FMVoice::note(uint8_t midi_note) {
 
   if (mSlewSecondsPerOctave > 0) {
     float diff = mMidiNoteTarget - mMidiNote;
-    float sec = fabs(diff / 12.0) * mSlewSecondsPerOctave;
+    float sec = fabsf(diff / 12.0f) * mSlewSecondsPerOctave;
     if (sec > 0)
       mSlewIncrement = diff / (sec * fm::fsample_rate());
     else
