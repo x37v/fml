@@ -51,7 +51,7 @@ LINKER_SCRIPT = ./src/stm32_flash.ld
 
 CPU = -mcpu=cortex-m4 -mthumb
 
-CFLAGS  = $(CPU) -c -g -O0 -Wall -D__FPU_PRESENT
+CFLAGS  = $(CPU) -c -O2 -Wall -D__FPU_PRESENT
 LDFLAGS  = $(CPU) -mlittle-endian -mthumb-interwork -nostartfiles -Wl,--gc-sections,-Map=$(OUTPATH)/$(PROJ_NAME).map,--cref --specs=nano.specs
 
 ifeq ($(FLOAT_TYPE), hard)

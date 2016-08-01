@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdlib>
 
+#define DETUNED_STEREO
+
 //phase increment = frequency / sample_rate
 
 namespace {
@@ -53,12 +55,6 @@ FMVoice::FMVoice() {
 
 void FMVoice::compute(unsigned int nframes, float* left, float* right) {
   for (unsigned int i = 0; i < nframes; i++) {
-#if 0
-    left[i] = right[i] = fm::sine(mMPhase, 0.0f);
-    mMPhase += 0.009523809523809525f;
-    while (mMPhase >= 1.0f)
-      mMPhase -= 1.0f;
-#else
     update_increments();
 
     float mod_env = mModEnv.process() * mModDepth * mModVelocity;
@@ -66,31 +62,36 @@ void FMVoice::compute(unsigned int nframes, float* left, float* right) {
 
     float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
     float car = fm::sine(mCPhase + mod) * car_env;
-    //float car2 = fm::sine(mCPhase2 + mod) * car_env;
+#ifdef DETUNED_STEREO
+    float car2 = fm::sine(mCPhase2 + mod) * car_env;
+#endif
+    mMOutLast = mod;
 
     mAmpVelocity = fm::lin_smooth(mAmpVelocityTarget, mAmpVelocity, mAmpVelocityIncrement);
     mModVelocity = fm::lin_smooth(mModVelocityTarget, mModVelocity, mModVelocityIncrement);
 
     mMPhase = mMPhase + mMPhaseInc;
     mCPhase = mCPhase + mCPhaseInc;
-    //mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
     while (mMPhase >= 1.0f)
       mMPhase -= 1.0f;
     while (mCPhase >= 1.0f)
       mCPhase -= 1.0f;
-    //while (mCPhase2 >= 1.0f)
-    //mCPhase2 -= 1.0f;
     while (mMPhase < 0.0f)
       mMPhase += 1.0f;
     while (mCPhase < 0.0f)
       mCPhase += 1.0f;
-    //while (mCPhase2 < 0.0f)
-    //mCPhase2 += 1.0f;
-    mMOutLast = mod;
 
+#ifdef DETUNED_STEREO
+    mCPhase2 = mCPhase2 + (mCPhaseInc * 1.0001);
+    while (mCPhase2 >= 1.0f)
+      mCPhase2 -= 1.0f;
+    while (mCPhase2 < 0.0f)
+      mCPhase2 += 1.0f;
+    left[i] += car;
+    right[i] += car2;
+#else
     left[i] += car;
     right[i] += car;
-    //right[i] += car2;
 #endif
   }
 }

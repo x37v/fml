@@ -46,6 +46,8 @@ void FMSynth::compute(float * buffer, uint16_t length) {
 
   //clear out buffer
   memset(buffer, 0, 2 * sizeof(float) * length);
+  float *left = buffer;
+  float *right = buffer + length;
   for (int i = 0; i < FM_VOICES; i++) {
     auto& s = mVoices[i];
     s.modulator_freq_offset(mModFreqOffset);
@@ -53,16 +55,14 @@ void FMSynth::compute(float * buffer, uint16_t length) {
     s.transpose(mTranspose);
     s.feedback(mFeedback);
     s.bend(mBend);
-    s.compute(length, buffer, buffer + length);
+    s.compute(length, left, right);
   }
 
-#if 0
   //XXX could maybe do some sort of vector multiply here??
   for (unsigned int i = 0; i < length; i++) {
-    buffer[i] *= mVolume;
-    buffer[i + length] *= mVolume;
+    left[i] *= mVolume;
+    right[i] *= mVolume;
   }
-#endif
 }
 
 void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velocity) {

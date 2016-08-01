@@ -8,8 +8,14 @@
 #include "arm_math.h"
 #include "fmsynth.h"
 
+#if 0
 #define   DAC_BUFFER_SIZE          256
 #define   DAC_BUFFER_SIZE_2        128
+#else
+#define   DAC_BUFFER_SIZE          32
+#define   DAC_BUFFER_SIZE_2        16
+#endif
+
 #define   DAC_DHR12R1_ADDR  0x40007408                           // DMA writes into this reg on every request
 #define   DAC_DHR12RD_Address 0x40007420
 

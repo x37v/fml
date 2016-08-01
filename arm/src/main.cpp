@@ -54,14 +54,18 @@ int main(void) {
   //uint8_t button_down = 0;
 
   init(&synth);
+  synth.volume(0.1);
   synth.mod_depth(0.9);
   synth.mode(FMVoice::NORMAL);
   synth.freq_mult(1.0, 4.0);
-  synth.modulator_freq_offset(0.2);
+  synth.modulator_freq_offset(0.5);
   synth.feedback(0.8);
-  synth.process_note(true, 0, 50, 100);
-  //synth.process_note(true, 0, 60, 100);
-  //synth.process_note(true, 1, 73, 100);
+  synth.trigger(0, true, 50, 0.5);
+  synth.trigger(1, true, 73, 0.5);
+  synth.trigger(2, true, 72, 0.5);
+  //synth.trigger(4, true, 80, 0.5);
+  //synth.trigger(3, true, 3, 0.5);
+  //synth.trigger(5, true, 1, 0.5);
 
   for(;;) {
     dac_compute();
