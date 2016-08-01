@@ -122,18 +122,17 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
   _synth->compute(synth_buffer, size);
 
   for (uint16_t i = 0; i < size; i++) {
-    uint16_t off = i << 1;
-    mem[i] = to_i(synth_buffer[off]) << 16 | to_i(synth_buffer[off + 1]);
+    mem[i] = to_i(synth_buffer[i]) << 16;// | to_i(synth_buffer[off + 1]);
   }
 #else
-  static double index[2] = {0.0f, 0.0f};
-  double inc = (440.0f / SR);
+  static float index[2] = {0.0f, 0.0f};
+  float inc = (440.0f / SR);
 
   for (int i = 0; i < size; i++) {
-    uint32_t iv = to_i(compute_sine(index[0], 0));
+    uint32_t iv = to_i(fm::sine(index[0], 0));
     mem[i] = iv;
 
-    iv = to_i(compute_sine(index[1], 0));
+    iv = to_i(fm::sine(index[1], 0));
     mem[i] |= (iv << 16);
 
     index[0] += (sine_freq / SR);

@@ -53,6 +53,12 @@ FMVoice::FMVoice() {
 
 void FMVoice::compute(unsigned int nframes, float* left, float* right) {
   for (unsigned int i = 0; i < nframes; i++) {
+#if 0
+    left[i] = right[i] = fm::sine(mMPhase, 0.0f);
+    mMPhase += 0.009523809523809525f;
+    while (mMPhase >= 1.0f)
+      mMPhase -= 1.0f;
+#else
     update_increments();
 
     float mod_env = mModEnv.process() * mModDepth * mModVelocity;
@@ -85,6 +91,7 @@ void FMVoice::compute(unsigned int nframes, float* left, float* right) {
     left[i] += car;
     right[i] += car;
     //right[i] += car2;
+#endif
   }
 }
 

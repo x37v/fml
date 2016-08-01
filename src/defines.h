@@ -12,7 +12,7 @@
 
 
 namespace fm {
-  const float two_pi = 6.283185307179586;
+  const float two_pi = 6.28318530717958f;
   inline unsigned int sample_rate() { return 44100; }
   inline float fsample_rate() { return 44100.0f; }
   float midi_note_to_freq(float midi_note);
