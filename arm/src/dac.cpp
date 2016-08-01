@@ -128,7 +128,7 @@ void fill_buffer(uint32_t * mem, uint16_t size) {
   _synth->compute(synth_buffer, size);
 
   for (uint16_t i = 0; i < size; i++) {
-    mem[i] = to_i(synth_buffer[i]) << 16;// | to_i(synth_buffer[off + 1]);
+    mem[i] = to_i(synth_buffer[i]) << 16 | to_i(synth_buffer[size + i]);
   }
 #else
   static float index[2] = {0.0f, 0.0f};
