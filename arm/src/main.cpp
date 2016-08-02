@@ -10,11 +10,11 @@
 
 /*
  *
- *   POTS  LED  BUTTONS  DAC  MIDI       DIP switch
- *   PC0   PB2  PE8      PA4  PB11 (Rx)  PD8
- *   PC1   PE7  PE9      PA5             PD9
- *   PA0   PE10 PE11                     PD10
- *   PA1   PE12                          PD11
+ *   POTS  LED  BUTTONS  DAC  MIDI                DIP switch
+ *   PC0   PB2  PE8      PA4  PB11 (Rx USART3)    PD8
+ *   PC1   PE7  PE9      PA5                      PD9
+ *   PA0   PE10 PE11                              PD10
+ *   PA1   PE12                                   PD11
  *   PA2
  *   PA3
  *   PA6
@@ -45,8 +45,8 @@ struct io_mapping buttons[3] = {
 struct io_mapping leds[4] = {
   {GPIOB, GPIO_Pin_2},
   {GPIOE, GPIO_Pin_7},
-  {GPIOE, GPIO_Pin_12}, //XXX TMP
-  {GPIOE, GPIO_Pin_13} //XXX TMP
+  {GPIOE, GPIO_Pin_10},
+  {GPIOE, GPIO_Pin_12}
 };
 
 
@@ -67,6 +67,8 @@ int main(void) {
   //synth.trigger(4, true, 80, 0.5);
   //synth.trigger(3, true, 3, 0.5);
   //synth.trigger(5, true, 1, 0.5);
+  //
+  GPIO_SetBits(leds[0].port, leds[0].pin);
 
   for(;;) {
     dac_compute();

@@ -53,5 +53,6 @@ extern "C"
 void USART3_IRQHandler(void) {
   if(USART_GetITStatus(USART3, USART_FLAG_RXNE)) {
     USART_ClearITPendingBit(USART3, USART_FLAG_RXNE);
+    uint8_t b = USART1->DR;
   }
 }

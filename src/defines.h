@@ -1,7 +1,7 @@
 #ifndef FM_DEFINES_H
 #define FM_DEFINES_H
 
-#define FM_VOICES 6
+#define FM_VOICES 2
 
 #include <inttypes.h>
 #include <cmath>
