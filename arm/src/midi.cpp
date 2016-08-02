@@ -19,7 +19,7 @@ namespace midi {
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -61,7 +61,7 @@ void USART3_IRQHandler(void) {
     if (b & 0x80) {
       last_status = b;
     } else {
-      if (last_status & 0xF0 == 0x90)
+      if ((last_status & 0xF0) == 0x90)
         USART_SendData(USART1, b);
     }
   }
