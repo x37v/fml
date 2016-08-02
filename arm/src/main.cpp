@@ -138,7 +138,7 @@ void init(FMSynth * synth) {
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 
-  leds_setup();
+  //leds_setup();
   buttons_setup();
   dac_setup(synth);
   midi::init();
