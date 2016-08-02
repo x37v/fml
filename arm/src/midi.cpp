@@ -9,15 +9,17 @@
 
 namespace midi {
   void init() {
+    USART_DeInit(USART3);
     //https://github.com/g4lvanix/STM32F4-examples/blob/master/USART/main.c
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -25,7 +27,7 @@ namespace midi {
 
     //set up the peripheral
     USART_InitTypeDef usartis;
-    USART_StructInit(&usartis);
+    //USART_StructInit(&usartis);
     usartis.USART_BaudRate = 31250;
     usartis.USART_WordLength = USART_WordLength_8b;
     usartis.USART_StopBits = USART_StopBits_1;
@@ -49,9 +51,18 @@ namespace midi {
   }
 }
 
+volatile uint8_t last_status = 0;
 extern "C"
 void USART3_IRQHandler(void) {
-  if(USART_GetITStatus(USART3, USART_FLAG_RXNE)) {
-    USART_ClearITPendingBit(USART3, USART_FLAG_RXNE);
+  uint8_t b = 0;
+  if (USART_GetITStatus(USART3, USART_IT_RXNE)) {
+    b = USART3->DR;
+    //USART_ClearITPendingBit(USART3, USART_IT_RXNE);
+    if (b & 0x80) {
+      last_status = b;
+    } else {
+      if (last_status & 0xF0 == 0x90)
+        USART_SendData(USART1, b);
+    }
   }
 }
