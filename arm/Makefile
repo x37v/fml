@@ -1,7 +1,7 @@
 # Sources
 
 SRCS = src/stm32f4xx_it.c src/system_stm32f4xx.c src/startup_stm32f4xx.c
-P_SRCS = src/main.cpp src/dac.cpp
+P_SRCS = src/main.cpp src/dac.cpp src/midi.cpp
 P_SRCS += ../src/defines.cpp \
 					../src/util.cpp \
 					../src/envelope.cpp \
@@ -51,7 +51,7 @@ LINKER_SCRIPT = ./src/stm32_flash.ld
 
 CPU = -mcpu=cortex-m4 -mthumb
 
-CFLAGS  = $(CPU) -c -O2 -Wall -D__FPU_PRESENT
+CFLAGS  = $(CPU) -c -g -O1 -Wall -D__FPU_PRESENT
 LDFLAGS  = $(CPU) -mlittle-endian -mthumb-interwork -nostartfiles -Wl,--gc-sections,-Map=$(OUTPATH)/$(PROJ_NAME).map,--cref --specs=nano.specs
 
 ifeq ($(FLOAT_TYPE), hard)

@@ -5,6 +5,7 @@
 #include "stm32f4xx.h"
 #include "dac.h"
 #include "fmsynth.h"
+#include "midi.h"
 
 
 /*
@@ -138,6 +139,7 @@ void init(FMSynth * synth) {
   leds_setup();
   buttons_setup();
   dac_setup(synth);
+  midi::init();
 }
 
 extern "C"
