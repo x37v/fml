@@ -52,18 +52,21 @@ struct io_mapping leds[4] = {
 
 int main(void) {
   FMSynth synth;
-  //uint8_t button_down = 0;
+  uint8_t button_down = 0;
 
   init(&synth);
 
   synth.volume(0.1);
   synth.mod_depth(0.9);
   synth.mode(FMVoice::NORMAL);
+  synth.volume_envelope_setting(ADSR::env_release, 2.0);
+  synth.mod_envelope_setting(ADSR::env_attack, 4.0);
+  synth.mod_envelope_setting(ADSR::env_release, 4.0);
   synth.freq_mult(1.0, 4.0);
   synth.modulator_freq_offset(0.5);
-  synth.feedback(0.8);
-  synth.trigger(0, true, 50, 0.5);
-  synth.trigger(1, true, 73, 0.5);
+  synth.feedback(0.2);
+  //synth.trigger(0, true, 50, 0.5);
+  //synth.trigger(1, true, 73, 0.5);
 
   //synth.trigger(2, true, 72, 0.5);
   //synth.trigger(4, true, 80, 0.5);
@@ -78,25 +81,29 @@ int main(void) {
 
   for(;;) {
     dac_compute();
-    /*
     for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       uint8_t mask = (1 << i);
+      uint8_t led_index = i;
+      if (i == 1)
+        led_index = 3;
       if (val) {
         if (!(button_down & mask)) {
-          synth.process_note(false, 0, 64 + i * 10, 127);
+          synth.trigger(i, false, 50 + i * 4, 0.5);
+          //synth.process_note(false, 0, 64 + i * 10, 127);
           button_down |= mask;
-          GPIO_SetBits(leds[i].port, leds[i].pin);
+          GPIO_SetBits(leds[led_index].port, leds[led_index].pin);
         }
       } else {
         if (button_down & mask) {
-          synth.process_note(true, 0, 64 + i * 10, 127);
+          synth.trigger(i, true, 50 + i * 4, 1.0);
+          //synth.process_note(false, 0, 64 + i * 10, 127);
+          //synth.process_note(true, 0, 64 + i * 10, 127);
           button_down &= ~mask;
-          GPIO_ResetBits(leds[i].port, leds[i].pin);
+          GPIO_ResetBits(leds[led_index].port, leds[led_index].pin);
         }
       }
     }
-    */
     //Delay(10);
   }
 
