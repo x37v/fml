@@ -55,6 +55,7 @@ int main(void) {
   //uint8_t button_down = 0;
 
   init(&synth);
+
   synth.volume(0.1);
   synth.mod_depth(0.9);
   synth.mode(FMVoice::NORMAL);
@@ -63,12 +64,17 @@ int main(void) {
   synth.feedback(0.8);
   synth.trigger(0, true, 50, 0.5);
   synth.trigger(1, true, 73, 0.5);
-  synth.trigger(2, true, 72, 0.5);
+
+  //synth.trigger(2, true, 72, 0.5);
   //synth.trigger(4, true, 80, 0.5);
   //synth.trigger(3, true, 3, 0.5);
   //synth.trigger(5, true, 1, 0.5);
   //
   GPIO_SetBits(leds[0].port, leds[0].pin);
+  GPIO_SetBits(leds[1].port, leds[1].pin);
+  GPIO_SetBits(leds[2].port, leds[2].pin);
+  GPIO_SetBits(leds[3].port, leds[3].pin);
+  //GPIO_ResetBits(leds[1].port, leds[1].pin);
 
   for(;;) {
     dac_compute();
@@ -138,7 +144,7 @@ void init(FMSynth * synth) {
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 
-  //leds_setup();
+  leds_setup();
   buttons_setup();
   dac_setup(synth);
   midi::init();
