@@ -16,10 +16,11 @@ namespace midi {
     RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 
     GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_StructInit(&GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -27,7 +28,7 @@ namespace midi {
 
     //set up the peripheral
     USART_InitTypeDef usartis;
-    //USART_StructInit(&usartis);
+    USART_StructInit(&usartis);
     usartis.USART_BaudRate = 31250;
     usartis.USART_WordLength = USART_WordLength_8b;
     usartis.USART_StopBits = USART_StopBits_1;
