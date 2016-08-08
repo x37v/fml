@@ -2,9 +2,10 @@
 #define FMADC_H
 
 class FMSynth;
+class FMMidiProc;
 namespace adc {
   void init();
-  void process(FMSynth* synth);
+  void process(FMMidiProc& midiproc, FMSynth& synth);
 }
 
 #endif

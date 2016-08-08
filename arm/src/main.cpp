@@ -8,6 +8,7 @@
 #include "midi.h"
 #include "io_mapping.h"
 #include "adc.h"
+#include "midiproc.h"
 
 /*
  *
@@ -48,6 +49,7 @@ struct io_mapping leds[4] = {
 
 int main(void) {
   FMSynth synth;
+  FMMidiProc midiproc(synth);
   uint8_t button_down = 0;
 
   init(&synth);
@@ -77,7 +79,7 @@ int main(void) {
 
   for(;;) {
     dac_compute();
-    adc::process(&synth);
+    adc::process(midiproc, synth);
     for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       uint8_t mask = (1 << i);

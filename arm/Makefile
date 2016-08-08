@@ -7,7 +7,8 @@ P_SRCS += ../src/defines.cpp \
 					../src/envelope.cpp \
 					../src/adsr.cpp \
 					../src/fmvoice.cpp \
-					../src/fmsynth.cpp
+					../src/fmsynth.cpp \
+					../src/midiproc.cpp
 
 S_SRCS = 
 

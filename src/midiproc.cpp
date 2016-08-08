@@ -1,11 +1,13 @@
 #include "midiproc.h"
 #include <cmath>
 
+/*
 #include <cassert>
 #include <iostream>
 #include <iomanip>
 using std::cout;
 using std::endl;
+*/
 
 namespace {
   const int num_ratios = 11;
@@ -19,10 +21,40 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     return;
   float fval = static_cast<float>(val) / 127.0;
   switch (num) {
+    case TRANSPOSE:
+      synth.transpose(12 * (((int16_t)val - 64) / 24));
+      break;
+    case MONO_MODE:
+      synth.mono_mode(val != 0);
+      break;
+    case MOD_ENV_LINEAR:
+      synth.mod_env_linear(val != 0);
+      break;
+
+    case RATIO:
+    case FINE:
+    case FBDK:
+    case DEPTH:
+    case VOL:
+    case SLEW:
+    case MOD_ENV_ATK:
+    case MOD_ENV_DEC:
+    case VOL_ENV_ATK:
+    case VOL_ENV_REL:
+      process_float(synth, (cc_map_t)num, fval);
+      break;
+
+    default:
+      break;
+  }
+}
+
+void FMMidiProc::process_float(FMSynth& synth, cc_map_t mapping, float fval) {
+  switch (mapping) {
     case RATIO:
       {
         int index = roundf((fval * 2.0 - 1.0) * static_cast<float>(num_ratios)); 
-        if (abs(index) == num_ratios) {
+        if (std::abs(index) == num_ratios) {
           if (index > 0) {
             synth.mode(FMVoice::FIXED_MODULATOR);
           } else {
@@ -79,6 +111,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     case VOL_ENV_REL:
       synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
       break;
+      /*
     case TRANSPOSE:
       synth.transpose(12 * (((int16_t)val - 64) / 24));
       break;
@@ -88,6 +121,7 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     case MOD_ENV_LINEAR:
       synth.mod_env_linear(val != 0);
       break;
+      */
     default:
       break;
   }
