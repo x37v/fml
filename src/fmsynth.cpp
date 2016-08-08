@@ -6,15 +6,32 @@
 
 namespace {
   //takes 10ms from 0..1
+  float volume_increment;
+  float mod_freq_increment;
+  float mod_depth_increment;
+  float transpose_increment;
+  float feedback_increment;
+  float bend_increment;
+
+  /*
   const float volume_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float transpose_increment = 1.0f / (fm::fsample_rate() * 0.005);
   const float feedback_increment = 1.0f / (fm::fsample_rate() * 0.05);
   const float bend_increment = 1.0f / (fm::fsample_rate() * 0.015);
+  */
 }
 
 FMSynth::FMSynth() {
+  //XXX block rate
+  volume_increment = 1.0f / (44100.0f * 0.05f);
+  mod_freq_increment = 1.0f / (44100.0f * 0.05f);
+  mod_depth_increment = 1.0f / (44100.0f * 0.05f);
+  transpose_increment = 1.0f / (44100.0f * 0.005f);
+  feedback_increment = 1.0f / (44100.0f * 0.05f);
+  bend_increment = 1.0f / (44100.0f * 0.015f);
+
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     /*
     mVoices[i].complete_callback([this, i] (void) {
@@ -37,12 +54,13 @@ FMSynth::FMSynth() {
 void FMSynth::compute(float * buffer, uint16_t length) {
   //XXX gonna be steppy based on buffer length..
   //smooth
-  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
-  mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
-  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement);
-  mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement);
-  mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement);
-  mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
+  float flen = length;
+  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement * flen);
+  mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement * flen);
+  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement * flen);
+  mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement * flen);
+  mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement * flen);
+  mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement * flen);
 
   //clear out buffer
   memset(buffer, 0, 2 * sizeof(float) * length);
