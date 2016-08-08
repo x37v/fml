@@ -52,7 +52,7 @@ int main(void) {
 
   init(&synth);
 
-  synth.volume(0.1);
+  synth.volume(0.3);
   synth.mod_depth(0.9);
   synth.mode(FMVoice::NORMAL);
   synth.volume_envelope_setting(ADSR::env_release, 2.0);
