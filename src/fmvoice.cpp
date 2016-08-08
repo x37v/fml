@@ -9,8 +9,8 @@
 //phase increment = frequency / sample_rate
 
 namespace {
-  const float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005);
-  const float offset_increment = 1.0f / (fm::fsample_rate() * 0.015);
+  float velocity_increment = 1.0f / (44100.0f * 0.005f);
+  float offset_increment = 1.0f / (44100.0f * 0.015f);
 
   const float fixed_midi_start = -38.0f;
   const float fixed_midi_range = 123.0f - fixed_midi_start;
@@ -28,9 +28,17 @@ namespace {
       return 2.0 * velocity - 0.5;
     return 1.0;
   }
-};
+}
 
 FMVoice::FMVoice() {
+  /*
+   *XXX ??? WHAT?
+  if (velocity_increment == 0) {
+    velocity_increment = 1.0f / (44100.0f * 0.005f);
+    offset_increment = 1.0f / (44100.0f * 0.015f);
+  }
+  */
+
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
