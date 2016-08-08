@@ -114,9 +114,8 @@ namespace adc {
 
   void process(FMSynth * synth) {
     uint16_t v = readADC1(10); //XXX c0
-    if (v > 255) {
-      synth->feedback(0.5);
-    }
+    float vf = static_cast<float>(v) / 4096.0f;
+    synth->mod_depth(vf);
   }
 
 }
