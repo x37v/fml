@@ -1,7 +1,7 @@
 # Sources
 
 SRCS = src/stm32f4xx_it.c src/system_stm32f4xx.c src/startup_stm32f4xx.c
-P_SRCS = src/main.cpp src/dac.cpp src/midi.cpp
+P_SRCS = src/main.cpp src/dac.cpp src/midi.cpp src/adc.cpp
 P_SRCS += ../src/defines.cpp \
 					../src/util.cpp \
 					../src/envelope.cpp \

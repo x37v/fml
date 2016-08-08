@@ -6,7 +6,8 @@
 #include "dac.h"
 #include "fmsynth.h"
 #include "midi.h"
-
+#include "io_mapping.h"
+#include "adc.h"
 
 /*
  *
@@ -30,11 +31,6 @@ volatile uint32_t time_var1, time_var2;
 // Private function prototypes
 void Delay(volatile uint32_t nCount);
 void init(FMSynth * synth);
-
-struct io_mapping {
-  GPIO_TypeDef* port;
-  uint16_t pin;
-};
 
 struct io_mapping buttons[3] = {
   {GPIOE, GPIO_Pin_8},
@@ -81,6 +77,7 @@ int main(void) {
 
   for(;;) {
     dac_compute();
+    adc::process(&synth);
     for (uint8_t i = 0; i < 3; i++) {
       uint8_t val = GPIO_ReadInputDataBit(buttons[i].port, buttons[i].pin);
       uint8_t mask = (1 << i);
@@ -155,6 +152,7 @@ void init(FMSynth * synth) {
   buttons_setup();
   dac_setup(synth);
   midi::init();
+  adc::init();
 }
 
 extern "C"
