@@ -6,37 +6,38 @@
 #include "fmsynth.h"
 
 /*
-PC0  ADC123_IN10
-PC1
-PA0
-PA1
-PA2
-PA3
-PA6
-PA7
-PC4
-PC5
-PB0
-PB1
+ * pin  adc in
+PC0     10
+PC1     11
+PA0     0
+PA1     1
+PA2     2
+PA3     3
+PA6     6
+PA7     7
+PC4     14
+PC5     15
+PB0     8
+PB1     9
 */
 
 #define NUM_ADC 12
 
 namespace {
 
-  struct io_mapping inputs[NUM_ADC] = {
-    {GPIOC, GPIO_Pin_0},
-    {GPIOC, GPIO_Pin_1},
-    {GPIOA, GPIO_Pin_0},
-    {GPIOA, GPIO_Pin_1},
-    {GPIOA, GPIO_Pin_2},
-    {GPIOA, GPIO_Pin_3},
-    {GPIOA, GPIO_Pin_6},
-    {GPIOA, GPIO_Pin_7},
-    {GPIOC, GPIO_Pin_4},
-    {GPIOC, GPIO_Pin_5},
-    {GPIOB, GPIO_Pin_0},
-    {GPIOB, GPIO_Pin_1},
+  struct analog_input_mapping inputs[NUM_ADC] = {
+    {GPIOC, GPIO_Pin_0, 10},
+    {GPIOC, GPIO_Pin_1, 11},
+    {GPIOA, GPIO_Pin_0, 0},
+    {GPIOA, GPIO_Pin_1, 1},
+    {GPIOA, GPIO_Pin_2, 2},
+    {GPIOA, GPIO_Pin_3, 3},
+    {GPIOA, GPIO_Pin_6, 6},
+    {GPIOA, GPIO_Pin_7, 7},
+    {GPIOC, GPIO_Pin_4, 14},
+    {GPIOC, GPIO_Pin_5, 15},
+    {GPIOB, GPIO_Pin_0, 8},
+    {GPIOB, GPIO_Pin_1, 9},
   };
 }
 

@@ -8,5 +8,11 @@ struct io_mapping {
   uint16_t pin;
 };
 
+struct analog_input_mapping {
+  GPIO_TypeDef* port;
+  uint16_t pin;
+  uint8_t index;
+};
+
 #endif
 
