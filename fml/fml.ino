@@ -9,6 +9,8 @@ AudioConnection conn2(fml, 1, out, 1);
 
 void handleNoteOn(byte inChannel, byte inNumber, byte inVelocity) {
   fml.process_note(true, inChannel - 1, inNumber, inVelocity);
+  if (!Serial)
+    return;
   Serial.print("NoteOn  ");
   Serial.print(inNumber);
   Serial.print("\tvelocity: ");
@@ -19,6 +21,8 @@ void handleNoteOn(byte inChannel, byte inNumber, byte inVelocity) {
 
 void handleNoteOff(byte inChannel, byte inNumber, byte inVelocity) {
   fml.process_note(false, inChannel - 1, inNumber, inVelocity);
+  if (!Serial)
+    return;
   Serial.print("NoteOff  ");
   Serial.print(inNumber);
   Serial.print("\tvelocity: ");
@@ -29,6 +33,8 @@ void handleNoteOff(byte inChannel, byte inNumber, byte inVelocity) {
 
 void handleCC(byte inChannel, byte inNumber, byte inVal) {
   fml.process_cc(inChannel - 1, inNumber, inVal);
+  if (!Serial)
+    return;
   Serial.print("CC  ");
   Serial.print(inNumber);
   Serial.print("\tval: ");
@@ -43,14 +49,13 @@ void handleBend(byte inChannel, int value) {
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial);
-
   AudioMemory(15);
   usbMIDI.setHandleNoteOff(handleNoteOff);
   usbMIDI.setHandleNoteOn(handleNoteOn) ;
   usbMIDI.setHandleControlChange(handleCC);
 
-  Serial.println("SETUP");
+  if (Serial)
+    Serial.println("SETUP");
 }
 
 void loop() {
