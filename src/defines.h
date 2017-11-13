@@ -13,8 +13,11 @@
 
 namespace fm {
   const float two_pi = 6.28318530717958f;
-  inline unsigned int sample_rate() { return 44100; }
-  inline float fsample_rate() { return 44100.0f; }
+#ifdef AUDIO_SAMPLE_RATE_EXACT
+  constexpr float fsample_rate() { return AUDIO_SAMPLE_RATE_EXACT; }
+#else
+  constexpr float fsample_rate() { return 44100.0f; }
+#endif
   float midi_note_to_freq(float midi_note);
 
   //float/offset 0..1
