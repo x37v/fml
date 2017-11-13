@@ -1,7 +1,7 @@
 #ifndef FM_VOICE_HPP
 #define FM_VOICE_HPP
 
-#include "adsr.h"
+#include "envelope.h"
 #include <inttypes.h>
 
 class FMVoice {
@@ -23,11 +23,12 @@ class FMVoice {
 
     void slew_rate(float seconds_per_octave);
 
-    void volume_envelope_setting(ADSR::envState stage, float v);
-    void mod_envelope_setting(ADSR::envState stage, float v);
+    void volume_envelope_setting(Envelope::TimeSetting s, float time);
+    void mod_envelope_setting(Envelope::TimeSetting s, float time);
 
+    bool idle() const;
     bool active() const;
-    ADSR::envState volume_envelope_state() const;
+    Envelope::Stage volume_envelope_state() const;
 
     void mod_env_linear(bool v);
     
@@ -75,8 +76,8 @@ class FMVoice {
     float mBend = 0.0f;
     float mTranspose = 0.0f;
 
-    ADSR mModEnv;
-    ADSR mAmpEnv;
+    Envelope mModEnv;
+    Envelope mAmpEnv;
 };
 
 #endif

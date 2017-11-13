@@ -4,7 +4,7 @@
 #include <array>
 #include "fmvoice.h"
 #include "defines.h"
-#include "adsr.h"
+#include "envelope.h"
 
 #include <inttypes.h>
 //#include <vector>
@@ -19,7 +19,7 @@ class FMSynth {
         uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     void note(unsigned int voice, uint8_t midi_note);
 
-    ADSR::envState volume_envelope_state(uint8_t voice) const;
+    Envelope::Stage volume_envelope_state(uint8_t voice) const;
 
     void mode(FMVoice::mode_t v);
 
@@ -34,8 +34,8 @@ class FMSynth {
     void slew_rate(float seconds_per_octave);
     void volume(float v); //0..1
 
-    void volume_envelope_setting(ADSR::envState stage, float v);
-    void mod_envelope_setting(ADSR::envState stage, float v);
+    void volume_envelope_setting(Envelope::TimeSetting stage, float v);
+    void mod_envelope_setting(Envelope::TimeSetting stage, float v);
     void mod_env_linear(bool v);
 
     void all_off();
@@ -71,6 +71,7 @@ class FMSynth {
     bool mSlewFromFirstHeld = true;
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
+    std::array<uint8_t, FM_VOICES> mVoiceNotes;
     std::array<uint8_t, 16> mNotesDown;
 
     //std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;

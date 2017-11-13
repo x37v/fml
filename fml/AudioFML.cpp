@@ -6,9 +6,9 @@ AudioFML::AudioFML() : AudioWrapperFloat(), mSynth(), mMidiProc(mSynth) {
   mSynth.volume(0.95);
   mSynth.mod_depth(0.1);
   mSynth.mode(FMVoice::NORMAL);
-  mSynth.volume_envelope_setting(ADSR::env_release, 2.0);
-  mSynth.mod_envelope_setting(ADSR::env_attack, 4.0);
-  mSynth.mod_envelope_setting(ADSR::env_release, 4.0);
+  mSynth.volume_envelope_setting(Envelope::TimeSetting::RELEASE, 2.0);
+  mSynth.mod_envelope_setting(Envelope::TimeSetting::ATTACK, 4.0);
+  mSynth.mod_envelope_setting(Envelope::TimeSetting::RELEASE, 4.0);
   mSynth.freq_mult(1.0, 2.0);
   mSynth.modulator_freq_offset(0.1);
   mSynth.feedback(0.0);

@@ -89,18 +89,17 @@ void FMMidiProc::process_float(FMSynth& synth, cc_map_t mapping, float fval) {
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(ADSR::env_attack, 0.01 + 4.0 * fval);
+      synth.mod_envelope_setting(Envelope::TimeSetting::ATTACK, 0.01 + 4.0 * fval);
       break;
     case MOD_ENV_DEC:
       {
         float v = 4.0 * fval;
-        synth.mod_envelope_setting(ADSR::env_decay, 0.01 + v);
-        synth.mod_envelope_setting(ADSR::env_release, 0.01 + v);
+        synth.mod_envelope_setting(Envelope::TimeSetting::RELEASE, 0.01 + v);
       }
       break;
 
     case VOL_ENV_ATK:
-      synth.volume_envelope_setting(ADSR::env_attack, 0.015 + fval * 4.0);
+      synth.volume_envelope_setting(Envelope::TimeSetting::ATTACK, 0.015 + fval * 4.0);
       break;
     //case VOL_ENV_DEC:
       //synth.volume_envelope_setting(ADSR::env_decay, 0.015 + fval * 2.0);
@@ -109,7 +108,7 @@ void FMMidiProc::process_float(FMSynth& synth, cc_map_t mapping, float fval) {
       //synth.volume_envelope_setting(ADSR::env_sustain, fval);
       //break;
     case VOL_ENV_REL:
-      synth.volume_envelope_setting(ADSR::env_release, 0.015 + fval * 10.0);
+      synth.volume_envelope_setting(Envelope::TimeSetting::RELEASE, 0.015 + fval * 10.0);
       break;
       /*
     case TRANSPOSE:

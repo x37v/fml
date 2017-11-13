@@ -1,6 +1,7 @@
 #include "fmsynth.h"
 #include "util.h"
 #include <cassert>
+#include <Arduino.h>
 
 #include <cmath>
 
@@ -44,6 +45,7 @@ FMSynth::FMSynth() {
   slew_rate(0.0f);
 
   mNotesDown.fill(0);
+  mVoiceNotes.fill(0);
   mModDepthIncrement = mod_depth_increment;
   mModFreqIncrement = mod_freq_increment;
   mVolumeIncrement = volume_increment;
@@ -86,7 +88,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
 
   uint8_t voices_on = 0;
   for (auto v: mVoices) {
-    if (!(v.volume_envelope_state() == ADSR::env_idle || v.volume_envelope_state() == ADSR::env_release))
+    if (!(v.volume_envelope_state() == Envelope::Stage::IDLE || v.volume_envelope_state() == Envelope::Stage::RELEASE))
       voices_on += 1;
   }
 
@@ -115,10 +117,10 @@ void FMSynth::note(unsigned int voice, uint8_t midi_note) {
   mVoices[voice].note(midi_note);
 }
 
-ADSR::envState FMSynth::volume_envelope_state(uint8_t voice) const {
+Envelope::Stage FMSynth::volume_envelope_state(uint8_t voice) const {
   if (voice >= mVoices.size()) {
     assert(false);
-    return ADSR::env_idle;
+    return Envelope::Stage::IDLE;
   }
   return mVoices[voice].volume_envelope_state();
 }
@@ -173,12 +175,12 @@ void FMSynth::volume(float v) {
   mVolumeIncrement = (mVolumeTarget > mVolume) ? volume_increment : -volume_increment;
 }
 
-void FMSynth::volume_envelope_setting(ADSR::envState stage, float v) {
+void FMSynth::volume_envelope_setting(Envelope::TimeSetting stage, float v) {
   for (auto& s: mVoices)
     s.volume_envelope_setting(stage, v);
 }
 
-void FMSynth::mod_envelope_setting(ADSR::envState stage, float v) {
+void FMSynth::mod_envelope_setting(Envelope::TimeSetting stage, float v) {
   for (auto& s: mVoices)
     s.mod_envelope_setting(stage, v);
 }
@@ -208,9 +210,7 @@ void FMSynth::mono_mode(bool v) {
 }
 
 void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t vel) {
-  //XXX
-  trigger(0, on, midi_note, 1.0);
-  return;
+  int voice = -1;
 
   //update the 'down' mask
   if (on) {
@@ -221,6 +221,7 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
 
   //in mono mode, any key down or up just re-scans all down keys and picks out the highest
   if (mMonoMode) {
+    voice = 0;
     bool found = false;
     for (int i = 15; i >= 0 && !found; i--) {
       for (int j = 7; j >= 0; j--) {
@@ -231,10 +232,39 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
         }
       }
     }
+  } else {
+    if (on) {
+      for (unsigned int i = 0; i < mVoices.size(); i++) {
+        if (!mVoices[i].active()) {
+          voice = i;
+          Serial.print("inactive: ");
+          Serial.println(voice);
+          break;
+        }
+      }
+      if (voice < 0) {
+        //XXX find LRU
+      }
+    } else {
+      for (unsigned int i = 0; i < mVoiceNotes.size(); i++) {
+        if (mVoiceNotes[i] == midi_note) {
+          voice = i;
+          break;
+        }
+      }
+    }
+  }
+
+  if (voice < 0) {
+    Serial.println("default voice");
+    voice = 0;
   }
 
 #if 1
-    trigger(0, on, midi_note, 1.0);
+  Serial.print(on ? "on: " : "off: ");
+  Serial.println(voice);
+  trigger(voice, on, midi_note, 1.0);
+  mVoiceNotes[voice] = midi_note;
 #else
   if (on) {
     int voice = -1;

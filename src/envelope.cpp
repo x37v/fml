@@ -2,149 +2,67 @@
 #include "defines.h"
 #include <cassert>
 
-ADAREnvelope::ADAREnvelope() {
-  mStageSettings[ATTACK] = 1.0 / (0.2 * fm::fsample_rate()); //attack time
-  mStageSettings[DECAY_RELEASE] = 1.0 / (0.3 * fm::fsample_rate()); //decay time
+namespace {
+  float time_to_increment(float v) {
+    if (v < 0.015)
+      v = 0.015;
+    return 1.0 / (fm::fsample_rate() * v);
+  }
 }
 
-float ADAREnvelope::compute() {
-  float val = 0.0f;
+float Envelope::value() const { return mValue; }
+
+float Envelope::compute() {
   switch (mStage) {
-    case COMPLETE:
-      return 0.0f;
-    case ATTACK:
-      val = mPosition;
-      mPosition += mStageSettings[ATTACK];
-      if (mPosition >= 1.0f) {
-        if (mMode == AD) {
-          mStage = DECAY_RELEASE;
-        } else {
-          mPosition = 1;
-        }
+    case Stage::IDLE:
+      break;
+    case Stage::ATTACK:
+      mValue += mAttackIncrement;
+      if (mValue >= 1) {
+        mValue = 1;
+        mStage = (mMode == Mode::ATTACK_SUSTAIN_RELEASE) ? Stage::SUSTAIN : Stage::RELEASE;
       }
       break;
-    case DECAY_RELEASE:
-      val = mPosition;
-      mPosition -= mStageSettings[DECAY_RELEASE];
-      if (mPosition <= 0.0f) {
-        mPosition = 0;
-        mStage = COMPLETE;
-        if (mCompleteCallback)
-          mCompleteCallback();
+    case Stage::SUSTAIN:
+      //wait for trigger off
+      break;
+    case Stage::RELEASE:
+      mValue -= mReleaseIncrement;
+      if (mValue <= 0) {
+        mValue = 0;
+        mStage = Stage::IDLE;
       }
       break;
   }
-  return val;
+  return mValue;
 }
 
-void ADAREnvelope::trigger(bool start) {
-  if (start) {
-    mPosition = 0;
-    mStage = ATTACK;
-  } else if (mMode == AR) {
-    mStage = DECAY_RELEASE;
+void Envelope::trigger(bool on) {
+  if (on) {
+    mStage = Stage::ATTACK;
+  } else if (mMode == Mode::ATTACK_SUSTAIN_RELEASE && mStage != Stage::IDLE) {
+    mStage = Stage::RELEASE;
   }
 }
 
-void ADAREnvelope::stage_setting(stage_t stage, float v) {
-  if (stage == COMPLETE)
-    return;
-  if (v <= 0.0)
-    mStageSettings[stage] = 1.0;
-  else
-    mStageSettings[stage] = 1.0 / (v * fm::fsample_rate());
-}
+void Envelope::attack_time(float v) { mAttackIncrement = time_to_increment(v); }
 
-ADAREnvelope::stage_t ADAREnvelope::stage() const { return mStage; }
+void Envelope::release_time(float v) { mReleaseIncrement = time_to_increment(v); }
 
-void ADAREnvelope::mode(mode_t v) { mMode = v; }
-ADAREnvelope::mode_t ADAREnvelope::mode() const { return mMode; }
-
-void ADAREnvelope::complete_callback(complete_callback_t cb) {
-  mCompleteCallback = cb;
-}
-
-ADSREnvelope::ADSREnvelope() {
-  mStageSettings[ATTACK] = 1.0 / (0.04 * fm::fsample_rate()); //attack time
-  mStageSettings[DECAY] = 1.0 / (0.04 * fm::fsample_rate()); //decay time
-  mStageSettings[SUSTAIN] = 0.8; //sustain level
-  mStageSettings[RELEASE] = 1.0 / (1.0 * fm::fsample_rate()); //release time
-
-  for (unsigned int i = 0; i < mStageSettings.size(); i++) {
-    if (mStageSettings[i] <= 0) {
-      assert(false);
-    }
-  }
-}
-
-float ADSREnvelope::compute() {
-  float val = 0.0;
-  switch (mStage) {
-    case COMPLETE:
-      val = 0.0;
+void Envelope::set(TimeSetting s, float time) {
+  switch (s) {
+    case TimeSetting::ATTACK:
+      attack_time(time);
       break;
-    case ATTACK:
-      val = mPosition;
-      mPosition += mStageSettings[ATTACK];
-      if (mPosition >= 1.0f) {
-        mPosition = 0;
-        mStage = DECAY;
-        mInterpPoint = val;
-        mInterpMult = mStageSettings[SUSTAIN] - mInterpPoint;
-      }
-      break;
-    case DECAY:
-      val = mInterpPoint + mInterpMult * mPosition;
-      mPosition += mStageSettings[DECAY];
-      if (mPosition >= 1.0f) {
-        mPosition = 0;
-        mStage = SUSTAIN;
-        mInterpPoint = val;
-      }
-      break;
-    case SUSTAIN:
-      val = mInterpPoint;
-      break;
-    case RELEASE:
-      val = mInterpPoint + mInterpMult * mPosition;
-      mPosition += mStageSettings[RELEASE];
-      if (mPosition >= 1.0f) {
-        val = 0.0f;
-        mPosition = 0;
-        mStage = COMPLETE;
-        if (mCompleteCallback)
-          mCompleteCallback();
-      }
+    case TimeSetting::RELEASE:
+      release_time(time);
       break;
   }
-
-  mValueLast = val;
-  return val;
 }
 
-void ADSREnvelope::trigger(bool start) {
-  mInterpPoint = mValueLast;
-  if (start) {
-    mPosition = mValueLast; //so that we ramp up from where we were
-    mStage = ATTACK;
-  } else {
-    mPosition = 0;
-    mStage = RELEASE;
-    mInterpMult = -mInterpPoint; //0 - start
-  }
-}
+Envelope::Stage Envelope::stage() const { return mStage; }
+Envelope::Mode Envelope::mode() const { return mMode; }
+void Envelope::mode(Mode v) { mMode = v; }
 
-void ADSREnvelope::stage_setting(stage_t stage, float v) {
-  if (stage == COMPLETE)
-    return;
-  if (stage != SUSTAIN) {
-    if (v > 0.0)
-      v = 1.0 / (v * fm::fsample_rate());
-    else
-      v = 1.0;
-  }
-  mStageSettings[stage] = v;
-}
-
-void ADSREnvelope::complete_callback(complete_callback_t cb) { mCompleteCallback = cb; }
-ADSREnvelope::stage_t ADSREnvelope::stage() const { return mStage; }
+bool Envelope::active() const { return !idle(); }
+bool Envelope::idle() const { return mStage == Stage::IDLE; }

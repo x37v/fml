@@ -50,23 +50,20 @@ FMVoice::FMVoice() {
   mAmpEnv.mode(ADAREnvelope::AR);
   */
 
-  mAmpEnv.setAttackRate(0.1 * fm::fsample_rate());
-  mAmpEnv.setDecayRate(0.0 * fm::fsample_rate());
-  mAmpEnv.setSustainLevel(1.0);
-  mAmpEnv.setReleaseRate(1.0 * fm::fsample_rate());
+  mAmpEnv.set(Envelope::TimeSetting::ATTACK, 0.1);
+  mAmpEnv.set(Envelope::TimeSetting::RELEASE, 0.1);
 
-  mModEnv.setAttackRate(fm::fsample_rate() * 0.01);
-  mModEnv.setDecayRate(fm::fsample_rate() * 0.01);
-  mModEnv.setReleaseRate(fm::fsample_rate() * 0.01);
-  mModEnv.setSustainLevel(0.1);
+  mModEnv.set(Envelope::TimeSetting::ATTACK, 0.1);
+  mModEnv.set(Envelope::TimeSetting::RELEASE, 0.1);
+  //XXX set mod sustain level to 0.1
 }
 
 void FMVoice::compute(unsigned int nframes, float* left, float* right) {
   for (unsigned int i = 0; i < nframes; i++) {
     update_increments();
 
-    float mod_env = mModEnv.process() * mModDepth * mModVelocity;
-    float car_env = mAmpEnv.process() * mAmpVelocity;
+    float mod_env = mModEnv.compute() * mModDepth * mModVelocity;
+    float car_env = mAmpEnv.compute() * mAmpVelocity;
 
     float mod = fm::sine(mMPhase + mMFeedBack * mMOutLast) * mod_env;
     float car = fm::sine(mCPhase + mod) * car_env;
@@ -105,7 +102,7 @@ void FMVoice::compute(unsigned int nframes, float* left, float* right) {
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {
-  bool retrigger = mAmpEnv.getState() == ADSR::env_idle || mAmpEnv.getState() == ADSR::env_release;
+  bool retrigger = mAmpEnv.stage() == Envelope::Stage::IDLE || mAmpEnv.stage() == Envelope::Stage::RELEASE;
 
   if (on) {
     mMidiNote = slew_note;
@@ -119,11 +116,11 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
 
   //don't trigger if we're already on
   if (!on) {
-    mModEnv.gate(false);
-    mAmpEnv.gate(false);
+    mModEnv.trigger(false);
+    mAmpEnv.trigger(false);
   } else if (retrigger) {
-    mModEnv.gate(true);
-    mAmpEnv.gate(true);
+    mModEnv.trigger(true);
+    mAmpEnv.trigger(true);
   }
 }
 
@@ -173,62 +170,21 @@ void FMVoice::slew_rate(float seconds_per_octave) {
   mSlewSecondsPerOctave = seconds_per_octave;
 }
 
-void FMVoice::volume_envelope_setting(ADSR::envState stage, float v) {
-  switch (stage) {
-    case ADSR::env_attack:
-      mAmpEnv.setAttackRate(fm::fsample_rate() * v);
-      break;
-    case ADSR::env_decay:
-      mAmpEnv.setDecayRate(fm::fsample_rate() * v);
-      break;
-    case ADSR::env_sustain:
-      mAmpEnv.setSustainLevel(v);
-        break;
-    case ADSR::env_release:
-      mAmpEnv.setReleaseRate(fm::fsample_rate() * v);
-        break;
-    case ADSR::env_idle:
-    default:
-      break;
-  }
+void FMVoice::volume_envelope_setting(Envelope::TimeSetting s, float time) {
+  mAmpEnv.set(s, time);
 }
 
-void FMVoice::mod_envelope_setting(ADSR::envState stage, float v) {
-  switch (stage) {
-    case ADSR::env_attack:
-      mModEnv.setAttackRate(fm::fsample_rate() * v);
-      break;
-    case ADSR::env_decay:
-      mModEnv.setDecayRate(fm::fsample_rate() * v);
-      break;
-    case ADSR::env_sustain:
-      mModEnv.setSustainLevel(v);
-        break;
-    case ADSR::env_release:
-      mModEnv.setReleaseRate(fm::fsample_rate() * v);
-        break;
-    case ADSR::env_idle:
-    default:
-      break;
-  }
+void FMVoice::mod_envelope_setting(Envelope::TimeSetting s, float time) {
+  mModEnv.set(s, time);
 }
 
-bool FMVoice::active() const {
-  return mAmpEnv.getState() == ADSR::env_idle;
-}
+bool FMVoice::active() const { return mAmpEnv.active(); }
+bool FMVoice::idle() const { return mAmpEnv.idle(); }
 
-ADSR::envState FMVoice::volume_envelope_state() const {
-  return mAmpEnv.getState();
-}
+Envelope::Stage FMVoice::volume_envelope_state() const { return mAmpEnv.stage(); }
 
 void FMVoice::mod_env_linear(bool v) {
-  if (v) {
-    mModEnv.setTargetRatioA(100);
-    mModEnv.setTargetRatioDR(100);
-  } else {
-    mModEnv.setTargetRatioA(0.0001);
-    mModEnv.setTargetRatioDR(0.0001);
-  }
+  //XXX DO IT
 }
 
 void FMVoice::mode(mode_t v) {
