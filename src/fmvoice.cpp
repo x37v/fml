@@ -9,8 +9,8 @@
 //phase increment = frequency / sample_rate
 
 namespace {
-  float velocity_increment = 1.0f / (44100.0f * 0.005f);
-  float offset_increment = 1.0f / (44100.0f * 0.015f);
+  float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005f);
+  float offset_increment = 1.0f / (fm::fsample_rate() * 0.015f);
 
   const float fixed_midi_start = -38.0f;
   const float fixed_midi_range = 123.0f - fixed_midi_start;
@@ -34,8 +34,8 @@ FMVoice::FMVoice() {
   /*
    *XXX ??? WHAT?
   if (velocity_increment == 0) {
-    velocity_increment = 1.0f / (44100.0f * 0.005f);
-    offset_increment = 1.0f / (44100.0f * 0.015f);
+    velocity_increment = 1.0f / (fm::fsample_rate() * 0.005f);
+    offset_increment = 1.0f / (fm::fsample_rate() * 0.015f);
   }
   */
 
@@ -50,10 +50,10 @@ FMVoice::FMVoice() {
   mAmpEnv.mode(ADAREnvelope::AR);
   */
 
-  mAmpEnv.setAttackRate(0.1 * 44100.0);
-  mAmpEnv.setDecayRate(0.0 * 44100.0);
+  mAmpEnv.setAttackRate(0.1 * fm::fsample_rate());
+  mAmpEnv.setDecayRate(0.0 * fm::fsample_rate());
   mAmpEnv.setSustainLevel(1.0);
-  mAmpEnv.setReleaseRate(1.0 * 44100.0);
+  mAmpEnv.setReleaseRate(1.0 * fm::fsample_rate());
 
   mModEnv.setAttackRate(fm::fsample_rate() * 0.01);
   mModEnv.setDecayRate(fm::fsample_rate() * 0.01);

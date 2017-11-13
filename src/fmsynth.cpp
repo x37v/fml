@@ -25,12 +25,12 @@ namespace {
 
 FMSynth::FMSynth() {
   //XXX block rate
-  volume_increment = 1.0f / (44100.0f * 0.05f);
-  mod_freq_increment = 1.0f / (44100.0f * 0.05f);
-  mod_depth_increment = 1.0f / (44100.0f * 0.05f);
-  transpose_increment = 1.0f / (44100.0f * 0.005f);
-  feedback_increment = 1.0f / (44100.0f * 0.05f);
-  bend_increment = 1.0f / (44100.0f * 0.015f);
+  volume_increment = 1.0f / (fm::fsample_rate() * 0.2f);
+  mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05f);
+  mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.15f);
+  transpose_increment = 1.0f / (fm::fsample_rate() * 0.005f);
+  feedback_increment = 1.0f / (fm::fsample_rate() * 0.2f);
+  bend_increment = 1.0f / (fm::fsample_rate() * 0.015f);
 
   for (unsigned int i = 0; i < mVoices.size(); i++) {
     /*
@@ -52,32 +52,27 @@ FMSynth::FMSynth() {
 }
 
 void FMSynth::compute(float * buffer, uint16_t length) {
-  //XXX gonna be steppy based on buffer length..
-  //smooth
-  float flen = length;
-  mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement * flen);
-  mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement * flen);
-  mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement * flen);
-  mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement * flen);
-  mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement * flen);
-  mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement * flen);
-
-  //clear out buffer
   memset(buffer, 0, 2 * sizeof(float) * length);
+
   float *left = buffer;
   float *right = buffer + length;
-  for (int i = 0; i < FM_VOICES; i++) {
-    auto& s = mVoices[i];
-    s.modulator_freq_offset(mModFreqOffset);
-    s.mod_depth(mModDepth);
-    s.transpose(mTranspose);
-    s.feedback(mFeedback);
-    s.bend(mBend);
-    s.compute(length, left, right);
-  }
-
-  //XXX could maybe do some sort of vector multiply here??
   for (unsigned int i = 0; i < length; i++) {
+    mModDepth = fm::lin_smooth(mModDepthTarget, mModDepth, mModDepthIncrement);
+    mVolume = fm::lin_smooth(mVolumeTarget, mVolume, mVolumeIncrement);
+    mModFreqOffset = fm::lin_smooth(mModFreqOffsetTarget, mModFreqOffset, mModFreqIncrement);
+    mTranspose = fm::lin_smooth(mTransposeTarget, mTranspose, mTransposeIncrement);
+    mFeedback = fm::lin_smooth(mFeedbackTarget, mFeedback, mFeedbackIncrement);
+    mBend = fm::lin_smooth(mBendTarget, mBend, mBendIncrement);
+
+    for (int v = 0; v < FM_VOICES; v++) {
+      auto& s = mVoices[v];
+      s.modulator_freq_offset(mModFreqOffset);
+      s.mod_depth(mModDepth);
+      s.transpose(mTranspose);
+      s.feedback(mFeedback);
+      s.bend(mBend);
+      s.compute(1, left + i, right + i);
+    }
     left[i] *= mVolume;
     right[i] *= mVolume;
   }
