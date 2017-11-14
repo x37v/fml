@@ -1,7 +1,13 @@
 #ifndef FM_DEFINES_H
 #define FM_DEFINES_H
 
-#define FM_VOICES 4
+#define FM_VOICES 5
+
+#ifdef AUDIO_BLOCK_SAMPLES
+#define FM_MAX_BUFFER_LENGTH AUDIO_BLOCK_SAMPLES
+#else
+#define FM_MAX_BUFFER_LENGTH 1024
+#endif
 
 #include <inttypes.h>
 #include <cmath>
