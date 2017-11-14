@@ -10,8 +10,6 @@
 
 namespace {
   float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005f);
-  float offset_increment = 1.0f / (fm::fsample_rate() * 0.015f);
-
   const float fixed_midi_start = -38.0f;
   const float fixed_midi_range = 123.0f - fixed_midi_start;
 
