@@ -1,31 +1,19 @@
 #include "fmsynth.h"
 #include "util.h"
 #include <cassert>
-#include <Arduino.h>
 
 #include <cmath>
 
 namespace {
-  //takes 10ms from 0..1
   float volume_increment;
   float mod_freq_increment;
   float mod_depth_increment;
   float transpose_increment;
   float feedback_increment;
   float bend_increment;
-
-  /*
-  const float volume_increment = 1.0f / (fm::fsample_rate() * 0.05);
-  const float mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05);
-  const float mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.05);
-  const float transpose_increment = 1.0f / (fm::fsample_rate() * 0.005);
-  const float feedback_increment = 1.0f / (fm::fsample_rate() * 0.05);
-  const float bend_increment = 1.0f / (fm::fsample_rate() * 0.015);
-  */
 }
 
 FMSynth::FMSynth() {
-  //XXX block rate
   volume_increment = 1.0f / (fm::fsample_rate() * 0.2f);
   mod_freq_increment = 1.0f / (fm::fsample_rate() * 0.05f);
   mod_depth_increment = 1.0f / (fm::fsample_rate() * 0.15f);
@@ -230,8 +218,6 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
       for (unsigned int i = 0; i < mVoices.size(); i++) {
         if (!mVoices[i].active()) {
           voice = i;
-          Serial.print("inactive: ");
-          Serial.println(voice);
           break;
         }
       }
@@ -253,13 +239,8 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
     }
   }
 
-  if (voice < 0) {
-    Serial.println("default voice");
+  if (voice < 0)
     voice = 0;
-  }
-
-  Serial.print(on ? "on: " : "off: ");
-  Serial.println(voice);
-  trigger(voice, on, midi_note, 1.0);
+  trigger(voice, on, midi_note, static_cast<float>(vel) / 127.0f);
 }
 
