@@ -33,24 +33,15 @@ FMSynth::FMSynth() {
   feedback_increment = 1.0f / (fm::fsample_rate() * 0.2f);
   bend_increment = 1.0f / (fm::fsample_rate() * 0.015f);
 
-  for (unsigned int i = 0; i < mVoices.size(); i++) {
-    /*
-    mVoices[i].complete_callback([this, i] (void) {
-      if (mVoiceCompleteCallback)
-        mVoiceCompleteCallback(i);
-    });
-    mNoteLRUQueue.push_back({0, 0});
-    */
-  }
   slew_rate(0.0f);
 
   mNotesDown.fill(0);
   mVoiceNotes.fill(0);
+  mVoiceHistory.fill(0);
+
   mModDepthIncrement = mod_depth_increment;
   mModFreqIncrement = mod_freq_increment;
   mVolumeIncrement = volume_increment;
-
-  //complete_callback([this] (unsigned int voice) { voice_freed(voice); });
 }
 
 void FMSynth::compute(float * buffer, uint16_t length) {
@@ -85,6 +76,8 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     assert(voice < mVoices.size());
     return;
   }
+  mVoiceHistory[voice] = mVoiceHistoryCounter++;
+  mVoiceNotes[voice] = midi_note;
 
   uint8_t voices_on = 0;
   for (auto v: mVoices) {
@@ -242,8 +235,13 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
           break;
         }
       }
+      //find the least recently used if we don't have a free voice
       if (voice < 0) {
-        //XXX find LRU
+        voice = 0;
+        for (unsigned int i = 1; i < FM_VOICES; i++) {
+          if (mVoiceHistory[voice] > mVoiceHistory[i])
+            voice = i;
+        }
       }
     } else {
       for (unsigned int i = 0; i < mVoiceNotes.size(); i++) {
@@ -260,82 +258,8 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
     voice = 0;
   }
 
-#if 1
   Serial.print(on ? "on: " : "off: ");
   Serial.println(voice);
   trigger(voice, on, midi_note, 1.0);
-  mVoiceNotes[voice] = midi_note;
-#else
-  if (on) {
-    int voice = -1;
-    if (mMonoMode) {
-      voice = 0;
-    } else {
-      int same_note = -1;
-      int release_note = -1;
-      uint8_t lru_voice = 0;
-
-      //look for a voice with the same note, a free voice, and the least recently used voice
-      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-        if (mNoteLRUQueue[i].first == midi_note) {
-          same_note = i;
-          break;
-        }
-        if (mNoteLRUQueue[i].second == 0)
-          voice = i;
-        if (volume_envelope_state(i) == ADSR::env_release)
-          release_note = i;
-        if (mNoteLRUQueue[lru_voice].second < mNoteLRUQueue[i].second)
-          lru_voice = i;
-      }
-
-      //same note, then free note, then release note, then least recently used
-      if (same_note >= 0) {
-        voice = same_note;
-      } else if (voice < 0) {
-        voice = release_note >= 0 ? release_note : lru_voice;
-      }
-
-      //increment all indicies that are non zero or the voice
-      for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-        if (i == voice || mNoteLRUQueue[i].second == 0)
-          continue;
-        mNoteLRUQueue[i].second++;
-      }
-    }
-
-    mNoteLRUQueue[voice] = {midi_note, 1};
-    auto vstate = volume_envelope_state(voice);
-    if (mMonoMode && !((vstate == ADSR::env_idle || vstate == ADSR::env_release)))
-      note(voice, midi_note);
-    else
-      trigger(voice, true, midi_note, static_cast<float>(vel) / 127.0f);
-  } else {
-    //don't actually take an 'off' note out of the queue because it needs its release time
-    for (uint8_t i = 0; i < mNoteLRUQueue.size(); i++) {
-      if (mNoteLRUQueue[i].first == midi_note) {
-        trigger(i, false);
-      }
-    }
-  }
-#endif
-}
-
-void FMSynth::voice_freed(unsigned int voice) {
-#if 0
-  if (voice >= mNoteLRUQueue.size()) {
-    assert(voice < mNoteLRUQueue.size());
-    return;
-  }
-  //anything greater than our index should get decremented
-  uint8_t index = mNoteLRUQueue[voice].second;
-  if (index > 0) {
-    mNoteLRUQueue[voice] = {0, 0};
-    for (size_t i = 0; i < mNoteLRUQueue.size(); i++) {
-      if (mNoteLRUQueue[i].second >= index)
-        mNoteLRUQueue[i].second--;
-    }
-  }
-#endif
 }
 

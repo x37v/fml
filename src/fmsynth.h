@@ -46,7 +46,6 @@ class FMSynth {
     void mono_mode(bool v);
 
     void process_note(bool on, uint8_t channel, uint8_t note, uint8_t vel);
-    void voice_freed(unsigned int voice);
   private:
     bool mMonoMode = false;
     float mModDepth = 0.0f;
@@ -72,6 +71,8 @@ class FMSynth {
     uint8_t mSlewNote = UINT8_MAX;
     std::array<FMVoice, FM_VOICES> mVoices;
     std::array<uint8_t, FM_VOICES> mVoiceNotes;
+    std::array<uint32_t, FM_VOICES> mVoiceHistory;
+    uint32_t mVoiceHistoryCounter = 0;
     std::array<uint8_t, 16> mNotesDown;
 
     //std::vector<std::pair<uint8_t, uint8_t>> mNoteLRUQueue;
