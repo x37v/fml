@@ -28,7 +28,17 @@ namespace fm {
 
   //float/offset 0..1
   //= sine(2 * pi * index + offset);
-  inline float sine(float index, float offset = 0.0f) {
+  inline float sine(float index) {
+#ifdef __arm__
+    return arm_sin_f32(index * two_pi);
+#else
+    return std::sin(index * two_pi);
+#endif
+  }
+
+  //float/offset 0..1
+  //= sine(2 * pi * index + offset);
+  inline float sine_offset(float index, float offset = 0.0f) {
 #ifdef __arm__
     return arm_sin_f32(index * two_pi + offset);
 #else
