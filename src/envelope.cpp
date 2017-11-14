@@ -6,7 +6,7 @@ namespace {
   float time_to_increment(float v) {
     if (v < 0.015)
       v = 0.015;
-    return 1.0 / (fm::fsample_rate() * v);
+    return fm::fsample_period() / v;
   }
 }
 

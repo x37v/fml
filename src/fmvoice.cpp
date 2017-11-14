@@ -9,7 +9,7 @@
 //phase increment = frequency / sample_rate
 
 namespace {
-  float velocity_increment = 1.0f / (fm::fsample_rate() * 0.005f);
+  float velocity_increment = fm::fsample_period() / 0.005f;
   const float fixed_midi_start = -38.0f;
   const float fixed_midi_range = 123.0f - fixed_midi_start;
 
@@ -115,7 +115,7 @@ void FMVoice::note(uint8_t midi_note) {
     float diff = mMidiNoteTarget - mMidiNote;
     float sec = fabsf(diff / 12.0f) * mSlewSecondsPerOctave;
     if (sec > 0)
-      mSlewIncrement = diff / (sec * fm::fsample_rate());
+      mSlewIncrement = diff * fm::fsample_period() / sec;
     else
       mSlewIncrement = 0;
   } else {
@@ -189,21 +189,21 @@ void FMVoice::update_increments() {
     case FIXED_MODULATOR: 
       {
         float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
-        mMPhaseInc = freq / fm::fsample_rate();
-        mCPhaseInc = base_freq / fm::fsample_rate();
+        mMPhaseInc = freq * fm::fsample_period();
+        mCPhaseInc = base_freq * fm::fsample_period();
       }
       break;
 
     case FIXED_CARRIER:
       {
         float freq = fm::midi_note_to_freq((mMFreqMultOffset * fixed_midi_range + fixed_midi_start));
-        mCPhaseInc = freq / fm::fsample_rate();
-        mMPhaseInc = base_freq / fm::fsample_rate();
+        mCPhaseInc = freq * fm::fsample_period();
+        mMPhaseInc = base_freq * fm::fsample_period();
       }
       break;
     default:
-      mMPhaseInc = (base_freq * (mMFreqMult + mMFreqMultOffset)) / fm::fsample_rate();
-      mCPhaseInc = (base_freq * mCFreqMult) / fm::fsample_rate();
+      mMPhaseInc = (base_freq * (mMFreqMult + mMFreqMultOffset)) * fm::fsample_period();
+      mCPhaseInc = (base_freq * mCFreqMult) * fm::fsample_period();
       break;
   }
 }
