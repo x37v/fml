@@ -31,24 +31,10 @@ namespace {
 }
 
 FMVoice::FMVoice() {
-  /*
-   *XXX ??? WHAT?
-  if (velocity_increment == 0) {
-    velocity_increment = 1.0f / (fm::fsample_rate() * 0.005f);
-    offset_increment = 1.0f / (fm::fsample_rate() * 0.015f);
-  }
-  */
-
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
   mod_env_linear(false);
-
-  /*
-  mModEnv.stage_setting(ADSREnvelope::SUSTAIN, 0.1);
-  mModEnv.stage_setting(ADSREnvelope::RELEASE, 0.1);
-  mAmpEnv.mode(ADAREnvelope::AR);
-  */
 
   mAmpEnv.set(Envelope::TimeSetting::ATTACK, 0.1);
   mAmpEnv.set(Envelope::TimeSetting::RELEASE, 0.1);
