@@ -67,9 +67,6 @@ class FMVoice {
     float mAmpVelocityIncrement = 0.0f;
 
     float mMFreqMultOffset = 0.0f;
-    float mMFreqMultOffsetTarget = 0.0f;
-    float mMFreqMultOffsetIncrement = 0.0f;
-
     float mSlewIncrement = 1.0f;
     float mSlewSecondsPerOctave = 0.0f;
 

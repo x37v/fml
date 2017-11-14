@@ -148,8 +148,7 @@ void FMVoice::freq_mult(float mod, float car) {
 }
 
 void FMVoice::modulator_freq_offset(float v) {
-  mMFreqMultOffsetTarget = v;
-  mMFreqMultOffsetIncrement = (mMFreqMultOffsetTarget > mMFreqMultOffset) ? offset_increment : -offset_increment;
+  mMFreqMultOffset = v;
 }
 
 void FMVoice::slew_rate(float seconds_per_octave) {
@@ -188,8 +187,6 @@ void FMVoice::update_increments() {
     mMidiNote = mMidiNoteTarget;
 
   float base_freq = fm::midi_note_to_freq(mMidiNote + mBend + mTranspose);
-
-  mMFreqMultOffset = fm::lin_smooth(mMFreqMultOffsetTarget, mMFreqMultOffset, mMFreqMultOffsetIncrement);
   switch(mMode) {
     case FIXED_MODULATOR: 
       {
