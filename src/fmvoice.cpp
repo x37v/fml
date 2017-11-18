@@ -28,7 +28,10 @@ namespace {
   }
 }
 
-FMVoice::FMVoice() {
+FMVoice::FMVoice() :
+  mModEnv(Envelope::Mode::ATTACK_RELEASE),
+  mAmpEnv(Envelope::Mode::ATTACK_SUSTAIN_RELEASE)
+{
   mMPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
   mCPhase = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
