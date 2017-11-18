@@ -114,7 +114,7 @@ namespace xnor {
 
           // convert output from interleaved floating point
           float * o = &outputSamples.front();
-#if 0
+#if 1
           for (unsigned int i = 0; i < outs.size(); i++) {
             for (unsigned int j = 0; j < AUDIO_BLOCK_SAMPLES; j++)
               outs[i][j] = floatToSample(*(o++));
