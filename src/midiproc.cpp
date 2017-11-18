@@ -89,12 +89,12 @@ void FMMidiProc::process_float(FMSynth& synth, cc_map_t mapping, float fval) {
       break;
 
     case MOD_ENV_ATK:
-      synth.mod_envelope_setting(Envelope::TimeSetting::ATTACK, 0.01 + 4.0 * fval);
+      synth.mod_envelope_setting(Envelope::TimeSetting::ATTACK, 4.0 * fval);
       break;
     case MOD_ENV_DEC:
       {
         float v = 4.0 * fval;
-        synth.mod_envelope_setting(Envelope::TimeSetting::RELEASE, 0.01 + v);
+        synth.mod_envelope_setting(Envelope::TimeSetting::RELEASE, v);
       }
       break;
 
