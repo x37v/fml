@@ -78,11 +78,12 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mSlewNote = midi_note;
   }
 
+#if 0
   if (Serial) {
     Serial.print(on ? "trig on " : "trig off ");
     Serial.println(voice);
   }
-  //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
+#endif
   mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && voices_on == 0) ? midi_note : mSlewNote);
 
   if (on) {
