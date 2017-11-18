@@ -10,6 +10,8 @@ class Envelope {
     enum class Mode { ATTACK_RELEASE, ATTACK_SUSTAIN_RELEASE };
     enum class TimeSetting { ATTACK, RELEASE };
 
+    Envelope(Mode m = Mode::ATTACK_RELEASE);
+
     float value() const;
     float compute();
     void reset();

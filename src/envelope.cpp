@@ -10,6 +10,8 @@ namespace {
   }
 }
 
+Envelope::Envelope(Mode m) : mMode(m) { }
+
 float Envelope::value() const { return mValue; }
 
 float Envelope::compute() {
