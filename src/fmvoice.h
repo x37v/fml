@@ -30,6 +30,7 @@ class FMVoice {
     bool active() const;
     Envelope::Stage volume_envelope_state() const;
 
+    void mod_envelope_mode(Envelope::Mode m);
     void mod_env_linear(bool v);
     
     void mode(mode_t v);

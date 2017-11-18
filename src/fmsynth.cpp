@@ -177,6 +177,11 @@ void FMSynth::mod_envelope_setting(Envelope::TimeSetting stage, float v) {
     s.mod_envelope_increment(stage, v);
 }
 
+void FMSynth::mod_envelope_mode(Envelope::Mode m) {
+  for (auto& s: mVoices)
+    s.mod_envelope_mode(m);
+}
+
 void FMSynth::mod_env_linear(bool v) {
   for (auto& s: mVoices)
     s.mod_env_linear(v);

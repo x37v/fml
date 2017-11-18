@@ -30,6 +30,9 @@ void FMMidiProc::process_cc(FMSynth& synth, uint8_t channel, uint8_t num, uint8_
     case MOD_ENV_LINEAR:
       synth.mod_env_linear(val != 0);
       break;
+    case SUSTAIN_PEDAL:
+      synth.mod_envelope_mode(val < 64 ? Envelope::Mode::ATTACK_RELEASE : Envelope::Mode::ATTACK_SUSTAIN_RELEASE);
+      break;
 
     case RATIO:
     case FINE:

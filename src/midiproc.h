@@ -28,6 +28,8 @@ class FMMidiProc {
 
       MONO_MODE = 58,
 
+      SUSTAIN_PEDAL = 64, // XXX toggles mod env mode from AR to ASR
+
       MOD_ENV_LINEAR = 59,
     };
 

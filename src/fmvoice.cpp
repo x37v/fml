@@ -164,6 +164,8 @@ bool FMVoice::idle() const { return mAmpEnv.idle(); }
 
 Envelope::Stage FMVoice::volume_envelope_state() const { return mAmpEnv.stage(); }
 
+void FMVoice::mod_envelope_mode(Envelope::Mode m) { mModEnv.mode(m); }
+
 void FMVoice::mod_env_linear(bool v) {
   //XXX DO IT
 }

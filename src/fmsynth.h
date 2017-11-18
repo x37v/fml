@@ -34,6 +34,7 @@ class FMSynth {
 
     void volume_envelope_setting(Envelope::TimeSetting stage, float v);
     void mod_envelope_setting(Envelope::TimeSetting stage, float v);
+    void mod_envelope_mode(Envelope::Mode m);
     void mod_env_linear(bool v);
 
     void all_off();
