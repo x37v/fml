@@ -36,9 +36,12 @@ FMVoice::FMVoice() {
 
   mAmpEnv.set(Envelope::TimeSetting::ATTACK, 0.1);
   mAmpEnv.set(Envelope::TimeSetting::RELEASE, 0.1);
+  mAmpEnv.reset_on_trigger(false);
 
   mModEnv.set(Envelope::TimeSetting::ATTACK, 0.1);
   mModEnv.set(Envelope::TimeSetting::RELEASE, 0.1);
+  mModEnv.reset_on_trigger(false);
+
   //XXX set mod sustain level to 0.1
 }
 
@@ -86,8 +89,6 @@ void FMVoice::compute(unsigned int nframes, float* left, float* right) {
 }
 
 void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_note) {
-  bool retrigger = mAmpEnv.stage() == Envelope::Stage::IDLE || mAmpEnv.stage() == Envelope::Stage::RELEASE;
-
   if (on) {
     mMidiNote = slew_note;
     note(midi_note);
@@ -98,14 +99,8 @@ void FMVoice::trigger(bool on, uint8_t midi_note, float velocity, uint8_t slew_n
     mModVelocityIncrement = (mModVelocityTarget > mModVelocity) ? velocity_increment : -velocity_increment;
   }
 
-  //don't trigger if we're already on
-  if (!on) {
-    mModEnv.trigger(false);
-    mAmpEnv.trigger(false);
-  } else if (retrigger) {
-    mModEnv.trigger(true);
-    mAmpEnv.trigger(true);
-  }
+  mAmpEnv.trigger(on);
+  mModEnv.trigger(on);
 }
 
 void FMVoice::note(uint8_t midi_note) {
@@ -206,5 +201,7 @@ void FMVoice::update_increments() {
       mCPhaseInc = (base_freq * mCFreqMult) * fm::fsample_period();
       break;
   }
+  if (mAmpEnv.idle())
+    mModEnv.reset();
 }
 
