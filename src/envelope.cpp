@@ -37,9 +37,16 @@ float Envelope::compute() {
   return mValue;
 }
 
+void Envelope::reset() { 
+  mStage = Stage::IDLE;
+  mValue = 0;
+}
+
 void Envelope::trigger(bool on) {
   if (on) {
     mStage = Stage::ATTACK;
+    if (mResetOnTrigger)
+      mValue = 0;
   } else if (mMode == Mode::ATTACK_SUSTAIN_RELEASE && mStage != Stage::IDLE) {
     mStage = Stage::RELEASE;
   }
@@ -66,3 +73,4 @@ void Envelope::mode(Mode v) { mMode = v; }
 
 bool Envelope::active() const { return !idle(); }
 bool Envelope::idle() const { return mStage == Stage::IDLE; }
+void Envelope::reset_on_trigger(bool v) { mResetOnTrigger = v; }

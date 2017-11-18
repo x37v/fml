@@ -12,6 +12,7 @@ class Envelope {
 
     float value() const;
     float compute();
+    void reset();
 
     void trigger(bool on);
     void attack_time(float v);
@@ -24,7 +25,9 @@ class Envelope {
 
     bool active() const;
     bool idle() const;
+    void reset_on_trigger(bool v);
   private:
+    bool mResetOnTrigger = false;
     float mValue = 0;
     float mAttackIncrement = 0.1;
     float mReleaseIncrement = 0.1;
