@@ -102,7 +102,7 @@ namespace xnor {
               for (unsigned int j = 0; j < AUDIO_BLOCK_SAMPLES; j++)
                 *(p++) = 0;
             } else {
-              for (unsigned int j = 0; j < AUDIO_BLOCK_SAMPLES; j++)
+              for (unsigned int j = 0; j < AUDIO_BLOCK_SAMPLES; j++) 
                 *(p++) = sampleToFloat(ins[i][j]);
             }
             fins[i] = &receivedSamples.front() + i * AUDIO_BLOCK_SAMPLES;
@@ -123,18 +123,6 @@ namespace xnor {
           for (unsigned int i = 0; i < outs.size(); i++) {
             arm_float_to_q15(o, outs[i], AUDIO_BLOCK_SAMPLES);
             o += AUDIO_BLOCK_SAMPLES;
-            /*
-            //https://gcc.gnu.org/onlinedocs/gcc-4.4.1/gcc/ARM-NEON-Intrinsics.html
-            //http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0553a/CHDJAEDB.html
-            for (unsigned int j = 0; j < AUDIO_BLOCK_SAMPLES; j+=4) {
-
-              float32x4_t fv = vld1q_f32(o);
-              int32x4_t iv = vcvtq_n_s32_f32(fv, 16);
-              int16x4_t iv16 = vmovn_s32(iv);
-              vst1_s16(&outs[i][j], iv16);
-              o += 4;
-            }
-            */
           }
 #endif
         }
