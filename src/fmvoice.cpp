@@ -1,5 +1,6 @@
 #include "fmvoice.h"
 #include "defines.h"
+#include "note_to_freq.h"
 #include "util.h"
 #include <cmath>
 #include <cstdlib>

@@ -26,8 +26,6 @@ namespace fm {
   constexpr float fsample_rate() { return 44100.0f; }
   constexpr float fsample_period() { return 1.0f / 44100.0f; }
 #endif
-  float midi_note_to_freq(float midi_note);
-
   //float/offset 0..1
   //= sine(2 * pi * index + offset);
   inline float sine(float index) {
