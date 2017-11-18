@@ -50,7 +50,14 @@ void handleCC(byte inChannel, byte inNumber, byte inVal) {
 }
 
 void handleBend(byte inChannel, int value) {
-  //fml.process_cc(inChannel, inNumber, inVal);
+  fml.process_bend(inChannel - 1, value);
+  if (!Serial)
+    return;
+  Serial.print("Bend ");
+  Serial.print(" chan: ");
+  Serial.print(inChannel);
+  Serial.print(" value: ");
+  Serial.println(value);
 }
 
 void setup() {
@@ -59,6 +66,7 @@ void setup() {
   usbMIDI.setHandleNoteOff(handleNoteOff);
   usbMIDI.setHandleNoteOn(handleNoteOn) ;
   usbMIDI.setHandleControlChange(handleCC);
+  usbMIDI.setHandlePitchChange(handleBend);
 
   if (Serial)
     Serial.println("SETUP");

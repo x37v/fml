@@ -130,11 +130,14 @@ void FMMidiProc::process_float(FMSynth& synth, cc_map_t mapping, float fval) {
 }
 
 void FMMidiProc::process_bend(FMSynth& synth, uint8_t channel, uint8_t num0, uint8_t num1) {
+  process_bend(synth, channel, ((uint16_t)num1 << 7) | num0);
+}
+
+void FMMidiProc::process_bend(FMSynth& synth, uint8_t channel, int v) {
   if (channel != mNoteChannel)
     return;
-  uint16_t p = ((uint16_t)num1 << 7) | num0;
-  float v = ((float)p - 8192.0f) / 8192.0f;
-  synth.bend(v);
+  float f = ((float)v - 8192.0f) / 8192.0f;
+  synth.bend(f);
 }
 
 void FMMidiProc::process_note(FMSynth& synth, bool on, uint8_t channel, uint8_t note, uint8_t vel) {

@@ -10,6 +10,7 @@ class AudioFML : public xnor::AudioWrapperFloat<0, 2> {
     AudioFML();
     void process_cc(uint8_t channel, uint8_t num, uint8_t val);
     void process_bend(uint8_t channel, uint8_t num0, uint8_t num1);
+    void process_bend(uint8_t channel, int value);
     void process_note(bool on, uint8_t channel, uint8_t note, uint8_t vel);
   protected:
     virtual void compute(uint16_t nframes, std::array<float *, 0>& ins, std::array<float *, 2>& outs) override;

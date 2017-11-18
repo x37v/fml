@@ -22,6 +22,10 @@ void AudioFML::process_bend(uint8_t channel, uint8_t num0, uint8_t num1) {
   mMidiProc.process_bend(mSynth, channel, num0, num1);
 }
 
+void AudioFML::process_bend(uint8_t channel, int value) {
+  mMidiProc.process_bend(mSynth, channel, value);
+}
+
 void AudioFML::process_note(bool on, uint8_t channel, uint8_t note, uint8_t vel) {
   mMidiProc.process_note(mSynth, on, channel, note, vel);
 }
