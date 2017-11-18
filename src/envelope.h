@@ -20,6 +20,7 @@ class Envelope {
     void attack_time(float v);
     void release_time(float v);
     void set(TimeSetting s, float time);
+    void set_increment(TimeSetting s, float v); //direct setting
 
     Stage stage() const;
     Mode mode() const;
