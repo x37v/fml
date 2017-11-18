@@ -23,8 +23,8 @@ class FMVoice {
 
     void slew_rate(float seconds_per_octave);
 
-    void volume_envelope_setting(Envelope::TimeSetting s, float time);
-    void mod_envelope_setting(Envelope::TimeSetting s, float time);
+    void volume_envelope_increment(Envelope::TimeSetting s, float inc);
+    void mod_envelope_increment(Envelope::TimeSetting s, float inc);
 
     bool idle() const;
     bool active() const;

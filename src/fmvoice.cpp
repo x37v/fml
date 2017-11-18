@@ -151,12 +151,12 @@ void FMVoice::slew_rate(float seconds_per_octave) {
   mSlewSecondsPerOctave = seconds_per_octave;
 }
 
-void FMVoice::volume_envelope_setting(Envelope::TimeSetting s, float time) {
-  mAmpEnv.set(s, time);
+void FMVoice::volume_envelope_increment(Envelope::TimeSetting s, float inc) {
+  mAmpEnv.set_increment(s, inc);
 }
 
-void FMVoice::mod_envelope_setting(Envelope::TimeSetting s, float time) {
-  mModEnv.set(s, time);
+void FMVoice::mod_envelope_increment(Envelope::TimeSetting s, float inc) {
+  mModEnv.set_increment(s, inc);
 }
 
 bool FMVoice::active() const { return mAmpEnv.active(); }

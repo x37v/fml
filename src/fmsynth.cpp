@@ -1,6 +1,7 @@
 #include "fmsynth.h"
 #include "util.h"
 #include <cassert>
+#include <Arduino.h>
 
 #include <cmath>
 
@@ -65,7 +66,7 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     return;
   }
   mVoiceHistory[voice] = mVoiceHistoryCounter++;
-  mVoiceNotes[voice] = midi_note;
+  mVoiceNotes[voice] = on ? midi_note : 255; //clear out the note if we're turning off so we don't find it when looking for on notes
 
   uint8_t voices_on = 0;
   for (auto v: mVoices) {
@@ -77,6 +78,10 @@ void FMSynth::trigger(unsigned int voice, bool on, uint8_t midi_note, float velo
     mSlewNote = midi_note;
   }
 
+  if (Serial) {
+    Serial.print(on ? "trig on " : "trig off ");
+    Serial.println(voice);
+  }
   //cout << "trig " << (on ? "on  " : "off ") << voice << " vel: " << velocity << endl;
   mVoices[voice].trigger(on, midi_note, velocity, (mSlewHeldOnly && voices_on == 0) ? midi_note : mSlewNote);
 
@@ -157,13 +162,18 @@ void FMSynth::volume(float v) {
 }
 
 void FMSynth::volume_envelope_setting(Envelope::TimeSetting stage, float v) {
+  v = fm::time_to_increment(v);
   for (auto& s: mVoices)
-    s.volume_envelope_setting(stage, v);
+    s.volume_envelope_increment(stage, v);
 }
 
 void FMSynth::mod_envelope_setting(Envelope::TimeSetting stage, float v) {
+  if (v > 0)
+    v = fm::time_to_increment(v);
+  else
+    v = 1.0;
   for (auto& s: mVoices)
-    s.mod_envelope_setting(stage, v);
+    s.mod_envelope_increment(stage, v);
 }
 
 void FMSynth::mod_env_linear(bool v) {
@@ -192,6 +202,8 @@ void FMSynth::mono_mode(bool v) {
 
 void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t vel) {
   int voice = -1;
+  if (vel == 0)
+    on = false;
 
   //update the 'down' mask
   if (on) {
@@ -215,10 +227,11 @@ void FMSynth::process_note(bool on, uint8_t channel, uint8_t midi_note, uint8_t 
     }
   } else {
     if (on) {
+      //find an active voice or [shouldn't happen] a voice with the same current note
+      //we can't break early because we need to see all notes to see if we have a match
       for (unsigned int i = 0; i < mVoices.size(); i++) {
-        if (!mVoices[i].active()) {
+        if (!mVoices[i].active() || mVoiceNotes[i] == midi_note) {
           voice = i;
-          break;
         }
       }
       //find the least recently used if we don't have a free voice

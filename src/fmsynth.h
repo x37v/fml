@@ -15,8 +15,6 @@ class FMSynth {
 
     //stereo buffer, left[length] right[length]
     void compute(float * buffer, uint16_t length);
-    void trigger(unsigned int voice, bool on,
-        uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     void note(unsigned int voice, uint8_t midi_note);
 
     Envelope::Stage volume_envelope_state(uint8_t voice) const;
@@ -47,6 +45,8 @@ class FMSynth {
 
     void process_note(bool on, uint8_t channel, uint8_t note, uint8_t vel);
   private:
+    void trigger(unsigned int voice, bool on,
+        uint8_t midi_note = UINT8_MAX, float velocity = 1.0f); //frequency,velocity ignored for off
     bool mMonoMode = false;
     float mModDepth = 0.0f;
     float mModDepthTarget = 0.0f;
