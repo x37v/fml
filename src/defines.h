@@ -47,6 +47,8 @@ namespace fm {
     return std::sin(index * two_pi + offset);
 #endif
   }
+
+  float time_to_increment(float seconds);
 };
 
 #endif

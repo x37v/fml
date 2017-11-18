@@ -273,5 +273,11 @@ namespace fm {
       return note_to_freq[index];
     return note_to_freq[127];
   }
+
+  float time_to_increment(float v) {
+    if (v < 0.015)
+      v = 0.015;
+    return fm::fsample_period() / v;
+  }
 }
 
