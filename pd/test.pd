@@ -1,23 +1,23 @@
-#N canvas 962 50 956 498 10;
+#N canvas 2 50 956 498 10;
 #X obj 113 193 pack f f;
 #X obj 112 218 noteout 1;
-#X obj 112 23 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+#X obj 112 23 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
 #X obj 114 49 metro 400;
 #X obj 113 94 random 20;
 #X obj 112 122 + 50;
 #X obj 403 71 hsl 128 15 0 127 0 0 empty empty ratio -2 -8 0 10 -262144
--1 -1 7800 1;
+-1 -1 5200 1;
 #X obj 550 69 hsl 128 15 0 127 0 0 empty empty fine -2 -8 0 10 -262144
--1 -1 5000 1;
+-1 -1 200 1;
 #X obj 694 69 hsl 128 15 0 127 0 0 empty empty fbdk -2 -8 0 10 -262144
--1 -1 1400 1;
+-1 -1 5900 1;
 #X obj 545 116 ctlout 16 2;
 #X obj 689 116 ctlout 24 2;
 #X obj 405 212 hsl 128 15 0 127 0 0 empty empty depth -2 -8 0 10 -262144
--1 -1 10800 1;
+-1 -1 7200 1;
 #X obj 552 210 hsl 128 15 0 127 0 0 empty empty vol -2 -8 0 10 -262144
--1 -1 9500 1;
+-1 -1 12700 1;
 #X obj 696 210 hsl 128 15 0 127 0 0 empty empty slew -2 -8 0 10 -262144
 -1 -1 0 1;
 #X obj 399 259 ctlout 9 2;
@@ -27,20 +27,20 @@
 #X obj 379 468 ctlout 14 2;
 #X obj 460 467 ctlout 22 2;
 #X obj 379 328 vsl 15 128 0 127 0 0 empty empty mod_atk 0 -9 0 10 -262144
--1 -1 0 1;
+-1 -1 1000 1;
 #X obj 423 326 vsl 15 128 0 127 0 0 empty empty mod_dec 0 -9 0 10 -262144
--1 -1 1000 1;
+-1 -1 2400 1;
 #X obj 549 314 vsl 15 128 0 127 0 0 empty empty vol_atk 0 -9 0 10 -262144
--1 -1 900 1;
+-1 -1 0 1;
 #X obj 601 313 vsl 15 128 0 127 0 0 empty empty vol_dec 0 -9 0 10 -262144
--1 -1 1000 1;
+-1 -1 1300 1;
 #X obj 546 469 ctlout 15 2;
 #X obj 627 468 ctlout 23 2;
 #X obj 815 245 hsl 128 15 0 127 0 0 empty empty trans -2 -8 0 10 -262144
--1 -1 5800 1;
+-1 -1 200 1;
 #X obj 809 291 ctlout 10 2;
 #X obj 206 30 hsl 128 15 20 800 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 10000 1;
+-1 -1 5700 1;
 #X obj 84 39 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 792 367 ctlout 58 2;
@@ -52,7 +52,7 @@
 #X text 73 387 linear env;
 #X obj 40 427 ctlout 59 2;
 #X obj 192 123 hsl 128 15 1 127 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 12500 1;
+-1 -1 9700 1;
 #X msg 4 75 64 \, 72 \, 67;
 #X obj 66 274 print;
 #X obj 114 168 makenote 127 100;
@@ -63,13 +63,17 @@
 #X obj 19 23 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1
 ;
 #X obj 256 205 vsl 15 128 20 1000 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 7400 1;
+-1 -1 2600 1;
 #X msg 56 140 52 \, 64 \, 76 \, 88 \, 100 \, 112;
 #X obj 21 49 metro 1000;
-#X obj 174 385 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 174 385 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 64
 64;
 #X obj 173 425 ctlout 64 2;
 #X text 206 385 mod env mode;
+#X obj 57 313 hsl 128 15 -8192 8192 0 0 empty empty empty -2 -8 0 10
+-262144 -1 -1 6350 1;
+#X msg 22 283 0;
+#X obj 68 346 bendout 1;
 #X connect 0 0 1 0;
 #X connect 0 0 38 0;
 #X connect 2 0 3 0;
@@ -113,3 +117,5 @@
 #X connect 46 0 37 0;
 #X connect 46 0 45 0;
 #X connect 47 0 48 0;
+#X connect 50 0 52 0;
+#X connect 51 0 50 0;
