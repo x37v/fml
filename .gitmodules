@@ -1,3 +1,9 @@
 [submodule "jackcpp"]
 	path = jack/jackcpp
 	url = https://github.com/x37v/jackcpp.git
+[submodule "hardware/teensy_library"]
+	path = hardware/teensy_library
+	url = git@github.com:XenGi/teensy_library.git
+[submodule "hardware/teensy.pretty"]
+	path = hardware/teensy.pretty
+	url = https://github.com/XenGi/teensy.pretty
