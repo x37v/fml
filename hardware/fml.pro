@@ -1,4 +1,4 @@
-update=Sun 19 Nov 2017 08:24:14 AM PST
+update=Tue 21 Nov 2017 08:01:11 AM PST
 version=1
 last_client=kicad
 [pcbnew]
@@ -62,3 +62,4 @@ LibName30=atmel
 LibName31=contrib
 LibName32=valves
 LibName33=teensy_library/teensy
+LibName34=/home/alex/projects/electronics/kicad/lib/xnorman
